@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mmt.dao.CustomDao">
+
+    <update id="delCustom">
+        update custom set recsts = 'D' where cid in <foreach collection="ids" item="id" open="(" close=")" separator=",">#{id}</foreach>
+    </update>
+
+    <update id="updateCustom" parameterType="custom">
+        update custom set name = #{name},type = #{type}, phone = #{phone},
+         name = #{name}, sex=#{sex}, ethnic = #{ethnic}, birthday = #{birthday}, identity = #{identity},
+         nativeplace = #{nativeplace}, koseki = #{koseki}, nowaddress = #{nowaddress}, bankcard = #{bankcard},
+         bankaddress = #{bankaddress}, family_linkone_name = #{family_linkone_name}, family_linkone_sex = #{family_linkone_sex},
+         family_linkone_relation = #{family_linkone_relation}, family_linkone_phone = #{family_linkone_phone},
+         family_linkone_address = #{family_linkone_address}, family_linktwo_name = #{family_linktwo_name},
+         family_linktwo_sex = #{family_linktwo_sex}, family_linktwo_phone = #{family_linktwo_phone},
+         family_linktwo_relation = #{family_linktwo_relation}, family_linktwo_address = #{family_linktwo_address},
+        company = #{company}, income = #{income}, consume = #{consume}, school = #{school},
+         indatestring = #{indatestring}, studentcard = #{studentcard}, shipaddress = #{shipaddress}
+          <if test="identity_front != null  and identity_front != ''">
+              , identity_front = #{identity_front}
+          </if>
+        <if test="identity_reverse != null  and identity_reverse != ''">
+            , identity_reverse = #{identity_reverse}
+        </if>
+        <if test="cus_photo != null  and cus_photo != ''">
+            , cus_photo = #{cus_photo}
+        </if>
+        <if test="workcard != null  and workcard != ''">
+            ,workcard = #{workcard}
+        </if>
+        <if test="zhimfvideo != null and zhimfvideo != ''">
+            ,zhimfvideo = #{zhimfvideo}
+        </if>
+          where cid = #{cid}
+    </update>
+
+    <select id="getCustom" resultType="custom" parameterType="custom">
+        SELECT cid, name, sex, phone, type, source, ethnic, birthday,`identity`,
+        nativeplace, koseki, nowaddress, phoneserviceno, bankcard, bankaddress,
+        family_linkone_name, family_linkone_sex, family_linkone_phone, family_linkone_relation, family_linkone_address,
+        family_linktwo_name, family_linktwo_sex, family_linktwo_phone, family_linktwo_relation, family_linktwo_address,
+        company, income, consume, school, indatestring, studentcard
+          FROM custom where recsts = '1'
+          <if test="phone != null and phone != ''">
+              and phone = #{phone}
+          </if>
+          <if test="name != null  and name != ''">
+              and name like concat('%', #{name}, '%')
+          </if>
+    </select>
+
+    <select id="getBookNumsWithCids" resultType="int">
+        SELECT count(*) from book where recsts = '1' and custom_id in <foreach collection="ids"  item="id" open="(" close=")" separator=",">#{id}</foreach>
+    </select>
+
+    <select id="getCustomDetail" resultType="custom" resultMap="customInfo">
+        select cid, name, sex, phone, type, source, ethnic, birthday, `identity`, nativeplace,
+         koseki, nowaddress, bankcard, bankaddress, family_linkone_name, family_linkone_sex, family_linkone_phone,
+         family_linkone_relation, family_linkone_address, family_linktwo_name, family_linktwo_phone, family_linktwo_sex,
+         family_linktwo_relation, family_linktwo_address, family_flg, link_flg, identity_flg, person_flg, taobao_flg,
+         zhifb_flg, zhimfvideo, mobile_flg, student_flg, identity_reverse, identity_front, cus_photo, workcard,
+         company, income, consume, school, indatestring, studentcard, shipaddress,
+         lid, lname, lsex, lrelation, lphone, lmemo  from custom c left join cus_link on concat(',', link_ids, ',') like concat('%,', lid, ',%')
+        where c.recsts = '1' and cid = #{cid}
+    </select>
+
+    <resultMap id="customInfo" type="custom">
+        <id column="cid" property="cid"></id>
+        <result column="name" property="name"></result>
+        <result column="sex" property="sex"></result>
+        <result column="phone" property="phone"></result>
+        <result column="type" property="type"></result>
+        <result column="source" property="source"></result>
+        <result column="ethnic" property="ethnic"></result>
+        <result column="birthday" property="birthday"></result>
+        <result column="identity" property="identity"></result>
+        <result column="nativeplace" property="nativeplace"></result>
+        <result column="koseki" property="koseki"></result>
+        <result column="nowaddress" property="nowaddress"></result>
+        <result column="bankcard" property="bankcard"></result>
+        <result column="bankaddress" property="bankaddress"></result>
+        <result column="family_linkone_name" property="family_linkone_name"></result>
+        <result column="family_linkone_sex" property="family_linkone_sex"></result>
+        <result column="family_linkone_phone" property="family_linkone_phone"></result>
+        <result column="family_linkone_relation" property="family_linkone_relation"></result>
+        <result column="family_linkone_address" property="family_linkone_address"></result>
+        <result column="family_linktwo_name" property="family_linktwo_name"></result>
+        <result column="family_linktwo_sex" property="family_linktwo_sex"></result>
+        <result column="family_linktwo_phone" property="family_linktwo_phone"></result>
+        <result column="family_linktwo_relation" property="family_linktwo_relation"></result>
+        <result column="family_linktwo_address" property="family_linktwo_address"></result>
+        <result column="family_flg" property="family_flg"></result>
+        <result column="link_flg" property="link_flg"></result>
+        <result column="identity_flg" property="identity_flg"></result>
+        <result column="person_flg" property="person_flg"></result>
+        <result column="taobao_flg" property="taobao_flg"></result>
+        <result column="zhifb_flg" property="zhifb_flg"></result>
+        <result column="zhimfvideo" property="zhimfvideo"></result>
+        <result column="mobile_flg" property="mobile_flg"></result>
+        <result column="student_flg" property="student_flg"></result>
+        <result column="identity_reverse" property="identity_reverse"></result>
+        <result column="identity_front" property="identity_front"></result>
+        <result column="cus_photo" property="cus_photo"></result>
+        <result column="workcard" property="workcard"></result>
+        <result column="company" property="company"></result>
+        <result column="income" property="income"></result>
+        <result column="consume" property="consume"></result>
+        <result column="school" property="school"></result>
+        <result column="indatestring" property="indatestring"></result>
+        <result column="studentcard" property="studentcard"></result>
+        <result column="shipaddress" property="shipaddress"></result>
+        
+        <collection property="cusLinkList" ofType="Cus_Link">
+            <id property="lid" column="lid"></id>
+            <result property="lname" column="lname"></result>
+            <result property="lsex" column="lsex"></result>
+            <result property="lrelation" column="lrelation"></result>
+            <result property="lphone" column="lphone"></result>
+            <result property="lmemo" column="lmemo"></result>
+        </collection>
+    </resultMap>
+</mapper>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mmt.dao.ProductDao">
+
+    <insert id="insertNotityWithOutProduct" useGeneratedKeys="true" keyColumn="id" keyProperty="params.msgid">
+        insert into notify(title, content, cid, islinkmsg, crtuser, crtdate, recsts)
+        VALUES ('产品审核通过', #{params.notify_msg}, #{params.cid}, 1, '系统', now(), '1')
+    </insert>
+
+    <insert id="insertNotityWithUnPassOutProduct" useGeneratedKeys="true" keyColumn="id" keyProperty="params.msgid">
+        insert into notify(title, content, cid, islinkmsg, crtuser, crtdate, recsts)
+        VALUES ('产品审核拒绝', #{params.notify_msg}, #{params.cid}, 2, '系统', now(), '1')
+    </insert>
+
+    <update id="passAuditOutPorduct">
+        update link set product_name = #{params.product_name}, product_imei = #{params.porduct_imei},
+         product_signprice = #{params.product_signprice}, product_eachprice = #{params.product_eachprice},
+         product_lease = #{params.product_lease}, product_price = #{params.product_price},
+         storage = #{params.storage}, color = #{params.color}, audituser = #{params.audituser}, auditdate = now(),
+         msgid = #{params.msgid}
+         where lid = #{params.lid}
+    </update>
+
+    <update id="unpassAuditOutProduct">
+        update link set state = 2, audituser = #{params.audituser}, auditdate = now(), unpass_reason= #{params.unpass_reason} where lid = #{params.lid}
+    </update>
+
+    <select id="getAllSkuProduct" resultType="map">
+        SELECT p.product_id, ps.sku_id, (SELECT product_name FROM product p WHERE p.product_id = ps.product_id) product_name,
+        (CASE p.type WHEN 1 THEN '全新' ELSE '二手' END) product_type,
+        ps.signprice, GROUP_CONCAT(prop_val) FROM prod_sku ps LEFT JOIN product p ON ps.product_id = p.product_id
+        LEFT JOIN prod_propval pp ON ps.sku_id = pp.sku_id GROUP BY sku_id
+    </select>
+
+    <select id="getAllProduct" resultType="map">
+        select product_id, concat(product_name, '(', (CASE type WHEN 1 THEN '全新' ELSE '二手' END), ')') product_desc
+        from product where recsts = '1'
+    </select>
+
+    <select id="getLineImeiInfo" resultType="map">
+        select imei_id, imei_no, type, sku_id, imei_no, state,
+        (select product_name from product where product_id = (select product_id from prod_sku ps where imei.sku_id = ps.sku_id)) product_name,
+        (select link from link where linkid = imei.linkid) link
+        from imei where recsts = '1'
+    </select>
+
+    <select id="getSkuProductByPid" resultType="map">
+        SELECT ps.sku_id, GROUP_CONCAT(prop_val) product_desc FROM prod_sku ps LEFT JOIN prod_propval pp ON ps.sku_id = pp.sku_id
+        where ps.product_id = #{product_id} GROUP BY sku_id
+    </select>
+
+    <select id="getImeiDetailById" resultType="map">
+        select imei_id, sku_id, state, type, imei_no,
+        (case state when '1' then '尚未出库' when '2' then '已出库' when '3' then '锁定中' end) state_name,
+        (select product_name from product where product_id = (select product_id from prod_sku ps where imei.sku_id = ps.sku_id)),
+         (select link from link where linkid = imei.linkid) link
+         product_name, from imei where id = #{id}
+    </select>
+
+    <select id="getOutLink" resultType="map">
+        select lid, link, state, product_lease, leaseunit, product_price, product_signprice, product_name,
+         product_imei, rate, color, storage, audituser, date_format(auditdate, '%Y-%m-%d %T') auditdate,
+        (select phone from custom where custom.cid = link.cid) custom_phone,
+         (select name from custom where custom.cid = link.cid) custom_name from link
+         where recsts = '1'
+         <if test="params.start_date != null and params.start_date != ''">
+             and crtdate >= #{params.start_date}
+         </if>
+        <if test="params.end_date != null  and params.end_date != ''">
+             and crtdate &lt;= #{params.end_date}
+        </if>
+    </select>
+
+    <select id="toOutLinkDet" resultType="map">
+        select lid, link, state, product_lease, product_eachprice, product_name,
+        cid, (select name from custom where custom.cid = link.cid) custom_name,
+        product_eachprice, product_signprice, product_imei, storage, color, rate, msgid from link where lid = #{lid}
+    </select>
+
+</mapper>

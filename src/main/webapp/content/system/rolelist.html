@@ -1,0 +1,489 @@
+<title>权限管理 - 笑享租</title>
+<link rel="stylesheet" href="/erp/assets/css/bootstrap-multiselect.css"/>
+<link rel="stylesheet" href="/erp/assets/css/select2.css"/>
+<link rel="stylesheet" href="/erp/assets/css/bootstrap-editable.css"/>
+<div class="page-header">
+    <h1>
+        权限管理
+        <small>
+            <i class="ace-icon fa fa-angle-double-right"></i>
+            分配权限，管理菜单
+        </small>
+    </h1>
+</div>
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="row">
+            <div class="alert alert-info"><strong>操作流程：</strong><strong>1</strong>:选择员工; <strong>2</strong>：选择该员工的权限，选择完权限之后，在右侧可以查看该权限下所拥有的菜单；如果没有想要的权限菜单，可以选择新建权限，指定自己想要分配的菜单
+                <strong>3</strong>：保存该用户权限。
+            </div>
+        </div>
+        <!--选择员工-->
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <div class="col-xs-12 col-xs-offset-2">
+                        <label class="control-label  no-padding-right align-right"> 选择员工: </label>
+                        <div id="rolelist_user" class="select2" style="width:300px;" data-placeholder="选择员工..."></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-6" id="roleItems">
+                <div class="widget-box widget-color-green2" style="max-height: 500px;">
+                    <div class="widget-header">
+                        <h4 class="widget-title lighter smaller">选择权限名</h4>
+                    </div>
+                    <div class="widget-body">
+                        <div class="widget-main padding-8">
+                            <ul id="tasks" class="item-list">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="align-center" id="roleButtom">
+                    <button class="btn btn-info" onclick="addRole()">
+                        <i class="ace-icon fa fa-plus"></i>
+                        新增权限
+                    </button>
+
+                    <button class="btn btn-success" onclick="saveUserRole()">
+                        <i class="ace-icon fa fa-save"></i>
+                        保存用户权限
+                    </button>
+                </div>
+            </div>
+            <div class="col-xs-6" id="menuItems">
+                <div class="widget-box widget-color-blue2">
+                    <div class="widget-header">
+                        <h4 class="widget-title lighter smaller">
+                            选择菜单
+                            <strong class="smaller-20" style="color: #d15b47">(当前状态：<span
+                                    id="selectBox">不可选中</span>)</strong>
+                        </h4>
+                    </div>
+                    <div class="widget-body" style="max-height:500px; overflow-y: scroll;">
+                        <div class="widget-main padding-8">
+                            <ul id="tree1"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="align-center" id="menuBottom" hidden>
+                    <span class="list-unstyled spaced orange">
+                        <i class="ace-icon fa fa-bell-o bigger-110 purple"></i>
+                        当前编辑的权限为：<strong id="role_name">管理员</strong>
+                    </span>
+                    <button class="btn btn-default" onclick="cancelEdit()">
+                        <i class="ace-icon fa fa-times red2"></i>
+                        取消
+                    </button>
+                    <button class="btn btn-success" onclick="updateMenu()">
+                        <i class="ace-icon fa fa-check"></i>
+                        保存编辑
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var scripts = [null, "/erp/assets/js/fuelux/fuelux.tree.js",
+        "/erp/assets/js/select2.js",
+        "/erp/assets/js/x-editable/bootstrap-editable.js",
+        "/erp/assets/js/x-editable/ace-editable.js",
+        "/erp/assets/js/typeahead.jquery.js",
+        null];
+
+    //添加权限
+    function addRole() {
+        bootbox.dialog({
+            title: '添加用户权限',
+            message: '<form class="form-horizontal">' +
+            '<div class="alert alert-info"><strong>操作步骤说明：</strong>1：添加权限名， 2：在选择权限名菜单中，找到新增的权限，点击右侧编辑图标，选择权限对应的菜单名称，保存即可</div>' +
+            '<div class="form-group">' +
+            '<label class="control-label col-xs-12 col-sm-3" for="form_role_name">权限名:</label>' +
+            '<div class="col-xs-12 col-sm-9">' +
+            '<div class="clearfix">' +
+            '<input type="text" name="form_role_name" id="form_role_name" class="col-xs-12 col-sm-9" />' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="form-group">' +
+            '<label class="control-label col-xs-12 col-sm-3" for="form_role_desc">权限描述:</label>' +
+            '<div class="col-xs-12 col-sm-9">' +
+            '<div class="clearfix">' +
+            '<textarea name="form_role_desc" id="form_role_desc" class="col-xs-12 col-sm-9"></textarea>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</form>'
+            ,
+            buttons: {
+                cancel: {
+                    label: '取消',
+                    className: 'btn-danger',
+                },
+                ok: {
+                    label: '保存',
+                    className: 'btn-success',
+                    callback: function () {
+                        var operState = true;
+                        myAjax("/base/addRole", {
+                            rname: $("#form_role_name").val(),
+                            rdesc: $("#form_role_desc").val()
+                        }, function (result) {
+                            if (result.code === 1) {
+                                //生成菜单
+                                addRoleDom($("#form_role_name").val(), result.data);
+                            } else {
+                                showErrorInfo(result.message);
+                                operState = false;
+                            }
+                        });
+                        return operState;
+                    }
+                }
+            }
+        })
+    }
+
+    //添加role Dom操作
+    function addRoleDom(rname, rid) {
+        var html = "";
+        html += '<li class="item-green2 clearfix">';
+        html += '<label class="inline">';
+        html += '<input type="checkbox" name="role_ids" class="ace" value="' + rid + '"/>';
+        html += '<span class="lbl"></span>';
+        html += '</label>';
+        html += '<span class="role_edit" style="margin-left: 10px;">' + (rname ? rname : "") + '</span>';
+        html += '<div class="pull-right action-buttons">';
+        html += '<a href="javascript:void(0);" class="blue" onclick="editRole(this, ' + rid + ')" title="选中右侧菜单，然后点击右侧菜单下方确认修改按钮，完成菜单修改操作">';
+        html += '<i class="ace-icon fa fa-pencil bigger-130"></i>';
+        html += '</a>';
+        html += '<span class="vbar"></span>';
+        html += '<a href="javascript:void(0);" class="red" onclick="delRole(this, ' + rid + ')">';
+        html += '<i class="ace-icon fa fa-trash-o bigger-130"></i>';
+        html += '</a>';
+        html += '</div>';
+        html += '</li>';
+        $("#tasks").prepend(html);
+        //注册当前节点
+        $('.role_edit:first').editable({
+            type: 'text',
+            url: function (params) {
+                var newValue = params.value;
+                var errMsg;
+                myAjax("/user/updRoleName", {rname: $(this).html(), newrname: newValue}, function (result) {
+                    if (result.code === 0) {
+                        errMsg = result.message;
+                    }
+                });
+                if (errMsg) {
+                    var d = new $.Deferred();
+                    return d.reject(errMsg);
+                }
+            },
+        });
+    }
+
+    //保存用户权限
+    function saveUserRole() {
+        //获取用户
+        var ids = $("#rolelist_user").select2("val");
+        if (!ids || ids.length === 0) {
+            showWarnInfo("请先选择客户, 在执行此操作");
+        } else {
+            var role_ids = "";
+            $("input[name=role_ids]:checked").each(function () {
+                role_ids += "," + $(this).val();
+            });
+            myAjax("/user/saveUserRole", {uid: ids, role_id: (role_ids ? role_ids.substr(1) : "")}, function (result) {
+                if (result.code === 1) {
+                    showSuccInfo("操作成功！");
+                }
+            })
+        }
+    }
+
+    var currRid;
+
+    //菜单修改操作
+    function editRole($this, rid) {
+        currRid = rid;
+        //选中该权限下的菜单
+        $('#tree1').tree('disSelectAll');
+        myAjax("/user/getMenuByRId", {role_ids: rid}, function (result) {
+            //遍历所有节点，通过相同那么就选中节点
+            result.data.forEach(function (data) {
+                $("#tree1").tree("selectItem", $("#tree1").tree('mainNode').find(".tree-item[data-id=" + data.mid + "]"), true);
+            })
+        });
+        //设置菜单可选
+        $("#tree1").tree('changeCanWrite');
+        //设置menuItems 全屏
+        $("#menuItems").removeClass("col-xs-6").addClass("col-xs-12");
+        $("#roleItems").hide();
+        $("#selectBox").html("可选中");
+        $("#menuBottom").show();
+
+        $("#role_name").html($($this).parent().parent().find(".role_edit").html())
+    }
+
+    //更新菜单
+    function updateMenu() {
+        var data = $("#tree1").tree("selectedItems");
+        var ids = "";
+        data.forEach(function (menu) {
+            ids += "," + menu.id;
+        });
+        myAjax("/base/updRoleMenu", {rid: currRid, menu_ids: (ids ? ids.substr(1) : "")}, function (result) {
+            if (result.code === 1) {
+                //操作成功
+                showSuccInfo("操作成功！需要拥有此权限的用户重新登录，菜单方可生效");
+                cancelEdit();
+            } else {
+                showErrorInfo(result.message);
+            }
+        })
+    }
+
+    //删除权限
+    function delRole($this, rid) {
+        bootbox.confirm("确认删除该权限?", function (result) {
+            if (result) {
+                myAjax("/base/delRole", {rid: rid}, function (result) {
+                    if (result.code === 1) {
+                        $($this).parent().parent().remove();
+                    } else {
+                        showErrorInfo(result.message);
+                    }
+                });
+            }
+        });
+    }
+
+    //取消编辑
+    function cancelEdit() {
+        $("#menuBottom").hide();
+        $("#tree1").tree("changeReadOnly");
+        $("#roleItems").show();
+        $("#menuItems").removeClass("col-xs-12").addClass("col-xs-6");
+        $("#selectBox").html("不可选中");
+        setCurrSelectMenu();
+    }
+
+    Array.prototype.unique = function () {
+        var res = [];
+        var json = {};
+        for (var i = 0; i < this.length; i++) {
+            if (!json[this[i]]) {
+                res.push(this[i]);
+                json[this[i]] = 1;
+            }
+        }
+        return res;
+    };
+
+    //设置当前选中的菜单
+    function setCurrSelectMenu() {
+        //取消所有选中状态
+        $('#tree1').tree('disSelectAll');
+        var role_ids = "";
+        $("input[name=role_ids]:checked").each(function () {
+            role_ids += "," + $(this).val();
+        });
+        if (role_ids) {
+            myAjax("/user/getMenuWithRuleIds", {role_ids: role_ids.substr(1)}, function (result) {
+                //遍历所有节点，通过相同那么就选中节点
+                result.data.forEach(function (data) {
+                    $("#tree1").tree("selectItem", $("#tree1").tree('mainNode').find(".tree-item[data-id=" + data.mid + "]"), true);
+                })
+            })
+        }
+    }
+
+    //页面加载完成，执行的js
+    $('.page-content-area').ace_ajax('loadScripts', scripts, function () {
+        //加载客户信息
+        $('#rolelist_user').select2({
+            ajax: {
+                url: projectUrl + "/base/getUserByKey",
+                dataType: "json",
+                delay: 500,
+                data: function (params) {
+                    return {key: params}
+                },
+                cache: true,
+                processResults: function (data) {
+                    if (data.code === 1) {
+                        return {results: data.data}
+                    } else {
+                        showErrorInfo(data.result);
+                    }
+                }
+            },
+        });
+
+        $("#rolelist_user").change(function () {
+            //加载选中的客户的权限
+            var uid = $("#rolelist_user").select2("val");
+            myAjax("/user/getRoleByUser", {uid: uid}, function (result) {
+                console.log(result);
+                if (result.code === 1) {
+                    if(!result.data || result.data.length === 0) {
+                        $("#tasks").find("input[name=role_ids]").each(function () {
+                            var id = $(this).val();
+                            var idWithDb = ',' + result.data.role_id + ',';
+                            $(this).removeAttr("checked");
+                            if (idWithDb.indexOf("," + id + ",") > -1) {
+                                $(this).trigger("click");
+                            }
+                        });
+                    }else{
+                        $("#tasks").find("input[name=role_ids]").each(function () {
+                            var id = $(this).val();
+                            var idWithDb = ',' + result.data.role_id + ',';
+                            $(this).removeAttr("checked");
+                            if (idWithDb.indexOf("," + id + ",") > -1) {
+                                $(this).trigger("click");
+                            }
+                        });
+                    }
+                }
+            })
+        });
+
+        /********加载所有权限信息*******/
+        myAjax("/base/getAllRoleInfo", null, function (result) {
+            var html = "";
+            result.data.forEach(function (data) {
+                html += '<li class="item-green2 clearfix">';
+                html += '<label class="inline">';
+                html += '<input type="checkbox" name="role_ids" class="ace" value="' + data.rid + '"/>';
+                html += '<span class="lbl"></span>';
+                html += '</label>';
+                html += '<span class="role_edit" style="margin-left: 10px;">' + (data.rname ? data.rname : "") + '</span>';
+                html += '<div class="pull-right action-buttons">';
+                html += '<a href="javascript:void(0);" class="blue" onclick="editRole(this, ' + data.rid + ')" title="选中右侧菜单，然后点击右侧菜单下方确认修改按钮，完成菜单修改操作">';
+                html += '<i class="ace-icon fa fa-pencil bigger-130"></i>';
+                html += '</a>';
+                html += '<span class="vbar"></span>';
+                html += '<a href="javascript:void(0);" class="red" onclick="delRole(this, ' + data.rid + ')">';
+                html += '<i class="ace-icon fa fa-trash-o bigger-130"></i>';
+                html += '</a>';
+                html += '</div>';
+                html += '</li>';
+            });
+            $("#tasks").html(html);
+        });
+
+        //注册权限编辑事件
+        $('.role_edit').editable({
+            type: 'text',
+            url: function (params) {
+                var newValue = params.value;
+                var errMsg;
+                myAjax("/user/updRoleName", {rname: $(this).html(), newrname: newValue}, function (result) {
+                    if (result.code === 0) {
+                        errMsg = result.message;
+                    }
+                });
+                if (errMsg) {
+                    var d = new $.Deferred();
+                    return d.reject(errMsg);
+                }
+            },
+        });
+
+
+        /******树节点******/
+        $('#tree1').ace_tree({
+            dataSource: getMenuData(),
+            multiSelect: true,
+            cacheItems: true,
+            readOnly: true,
+            'open-icon': 'ace-icon tree-minus',
+            'close-icon': 'ace-icon tree-plus',
+            'itemSelect': true,
+            'folderSelect': false,
+            'selected-icon': 'ace-icon fa fa-check',
+            'unselected-icon': 'ace-icon fa fa-times',
+            loadingHTML: '<div class="tree-loading"><i class="ace-icon fa fa-refresh fa-spin blue"></i></div>'
+        });
+        $('#tree1').tree('discloseVisible');//设置默认展开所有节点
+
+
+        //选中菜单时触发
+        $('#tree1').on('selected.fu.tree', function (e, res) {
+        });
+
+        $("input[name=role_ids]").on("click", function () {
+            var role_ids = "";
+            $("input[name=role_ids]:checked").each(function () {
+                role_ids += "," + $(this).val();
+            });
+            //取消所有选中状态
+            $('#tree1').tree('disSelectAll');
+            //请求后台数据
+            if (role_ids) {
+                myAjax("/user/getMenuByRId", {role_ids: role_ids.substr(1)}, function (result) {
+                    //遍历所有节点，通过相同那么就选中节点
+                    result.data.forEach(function (data) {
+                        $("#tree1").tree("selectItem", $("#tree1").tree('mainNode').find(".tree-item[data-id=" + data.mid + "]"), true);
+                    })
+                })
+            }
+        });
+
+        /**
+         * 加载所有菜单项,目前仅有二级菜单项
+         */
+        function getMenuData() {
+            var mainData = {};
+            myAjax("/base/getAllMenu", null, function (result) {
+                var data = result.data;
+                data.forEach(function (parentMenu) {
+                    mainData[parentMenu.mid] = {text: parentMenu.mname, type: parentMenu.murl ? 'item' : 'folder'}
+                    if (parentMenu.childMenu && parentMenu.childMenu.length > 0) {
+                        var childMenu = {};
+                        parentMenu.childMenu.forEach(function (child) {
+                            childMenu[child.mid] = {id: child.mid, text: child.mname, type: 'item'}
+                        });
+                        mainData[parentMenu.mid]['additionalParameters'] = {
+                            children: childMenu
+                        }
+                    }
+                });
+            });
+
+            var dataSource = function (options, callback) {
+                var $data = null;
+                if (!("text" in options) && !("type" in options)) {
+                    $data = mainData;
+                    callback({data: $data});
+                    return;
+                } else if ("type" in options && options.type == "folder") {
+                    if ("additionalParameters" in options && "children" in options.additionalParameters)
+                        $data = options.additionalParameters.children || {};
+                    else $data = {}//no data
+                }
+                if ($data != null) {
+                    callback({data: $data});
+                }
+            };
+            return dataSource;
+        }
+
+
+        //页面重新加载时，移除select2选择事件
+        $(document).one('ajaxloadstart.page', function (e) {
+            $('[class*=select2]').remove();
+        });
+
+    });
+</script>

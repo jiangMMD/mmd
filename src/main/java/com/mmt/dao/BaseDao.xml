@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mmt.dao.BaseDao">
+    <update id="updRoleMenu" parameterType="role">
+        update role set m_ids = #{menu_ids}  where rid = #{rid}
+    </update>
+
+    <update id="unLockIemi">
+        update imei set state = 1 where state = 3 and imei_no in
+        <foreach collection="imeiList" item="imei" open="(" close=")" separator=",">#{imei}</foreach>
+    </update>
+
+    <delete id="delRole">
+        DELETE FROM role where rid = #{rid}
+    </delete>
+
+    <select id="getAllDepartment" resultType="department">
+        SELECT d.dep_id, d.dep_name from department d
+    </select>
+
+    <!--查询所有菜单信息-->
+    <select id="getAllMenu" resultType="menu">
+        SELECT m.mid, m.murl from menu m where m.murl is not null
+    </select>
+
+    <select id="getAllMenuOrder" resultType="menu" resultMap="menuOrderMap">
+        select m1.mid, m1.mname, m1.order, m2.mid mmid, m2.mname mmname, m2.murl mmurl from menu m1 left join menu m2 on m1.mid = m2.parentid
+        where m1.parentid is NULL
+    </select>
+    <select id="getUserByKey" resultType="map">
+        select uid id, username text from user
+        <where>
+            <if test="key != null and key != ''">
+               and username like concat('%', #{key}, '%')
+            </if>
+        </where>
+        limit 10
+    </select>
+
+    <select id="getAllRoleInfo" resultType="role">
+        select rid, rname, m_ids menu_ids from role ORDER BY crtdate DESC
+    </select>
+    <select id="getAllCity" resultType="map">
+        select id, city from bs_city
+    </select>
+    <select id="getAllAgency" resultType="agency">
+        select aid, aname, (select city from bs_city where id = agency_city) agency_cityname from agency where recsts = '1'
+    </select>
+    <select id="getAllPost" resultType="map">
+        select data_code, data_name from bs_basedict where dict_code = 'ZW001'
+    </select>
+
+    <select id="getAllImeiWithHas" resultType="iemi">
+        select imei_id, imei_no from imei
+        where (state = '1' or (select CONCAT(',', imei_nos, ',') from iemi_turnover where id = #{id}) like  CONCAT('%,', imei_no, ',%'))
+        and recsts = '1'
+    </select>
+    <select id="toImeiOutdetail" resultType="iemi_turnover">
+        select id, type, product_name, imei_nos, agency_id, crtuser, crtdate from iemi_turnover where id = #{id}
+    </select>
+
+    <select id="toImeiIndetail" resultType="iemi_turnover">
+        select id, type, product_name, imei_nos, agency_id, crtuser, crtdate from iemi_turnover where id = #{id}
+    </select>
+
+    <resultMap id="menuOrderMap" type="Menu">
+        <id property="mid" column="mid"></id>
+        <result property="mname" column="mname"></result>
+        <result property="order" column="order"></result>
+        <collection property="childMenu" ofType="Menu">
+            <id property="mid" column="mmid"></id>
+            <result property="mname" column="mmname"></result>
+            <result property="murl" column="mmurl"></result>
+        </collection>
+    </resultMap>
+</mapper>

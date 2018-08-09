@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mmt.dao.LineBookDao">
+
+    <insert id="insertBookFee">
+        INSERT INTO line_payment(bid, state, curphase, money, totalmoney,expectfee, date, crtdate, crtuser, recsts)
+        VALUES
+        <foreach collection="payments" item="payment" separator=",">
+            (#{payment.bid}, #{payment.state},  #{payment.curphase}, #{payment.money},
+            #{payment.money},'0', #{payment.date}, now(), #{payment.crtuser}, '1')
+        </foreach>
+    </insert>
+
+    <insert id="insertNotify">
+        insert into notify(title, content, cid, crtuser, crtdate, recsts)
+        VALUES (#{title}, #{msg}, #{custom_id}, #{crtuser}, now(), '1')
+    </insert>
+
+    <insert id="insertBookOperLog">
+        insert into line_bookoper(bid, oper_type, oper_title, oper_content, oper_date, oper_user)
+        VALUES (#{bid}, #{oper_type}, #{oper_title}, #{oper_content}, now(), #{user_no})
+    </insert>
+
+    <update id="passAudit">
+        update book set state = 8, audit_user = #{user_no}, audit_date = now() where bid = #{bid}
+    </update>
+
+    <update id="unPassAudit" parameterType="lineBook">
+        update book set state = 5, audit_unpass_reason = #{audit_unpass_reason},
+         audit_user = #{audit_user}, audit_date = now() where bid = #{bid}
+    </update>
+
+    <update id="completePay">
+        update book set state = 1, repaytotal = leaseterm_price, remainpay = product_price, repaydate = #{repaydate}, start_date = now(), cfmpayuser = #{user_no}, cfmpaydate = now() where bid = #{bid}
+    </update>
+
+    <update id="delBook">
+        update book set recsts = 'D' where id in <foreach collection="ids" item="id" open="(" separator="," close=")">${id}</foreach>
+    </update>
+
+    <update id="finishBook">
+        update book set state = '3' where bid = #{bid}
+    </update>
+
+    <!--将所有账单结算-->
+    <update id="finishBookBill">
+        update line_payment set state = 1, finishdate = now(), finishuser = #{user_no} where bid = #{bid}
+    </update>
+
+    <update id="setBookOverdueFee" parameterType="lineBook">
+        update book set expectfee = #{expectfee}, totalexpectfee = #{totalexpectfee},
+        state = '2', syncdate = #{syncdate}, repaytotal = #{repaytotal} where bid = #{bid}
+    </update>
+
+    <update id="setBookRent" parameterType="lineBook">
+        update book set expectfee = #{expectfee}, totalexpectfee = #{totalexpectfee}, book_type = '1',
+         state = '2', syncdate = #{syncdate}, repaytotal = #{repaytotal} where bid = #{bid}
+    </update>
+
+    <update id="updateRaymentFee" parameterType="payment">
+        update payment set state = '3', totalmoney = #{totalmoney}, expectfee = #{expectfee}  where pid = #{pid}
+    </update>
+
+    <select id="getBaseBookInfo" resultType="lineBook">
+        select bid, product_price, leaseterm, leaseterm_price, custom_id  from book where bid = #{bid}
+    </select>
+
+    <select id="getBookList" resultType="lineBook" parameterType="book">
+        select <include refid="bookField"></include>
+        from book b left join custom c on b.custom_id = c.cid where b.recsts = '1' and state != '4' and state != '8'
+        <where>
+            <if test="phone != null and phone != ''">
+               and c.phone = #{phone}
+            </if>
+            <if test="book_no != null and book_no != ''">
+                and b.book_no = #{book_no}
+            </if>
+        </where>
+    </select>
+
+    <select id="getLineBookDetail" resultMap="lineBookInfo">
+        select  l.lname, l.lid, l.lphone, l.lsex, l.lrelation, l.lrelation, <include refid="bookField"></include> from book b left join custom c on b.custom_id = c.cid
+        left join cus_link l on concat(',', c.link_ids, ',') like concat('%,', l.lid, ',%')
+        where b.recsts = '1' and bid = #{bid}
+    </select>
+
+    <select id="getAuditBookList" resultType="lineBook" parameterType="book">
+        select <include refid="bookField"></include> from book b left join custom c on b.custom_id = c.cid
+        where b.recsts = '1' and (state = '4' or state = '8')
+        <if test="phone != null and phone != ''">
+            and c.phone = #{phone}
+        </if>
+
+        <if test="name != null and name != ''">
+            and b.book_no = #{book_no}
+        </if>
+    </select>
+
+    <select id="getBookInfo" resultType="lineBook">
+        select b.book_no, c.phone, c.name, b.custom_id, b.product_imei from book b left join custom c on b.custom_id = c.cid where bid = #{bid}
+    </select>
+
+    <select id="getBanlanceBookList" resultType="lineBook" parameterType="lineBook">
+        select <include refid="bookField"></include> from book b left join custom c on b.custom_id = c.cid
+        where b.recsts = '1' and (b.state = '1' or b.state = '2' or b.state = '3')
+        <if test="book_no != null and book_no != ''">
+            and b.book_no = #{book_no}
+        </if>
+        <if test="phone != null and phone != ''">
+            and c.phone = #{phone}
+        </if>
+    </select>
+
+    <select id="getBill" resultType="payment">
+        select pid, bid, curphase, state, issms, money, totalmoney, realymoney,
+         date, realydate, expectfee from line_payment where bid = #{bid} and recsts = '1'
+    </select>
+
+    <select id="queryBookWithPaid" resultType="lineBook">
+        select bid, book_no, book_type, product_price, leaseterm, monthrent, repaydate, totalexpectfee, syncdate, expectFee, repaytotal
+        from cus_book where recsts = '1' and (state = '1' or state = '2')
+    </select>
+
+    <select id="insertErrBookMsg">
+        insert into book_errorinfo(operdate, book_no, errmsg, type) VALUES (now(), #{book_no}, #{errmsg}, '1')
+    </select>
+    <select id="getCurrRepayByBook" resultType="payment">
+        SELECT * from payment where bid = #{bid} and date = #{repaydate}
+    </select>
+
+    <resultMap id="lineBookInfo" type="lineBook">
+        <id column="bid" property="bid"></id>
+        <result property="source" column="source"></result>
+        <result property="book_no" column="book_no"></result>
+        <result property="custom_id" column="custom_id"></result>
+        <result property="product_name" column="product_name"></result>
+        <result property="product_price" column="product_price"></result>
+        <result property="product_signprice" column="product_signprice"></result>
+        <result property="product_imei" column="product_imei"></result>
+        <result property="product_rate" column="product_rate"></result>
+        <result property="book_type" column="book_type"></result>
+        <result property="leaseterm" column="leaseterm"></result>
+        <result property="apply_date" column="apply_date"></result>
+        <result property="leaseterm_price" column="leaseterm_price"></result>
+        <result property="repaytotal" column="repaytotal"></result>
+        <result property="repaydate" column="repaydate"></result>
+        <result property="totalexpectfee" column="totalexpectfee"></result>
+        <result property="expectfee" column="expectfee"></result>
+        <result property="expectday" column="expectday"></result>
+        <result property="reimbursement" column="reimbursement"></result>
+        <result property="repaylssue" column="repaylssue"></result>
+        <result property="remainpay" column="remainpay"></result>
+        <result property="state" column="state"></result>
+        <result property="state_name" column="state_name"></result>
+        <result property="audit_state" column="audit_state"></result>
+        <result property="audit_state_name" column="audit_state_name"></result>
+        <result property="audit_user" column="audit_user"></result>
+        <result property="audit_date" column="audit_date"></result>
+        <result property="openid" column="openid"></result>
+        <result property="type" column="type"></result>
+        <result property="custom_source" column="custom_source"></result>
+        <result property="phone" column="phone"></result>
+        <result property="name" column="name"></result>
+        <result property="sex" column="sex"></result>
+        <result property="birthday" column="birthday"></result>
+        <result property="identity" column="identity"></result>
+        <result property="nativeplace" column="nativeplace"></result>
+        <result property="koseki" column="koseki"></result>
+        <result property="nowaddress" column="nowaddress"></result>
+        <result property="bankcard" column="bankcard"></result>
+        <result property="bankaddress" column="bankaddress"></result>
+        <result property="family_linkone_name" column="family_linkone_name"></result>
+        <result property="family_linkone_phone" column="family_linkone_phone"></result>
+        <result property="family_linkone_relation" column="family_linkone_relation"></result>
+        <result property="family_linkone_address" column="family_linkone_address"></result>
+        <result property="family_linkone_sex" column="family_linkone_sex"></result>
+        <result property="family_linktwo_name" column="family_linktwo_name"></result>
+        <result property="family_linktwo_phone" column="family_linktwo_phone"></result>
+        <result property="family_linktwo_relation" column="family_linktwo_relation"></result>
+        <result property="family_linktwo_address" column="family_linktwo_address"></result>
+        <result property="family_linktwo_sex" column="family_linktwo_sex"></result>
+        <result property="family_flg" column="family_flg"></result>
+        <result property="identity_flg" column="identity_flg"></result>
+        <result property="person_flg" column="person_flg"></result>
+        <result property="taobao_flg" column="taobao_flg"></result>
+        <result property="zhifb_flg" column="zhifb_flg"></result>
+        <result property="mobile_flg" column="mobile_flg"></result>
+        <result property="student_flg" column="student_flg"></result>
+        <result property="company" column="company"></result>
+        <result property="income" column="income"></result>
+        <result property="consume" column="consume"></result>
+        <result property="school" column="school"></result>
+        <result property="indatestring" column="indatestring"></result>
+        <result property="studentcard" column="studentcard"></result>
+        <result property="studentcardimg" column="studentcardimg"></result>
+        <result property="shipaddress" column="shipaddress"></result>
+        <result property="zhimfvideo" column="zhimfvideo"></result>
+
+        <collection property="cusLinkList" ofType="cusLink">
+            <id column="lid" property="lid"></id>
+            <result property="lname" column="lname"></result>
+            <result property="lsex" column="lsex"></result>
+            <result property="lphone" column="lphone"></result>
+            <result property="lrelation" column="lrelation"></result>
+            <result property="lmemo" column="lmemo"></result>
+        </collection>
+    </resultMap>
+
+    <sql id="bookField">
+        b.bid, b.source, b.book_no, b.custom_id, b.product_name, b.product_price, b.product_signprice,
+        b.product_imei, b.product_rate, b.book_type, b.leaseterm, b.apply_date, b.leaseterm_price,
+        b.repaytotal, b.repaydate, b.totalexpectfee, b.expectfee, b.expectday, b.reimbursement, b.repaylssue, b.remainpay,
+        b.state, (select data_name from bs_basedict where dict_code = 'DD001' and data_code = b.state) state_name,
+        b.audit_state, (select data_name from bs_basedict where dict_code = 'DD002' and data_code = b.state) audit_state_name,
+        b.audit_user, b.audit_date,
+        c.openid, c.type, c.source custom_source, c.phone, c.name, c.sex, c.ethnic, c.birthday, c.identity,
+        c.nativeplace, c.koseki, c.nowaddress, c.bankcard, c.bankaddress, c.identity_front, c.identity_reverse, c.cus_photo, c.workcard,
+        c.family_linkone_name, c.family_linkone_phone, c.family_linkone_relation, c.family_linkone_address, c.family_linkone_sex,
+        c.family_linktwo_name, c.family_linktwo_phone, c.family_linktwo_relation, c.family_linktwo_address, c.family_linktwo_sex,
+        family_flg, identity_flg, person_flg, taobao_flg, zhifb_flg, mobile_flg, student_flg,
+        c.company, c.income, c.consume, c.school, c.indatestring, c.studentcard, c.studentcardimg, c.shipaddress, c.zhimfvideo
+    </sql>
+</mapper>

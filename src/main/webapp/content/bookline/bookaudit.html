@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>线上订单审核</title>
+    <!--列表样式信息-->
+    <link rel="stylesheet" href="/erp/assets/css/ui.jqgrid.css"/>
+    <link rel="stylesheet" href="/erp/assets/css/chosen.css" />
+</head>
+<body>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="space-6"></div>
+            <div class="well">
+                <form id="queryForm" class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-xs-3">
+                            <label for="book_no" class="col-sm-3 control-label no-padding-right">订单号:</label>
+                            <div class="col-sm-9">
+                                <input type="text" id="book_no" name="book_no" class="form-control"/>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-3">
+                            <label for="book_phone" class="col-sm-3 control-label no-padding-right">客户手机:</label>
+                            <div class="col-sm-9">
+                                <input type="text" id="book_phone" name="phone" class="form-control"/>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-3">
+                            <button class="btn btn-primary" type="button" onclick="queryData()">
+                                <i class="ace-icon fa fa-search bigger"></i>
+                                查询
+                            </button>
+                            <button class="btn" type="reset" onclick="resetForm()">
+                                <i class="ace-icon fa fa-refresh bigger"></i>
+                                重置
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="space-12"></div>
+            <div class="row">
+                <div class="col-xs-2">
+                    <!--<a id="linebook_add" data-rel="tooltip" title="" data-original-title="新增" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon fa fa-plus-circle purple bigger-125"></i></a>-->
+                    <a id="linebook_edit" data-rel="tooltip" title="" data-original-title="修改" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon fa fa-pencil blue bigger-125"></i></a>
+                    <a id="linebook_del" data-rel="tooltip" title="" data-original-title="删除" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon fa fa-trash-o red bigger-125"></i></a>
+                </div>
+            </div>
+            <table id="grid-table"></table>
+            <div id="grid-pager"></div>
+        </div>
+    </div>
+<script>
+    var scripts = [null, "/erp/assets/js/date-time/bootstrap-datepicker.js",
+        "/erp/assets/js/jqGrid/jquery.jqGrid.custom.js",
+        "/erp/assets/js/chosen.jquery.js",
+        "/erp/assets/js/jqGrid/i18n/grid.locale-cn.js", null];
+
+    var grid_selector = "#grid-table";
+    var pager_selector = "#grid-pager";
+
+    //查询表单数据
+    function queryData() {
+        var formData = $("#queryForm").serializeJson();
+        jQuery(grid_selector).jqGrid("setGridParam", {postData: formData}).trigger("reloadGrid", [{page: 1}]);
+    }
+
+
+    $(".page-content-area").ace_ajax('loadScripts', scripts, function() {
+        $(function(){
+            var parent_column = $(grid_selector).closest('[class*="col-"]');
+            $(window).on('resize.jqGrid', function () {
+                $(grid_selector).jqGrid('setGridWidth', parent_column.width());
+                $(grid_selector).jqGrid('setGridHeight', $(window).height() - 360);
+            });
+
+            //重新进入时，销毁原有页面信息
+            $(document).one('ajaxloadstart.page', function (e) {
+                $.jgrid.gridDestroy(grid_selector);
+                $('.ui-jqdialog').remove();
+            });
+
+            //进入订单详细
+            $("#linebook_edit").click(function() {
+                var ids = $(grid_selector).jqGrid('getGridParam','selarrrow');
+                if(!ids || ids.length === 0) {
+                    showWarnInfo("请先选择一条记录", 3000);
+                }else if(ids.length>1) {
+                    showWarnInfo("只能选择一条记录进行修改", 3000);
+                }else{
+                    queryDetail(ids[0]);
+                }
+            });
+
+            //删除订单
+            $("#linebook_del").click(function(){
+                var ids = $(grid_selector).jqGrid('getGridParam','selarrrow');
+                if(!ids || ids.length === 0) {
+                    showWarnInfo("至少选择一条记录", 3000);
+                }else{
+                    bootbox.confirm("确认删除选中的所有订单？该操作不可逆转", function(res) {
+                        if(res) {
+                            myAjax("/linebook/delBook", {ids: ids.join(",")}, function(result){
+                                if(result.code == '1') {
+                                    showSuccInfo("操作成功");
+                                    queryData();
+                                }else{
+                                    showErrorInfo(result.message);
+                                }
+                            })
+                        }
+                    });
+                }
+            })
+
+            $(grid_selector).jqGrid({
+                url: projectUrl + "/linebook/getAuditBookList", //获取所有订单信息
+                datatype: "json",
+                mtype: 'POST',
+                height: $(window).height() - 360,
+                colNames: ['ID', '租售类型', '订单状态', '客户类型', '姓名', '电话','订单号',
+                    '产品名称', '签约价格', '租期', 'IMEI号', '每期租金',
+                    '性别', '出生年月', '民族', '身份证', '籍贯',
+                    '家庭电话', '户籍地址', '现地址', '银行卡号', '银行卡开户行',
+                    '初审时间', '初审人','复审时间', '复审人', '备注'],
+                colModel: [
+                    {name: 'bid', key: true, width: 60, hidden: true, frozen: true},
+                    {name: 'book_type', width:100, formatter: pickBookType},
+                    {name: 'state_name', width:150, formatter: pickState},
+                    {name: 'type', width: 100, formatter: pickType},
+                    {name: 'name', width: 100, editable: true},
+                    {name: 'phone', width: 100, editable: true},
+                    {name: 'book_no', width: 120, editable: true},
+                    {name: 'product_name', width: 100, editable: true},
+                    {name: 'product_price', width: 100, editable: true},
+                    {name: 'leaseterm', width: 60, editable: true},
+                    {name: 'product_imei', width: 100, editable: true},
+                    {name: 'leaseterm_price', width: 100, editable: true},
+                    {name: 'sex', width: 50, editable: true},
+                    {name: 'birth', width: 120, editable: true},
+                    {name: 'ethnic', width: 50, editable: true},
+                    {name: 'identity', width: 150, editable: true},
+                    {name: 'place', width: 100, editable: true},
+                    {name: 'familyphone', width: 100, editable: true},
+                    {name: 'koseki', width: 150, editable: true},
+                    {name: 'nowaddress', width: 150, editable: true},
+                    {name: 'bankcard', width: 100, editable: true},
+                    {name: 'bankaddress', width: 150, editable: true},
+                    {name: 'audituser', width: 150, editable: true},
+                    {name: 'auditdate', width: 150, editable: true},
+                    {name: 'reaudituser', width: 150, editable: true},
+                    {name: 'reauditdate', width: 150, editable: true},
+                    {name: 'memo', width: 200, editable: true},
+                ],
+                sortname: 'b.crtdate',
+                sortorder: 'desc',
+                ondblClickRow: queryDetail,
+                viewrecords: true,
+                rowNum: 10,
+                rowList: [10, 20, 30],
+                pager: pager_selector,
+                autowidth: true,
+                autoScroll: false,
+                shrinkToFit: false,
+                multiselect: true,
+                multiboxonly: true,
+                loadError: function (xhr, status, error) {
+                    showErrorInfo("服务异常;"+error);
+                },
+                loadComplete: function() {
+                    //分页信息
+                    Jq_loadComlete();
+                }
+            });
+
+            //租售类型
+            function pickBookType(val) {
+                if(val == '1') {
+                    return '<span class="red2">由租转售</span>';
+                }else {
+                    return '<span class="orange">租</span>';
+                }
+            }
+
+            function pickType(val) {
+                console.log(val);
+                if(val == '1') {
+                    return '学生';
+                }else{
+                    return '成人';
+                }
+            }
+
+            //订单状态
+            function pickState(val, row, rowData) {
+                var statename = 'label-info';
+                if(val === '待打款') {
+                    statename = 'label-warning';
+                }
+                return '<span class="label label-sm '+statename+'">'+val+'</span>';
+            }
+
+            function queryDetail(id) {
+                toCustomUrl("server/linebook/toLineBookAuditDet?bid="+id);
+            }
+        })
+    })
+
+</script>
+</body>
+</html>
