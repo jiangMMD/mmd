@@ -14,7 +14,7 @@
 
     <!--<mvc:annotation-driven />-->
     <context:annotation-config/>
-    <context:component-scan base-package="com.mmt.*"/>
+    <context:component-scan base-package="com.mmd.*"/>
     <!--启动spring定时任务注解-->
     <task:annotation-driven/>
     <!--<task:scheduler id="scheduler" pool-size="5"></task:scheduler>-->
@@ -26,7 +26,8 @@
             <list>
                 <value>classpath:jdbc.properties</value>
                 <value>classpath:redis.properties</value>
-                <value>classpath:rabbit.properties</value>
+                <value>classpath:email.properties</value>
+                <!--<value>classpath:rabbit.properties</value>-->
             </list>
         </property>
     </bean>
@@ -95,7 +96,7 @@
     </bean>
     <!--配置mapping扫描包-->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.mmt.dao"/>
+        <property name="basePackage" value="com.mmd.dao"/>
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
     </bean>
 
@@ -114,26 +115,31 @@
         <property name="password" value="${redis.requirepass}"/>
         <property name="poolConfig" ref="poolConfig"/>
     </bean>
-    <bean id="jedisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
-        <property name="connectionFactory" ref="connectionFactory"/>
-        <property name="keySerializer">
-            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
-        </property>
-        <property name="valueSerializer">
-            <bean class="org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer"/>
-        </property>
-        <property name="hashKeySerializer">
-            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
-        </property>
-        <property name="hashValueSerializer">
-            <bean class="org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer"/>
-        </property>
-    </bean>
 
+    <!--<bean id="jedisTemplate" class="org.springframework.data.redis.core.RedisTemplate">-->
+        <!--<property name="connectionFactory" ref="connectionFactory"/>-->
+        <!--<property name="keySerializer">-->
+            <!--<bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>-->
+        <!--</property>-->
+        <!--<property name="valueSerializer">-->
+            <!--<bean class="org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer"/>-->
+        <!--</property>-->
+        <!--<property name="hashKeySerializer">-->
+            <!--<bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>-->
+        <!--</property>-->
+        <!--<property name="hashValueSerializer">-->
+            <!--<bean class="org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer"/>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+
+    <bean id="redisHttpSessionConfiguration" class="org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration">
+        <property name="maxInactiveIntervalInSeconds" value="10800" />
+    </bean>
 
     <!--配置事物切入点-->
     <aop:config>
-        <aop:pointcut id="bussnessService" expression="(execution(public * com.mmt.service.*.*(..)))"/>
+        <aop:pointcut id="bussnessService" expression="(execution(public * com.mmd.service.*.*(..)))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="bussnessService"/>
     </aop:config>
 
@@ -159,8 +165,8 @@
     <!--配置Druid的spirng监控-->
     <bean id="druid-stat-interceptor" class="com.alibaba.druid.support.spring.stat.DruidStatInterceptor"/>
     <aop:config>
-        <aop:pointcut id="druid-stat-pointcut" expression="(execution(public * com.mmt.controll.*.*(..)))
-        || execution(public * com.mmt.service.*.*(..)) || execution(public * com.mmt.dao.*.*(..))"/>
+        <aop:pointcut id="druid-stat-pointcut" expression="(execution(public * com.mmd.controll.*.*(..)))
+        || execution(public * com.mmd.service.*.*(..)) || execution(public * com.mmd.dao.*.*(..))"/>
         <aop:advisor advice-ref="druid-stat-interceptor" pointcut-ref="druid-stat-pointcut"/>
     </aop:config>
 
@@ -172,4 +178,5 @@
         <!--<property name="jobFactory" ref="jobFactory"></property>-->
     <!--</bean>-->
 
+    <import resource="spring-email.xml" />
 </beans>

@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Baidu-Push-Server-SDK-Java-3.0.1">
+    <CLASSES>
+      <root url="jar://E:/downloads/Baidu-Push-Server-SDK-Java-3.0.1.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://E:/downloads/Baidu-Push-Server-SDK-Java-3.0.1.zip!/javasdk_3.0.1/core" />
+      <root url="jar://E:/downloads/Baidu-Push-Server-SDK-Java-3.0.1.zip!/javasdk_3.0.1/output/sample" />
+      <root url="jar://E:/downloads/Baidu-Push-Server-SDK-Java-3.0.1.zip!/javasdk_3.0.1/sample" />
+      <root url="jar://E:/downloads/Baidu-Push-Server-SDK-Java-3.0.1.zip!/javasdk_3.0.1/src" />
+    </SOURCES>
+  </library>
+</component>

@@ -1182,7 +1182,15 @@
   <script src="../../assets/js/excanvas.js"></script>
 <![endif]-->
 <script type="text/javascript">
-	var scripts = [null,"../../assets/js/jquery-ui.custom.js","../../assets/js/jquery.ui.touch-punch.js","../../assets/js/jquery.easypiechart.js","../../assets/js/jquery.sparkline.js","../../assets/js/flot/jquery.flot.js","../../assets/js/flot/jquery.flot.pie.js","../../assets/js/flot/jquery.flot.resize.js", null]
+	var scripts = [null,
+		"../../assets/js/jquery-ui.custom.js",
+		// "../../assets/js/jquery.ui.touch-punch.js",
+		"../../assets/js/jquery.easypiechart.js",
+		"../../assets/js/jquery.sparkline.js",
+		"../../assets/js/flot/jquery.flot.js",
+		// "../../assets/js/flot/jquery.flot.pie.js",
+		"../../assets/js/flot/jquery.flot.resize.js", null]
+
 	$('.page-content-area').ace_ajax('loadScripts', scripts, function() {
 	  //inline scripts related to this page
 		 jQuery(function($) {
@@ -1200,7 +1208,7 @@
 				animate: ace.vars['old_ie'] ? false : 1000,
 				size: size
 			});
-		})
+		});
 	
 		$('.sparkline').each(function(){
 			var $box = $(this).closest('.infobox');

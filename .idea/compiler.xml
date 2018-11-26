@@ -7,10 +7,14 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="erp" />
+        <module name="mmd" />
+        <module name="xinrong" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.8">
       <module name="erp" target="1.7" />
+      <module name="mmd" target="1.8" />
+      <module name="xinrong" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>

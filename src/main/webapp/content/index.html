@@ -1,5 +1,5 @@
 <title>主页 - 笑享租</title>
-<link rel="stylesheet" href="/erp/assets/css/fullcalendar.css"/>
+<link rel="stylesheet" href="assets/css/fullcalendar.css"/>
 
 <div class="row">
     <div class="col-xs-12">
@@ -78,12 +78,12 @@
 
 <!-- page specific plugin scripts -->
 <script type="text/javascript">
-    var scripts = [null, "/erp/assets/js/jquery-ui.custom.js",
-        "/erp/assets/js/jquery.ui.touch-punch.js",
-        "/erp/assets/js/date-time/moment.js",
-        "/erp/assets/js/gmt.js",
-        "/erp/assets/js/fullcalendar.js",
-        "/erp/assets/js/bootbox.js", null]
+    var scripts = [null, "assets/js/jquery-ui.custom.js",
+        "assets/js/jquery.ui.touch-punch.js",
+        "assets/js/date-time/moment.js",
+        "assets/js/gmt.js",
+        "assets/js/fullcalendar.js",
+        "assets/js/bootbox.js", null]
 
     $('.page-content-area').ace_ajax('loadScripts', scripts, function () {
         //inline scripts related to this page
@@ -117,7 +117,7 @@
             var y = date.getFullYear();
 
             var eventInit;
-            myAjax("/user/getMyEvent", null, function(result){
+            myAjax("/employee/getMyEvent", null, function(result){
                 eventInit = result.data;
             });
 

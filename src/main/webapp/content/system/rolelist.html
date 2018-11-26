@@ -1,7 +1,7 @@
 <title>权限管理 - 笑享租</title>
-<link rel="stylesheet" href="/erp/assets/css/bootstrap-multiselect.css"/>
-<link rel="stylesheet" href="/erp/assets/css/select2.css"/>
-<link rel="stylesheet" href="/erp/assets/css/bootstrap-editable.css"/>
+<link rel="stylesheet" href="assets/css/bootstrap-multiselect.css"/>
+<link rel="stylesheet" href="assets/css/select2.css"/>
+<link rel="stylesheet" href="assets/css/bootstrap-editable.css"/>
 <div class="page-header">
     <h1>
         权限管理
@@ -40,8 +40,7 @@
                     </div>
                     <div class="widget-body">
                         <div class="widget-main padding-8">
-                            <ul id="tasks" class="item-list">
-                            </ul>
+                            <ul id="tasks" class="item-list"></ul>
                         </div>
                     </div>
                 </div>
@@ -92,11 +91,11 @@
 </div>
 
 <script type="text/javascript">
-    var scripts = [null, "/erp/assets/js/fuelux/fuelux.tree.js",
-        "/erp/assets/js/select2.js",
-        "/erp/assets/js/x-editable/bootstrap-editable.js",
-        "/erp/assets/js/x-editable/ace-editable.js",
-        "/erp/assets/js/typeahead.jquery.js",
+    var scripts = [null, "assets/js/fuelux/fuelux.tree.js",
+        "assets/js/select2.js",
+        "assets/js/x-editable/bootstrap-editable.js",
+        "assets/js/x-editable/ace-editable.js",
+        "assets/js/typeahead.jquery.js",
         null];
 
     //添加权限
@@ -178,7 +177,7 @@
             url: function (params) {
                 var newValue = params.value;
                 var errMsg;
-                myAjax("/user/updRoleName", {rname: $(this).html(), newrname: newValue}, function (result) {
+                myAjax("/employee/updRoleName", {rname: $(this).html(), newrname: newValue}, function (result) {
                     if (result.code === 0) {
                         errMsg = result.message;
                     }
@@ -202,7 +201,7 @@
             $("input[name=role_ids]:checked").each(function () {
                 role_ids += "," + $(this).val();
             });
-            myAjax("/user/saveUserRole", {uid: ids, role_id: (role_ids ? role_ids.substr(1) : "")}, function (result) {
+            myAjax("/employee/saveUserRole", {id: ids, roleId: (role_ids ? role_ids.substr(1) : "")}, function (result) {
                 if (result.code === 1) {
                     showSuccInfo("操作成功！");
                 }
@@ -217,7 +216,7 @@
         currRid = rid;
         //选中该权限下的菜单
         $('#tree1').tree('disSelectAll');
-        myAjax("/user/getMenuByRId", {role_ids: rid}, function (result) {
+        myAjax("/employee/getMenuByRId", {role_ids: rid}, function (result) {
             //遍历所有节点，通过相同那么就选中节点
             result.data.forEach(function (data) {
                 $("#tree1").tree("selectItem", $("#tree1").tree('mainNode').find(".tree-item[data-id=" + data.mid + "]"), true);
@@ -298,7 +297,7 @@
             role_ids += "," + $(this).val();
         });
         if (role_ids) {
-            myAjax("/user/getMenuWithRuleIds", {role_ids: role_ids.substr(1)}, function (result) {
+            myAjax("/employee/getMenuWithRuleIds", {role_ids: role_ids.substr(1)}, function (result) {
                 //遍历所有节点，通过相同那么就选中节点
                 result.data.forEach(function (data) {
                     $("#tree1").tree("selectItem", $("#tree1").tree('mainNode').find(".tree-item[data-id=" + data.mid + "]"), true);
@@ -332,13 +331,13 @@
         $("#rolelist_user").change(function () {
             //加载选中的客户的权限
             var uid = $("#rolelist_user").select2("val");
-            myAjax("/user/getRoleByUser", {uid: uid}, function (result) {
+            myAjax("/employee/getRoleByUser", {uid: uid}, function (result) {
                 console.log(result);
                 if (result.code === 1) {
                     if(!result.data || result.data.length === 0) {
                         $("#tasks").find("input[name=role_ids]").each(function () {
                             var id = $(this).val();
-                            var idWithDb = ',' + result.data.role_id + ',';
+                            var idWithDb = ',' + result.data.roleId + ',';
                             $(this).removeAttr("checked");
                             if (idWithDb.indexOf("," + id + ",") > -1) {
                                 $(this).trigger("click");
@@ -347,7 +346,7 @@
                     }else{
                         $("#tasks").find("input[name=role_ids]").each(function () {
                             var id = $(this).val();
-                            var idWithDb = ',' + result.data.role_id + ',';
+                            var idWithDb = ',' + result.data.roleId + ',';
                             $(this).removeAttr("checked");
                             if (idWithDb.indexOf("," + id + ",") > -1) {
                                 $(this).trigger("click");
@@ -388,7 +387,7 @@
             url: function (params) {
                 var newValue = params.value;
                 var errMsg;
-                myAjax("/user/updRoleName", {rname: $(this).html(), newrname: newValue}, function (result) {
+                myAjax("/employee/updRoleName", {rname: $(this).html(), newrname: newValue}, function (result) {
                     if (result.code === 0) {
                         errMsg = result.message;
                     }
@@ -431,7 +430,7 @@
             $('#tree1').tree('disSelectAll');
             //请求后台数据
             if (role_ids) {
-                myAjax("/user/getMenuByRId", {role_ids: role_ids.substr(1)}, function (result) {
+                myAjax("/employee/getMenuByRId", {role_ids: role_ids.substr(1)}, function (result) {
                     //遍历所有节点，通过相同那么就选中节点
                     result.data.forEach(function (data) {
                         $("#tree1").tree("selectItem", $("#tree1").tree('mainNode').find(".tree-item[data-id=" + data.mid + "]"), true);

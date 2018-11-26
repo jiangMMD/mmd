@@ -2,11 +2,11 @@
 <html>
 <head>
     <title>员工维护详细 - 笑享租</title>
-    <link rel="stylesheet" href="/erp/assets/css/chosen.css"/>
-    <link rel="stylesheet" href="/erp/assets/css/bootstrap-datepicker3.css" />
-    <link rel="stylesheet" href="/erp/assets/css/bootstrap-timepicker.css" />
-    <link rel="stylesheet" href="/erp/assets/css/daterangepicker.css" />
-    <link rel="stylesheet" href="/erp/assets/css/bootstrap-datetimepicker.css" />
+    <link rel="stylesheet" href="assets/css/chosen.css"/>
+    <link rel="stylesheet" href="assets/css/bootstrap-datepicker3.css" />
+    <link rel="stylesheet" href="assets/css/bootstrap-timepicker.css" />
+    <link rel="stylesheet" href="assets/css/daterangepicker.css" />
+    <link rel="stylesheet" href="assets/css/bootstrap-datetimepicker.css" />
     <style>
         .form-group {
             margin-left: 0 !important;
@@ -162,16 +162,16 @@
 </body>
 <script>
     var scripts = [null,
-        "/erp/assets/js/date-time/bootstrap-datepicker.js",
-        "/erp/assets/js/date-time/bootstrap-timepicker.js",
-        "/erp/assets/js/date-time/daterangepicker.js",
-        "/erp/assets/js/jquery.colorbox.js",
-        "/erp/assets/js/jquery.validate.js",
-        "/erp/assets/js/jquery.validate_zh.js",
-        "/erp/assets/js/jquery.form.js",
-        "/erp/assets/js/bootbox.js",
-        "/erp/assets/js/chosen.jquery.js",
-        "/erp/assets/js/date-time/bootstrap-datetimepicker.js", null];
+        "assets/js/date-time/bootstrap-datepicker.js",
+        "assets/js/date-time/bootstrap-timepicker.js",
+        "assets/js/date-time/daterangepicker.js",
+        "assets/js/jquery.colorbox.js",
+        "assets/js/jquery.validate.js",
+        "assets/js/jquery.validate_zh.js",
+        "assets/js/jquery.form.js",
+        "assets/js/bootbox.js",
+        "assets/js/chosen.jquery.js",
+        "assets/js/date-time/bootstrap-datetimepicker.js", null];
 
     function resetForm() {
         $(".chosen-select").val('').trigger("chosen:updated");

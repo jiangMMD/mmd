@@ -4,7 +4,7 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <meta charset="utf-8"/>
-    <title>笑享租ERP管理平台</title>
+    <title>买卖多管理平台</title>
     <meta name="description" content="User login page"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
     <link rel="shortcut icon" href="assets/ico/logo_no.ico" type="image/x-icon" />
@@ -42,9 +42,20 @@
         }
     </script>
 
+    <style>
+        .xinrong-login {
+            background:  url('./assets/images/loginground.png') repeat;
+        }
+        .login-layout .widget-box {
+            background-color: #ffffff;
+        }
+        .login-layout .widget-box .widget-main {
+            background-color: #fff;
+        }
+    </style>
 </head>
 
-<body class="login-layout light-login">
+<body class="login-layout xinrong-login">
 <div class="main-container" style="margin-top: 150px;">
     <div class="main-content">
         <div class="row">
@@ -53,11 +64,11 @@
                     <div class="center">
                         <h1>
                             <!--<i class="ace-icon fa fa-leaf green"></i>-->
-                            <img src="assets/img/logo_no.png" width="32" height="32">
-                            <span class="red">XXZ</span>
-                            <span class="grey" id="id-text2">笑享租</span>
+                            <img src="assets/img/logo_no.png" width="64" height="64">
+                            <span class="red">MMD</span>
+                            <span class="grey" id="id-text2">买卖多</span>
                         </h1>
-                        <h4 class="blue" id="id-company-text">&copy; 江苏笑享租服务有限公司</h4>
+                        <h4 class="blue" id="id-company-text">&copy; 江苏买卖多电子商务有限公司</h4>
                     </div>
 
                     <div class="space-6"></div>
@@ -68,11 +79,10 @@
                                 <div class="widget-main">
                                     <h4 class="header blue lighter bigger">
                                         <i class="ace-icon fa fa-hand-o-right green"></i>
-                                        Please Enter Your Information
+                                        请输入你的账户信息
                                     </h4>
                                     <div class="space-6"></div>
                                     <form>
-                                        <fieldset>
                                             <label class="block clearfix">
 														<span class="block input-icon input-icon-right">
 															<input name="user_no" type="text" class="form-control"
@@ -152,11 +162,11 @@
         var user_no = $("input[name=user_no]").val();
         var password = $("input[name=password]").val();
         $.ajax({
-            url : window.location.origin+"/erp/user/login",
+            url : window.location.origin+"/mmd/employee/login",
             type: "POST",
             async: false,
             data: {
-                user_no : user_no,
+                loginNo : user_no,
                 password: password
             },
             success: function(result) {
@@ -171,7 +181,7 @@
                         window.localStorage.removeItem("name");
                         window.localStorage.removeItem("password");
                     }
-                    window.location.href = window.location.origin + "/erp/index.html?tptime="+new Date().getTime();
+                    window.location.href = window.location.origin + "/mmd/index.html?tptime="+new Date().getTime();
                 }else{
                     $("#errortop").show();
                     $("#errormsg").html(result.message);

@@ -22,7 +22,7 @@
     </mvc:annotation-driven>
 
     <mvc:default-servlet-handler/> <!--不拦截静态资源-->
-    <context:component-scan base-package="com.mmt.controll"></context:component-scan>
+    <context:component-scan base-package="com.mmd.controll"></context:component-scan>
 
     <!--配置json数据响应-->
     <bean id="mappingJackson2HttpMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
@@ -69,13 +69,13 @@
         <!--过滤所有请求，处理跨域请求问题, 仅限本地测试使用-->
         <!--<mvc:interceptor>-->
             <!--<mvc:mapping path="/**"/>-->
-            <!--<bean class="com.mmt.interceptor.CommonInterceptor"></bean>-->
+            <!--<bean class="com.mmd.interceptor.CommonInterceptor"></bean>-->
         <!--</mvc:interceptor>-->
 
         <!--过滤ajax  .do请求，检查session是否过期-->
         <mvc:interceptor>
             <mvc:mapping path="/**"/>
-            <bean class="com.mmt.filter.LoginFilter"></bean>
+            <bean class="com.mmd.filter.LoginFilter"></bean>
         </mvc:interceptor>
     </mvc:interceptors >
 
