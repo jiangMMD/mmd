@@ -67,6 +67,7 @@
             $("#add").click(function(){
                 toCustomUrl('page/app/classifydetail.jsp');
             });
+
             //修改
             $("#edit").click(function(){
                 var ids = $(grid_selector).jqGrid('getGridParam','selarrrow');
@@ -75,9 +76,10 @@
                 }else if(ids.length>1) {
                     showWarnInfo("只能选择一条记录进行修改", 3000);
                 }else{
-                    toCustomUrl("server/user/toUserDetail?id="+ids[0]);
+                    toCustomUrl("server/app/toClassifyDetail?id="+ids[0]);
                 }
             });
+
             //删除
             $("#del").click(function(){
                 var ids = $(grid_selector).jqGrid('getGridParam','selarrrow');
