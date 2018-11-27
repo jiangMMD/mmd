@@ -44,7 +44,8 @@ public class EmployeeControll {
 
 
     @RequestMapping("/getUserInfo")
-    public @ResponseBody Result getUserInfo() {
+    public @ResponseBody
+    Result getUserInfo() {
         return new Result(1, "查询成功！", session.getAttribute("employee"));
     }
 
@@ -58,18 +59,21 @@ public class EmployeeControll {
     }
 
     @RequestMapping("/updPass")
-    public @ResponseBody Result updPass(@RequestParam Map<String, Object> param, HttpServletResponse response) {
+    public @ResponseBody
+    Result updPass(@RequestParam Map<String, Object> param, HttpServletResponse response) {
         return employeeService.updPass(param);
     }
 
-    @RequestMapping("/getAllUser")
+    @RequestMapping("/getAllEmployee")
     public @ResponseBody
     ResultPage getAllUser(Page page, Employee employee) {
-        return employeeService.getAllUser(page, employee);
+        return employeeService.getAllEmployee(page, employee);
+
     }
 
     @RequestMapping("/CRUD_UserInfo")
-    public @ResponseBody Result crudUserInfo(String oper, String id, Employee employee) {
+    public @ResponseBody
+    Result crudUserInfo(String oper, String id, Employee employee) {
         if(Objects.equals(oper, "edit")) {
             if(StringUtils.isEmpty(employee.getLoginNo()) || StringUtils.isEmpty(employee.getName())) {
                 return new Result(0, "参数异常，登录名及其用户名不能为空");
@@ -95,7 +99,8 @@ public class EmployeeControll {
      * @return
      */
     @RequestMapping("/getMenu")
-    public @ResponseBody Result getMenu() {
+    public @ResponseBody
+    Result getMenu() {
         Employee employee = (Employee) session.getAttribute("employee");
         if(employee.getRoles() != null && employee.getRoles().size() > 0) {
             return new Result(1, "查询成功！", employee.getRoles());
@@ -105,91 +110,108 @@ public class EmployeeControll {
     }
 
     @RequestMapping("/getMenuWithRuleIds")
-    public @ResponseBody Result getMenuWithRuleIds(String role_ids) {
+    public @ResponseBody
+    Result getMenuWithRuleIds(String role_ids) {
         return employeeService.getMenuWithRuleIds(role_ids);
     }
 
     @RequestMapping("/getMenuByRId")
-    public @ResponseBody Result getMenuByRId(String role_ids) {
+    public @ResponseBody
+    Result getMenuByRId(String role_ids) {
         return employeeService.getMenuByRId(role_ids);
     }
 
     @RequestMapping("/updRoleName")
-    public @ResponseBody Result updRoleName(@RequestParam Map<String, Object> params) {
+    public @ResponseBody
+    Result updRoleName(@RequestParam Map<String, Object> params) {
         return employeeService.updRoleName(params);
     }
 
 
     @RequestMapping("/getRoleByUser")
-    public @ResponseBody Result getRoleByUser(String uid) {
+    public @ResponseBody
+    Result getRoleByUser(String uid) {
         return employeeService.getRoleByUser(uid);
     }
 
     @RequestMapping("/saveUserRole")
-    public @ResponseBody Result saveUserRole(Employee employee) {
+    public @ResponseBody
+    Result saveUserRole(Employee employee) {
         return employeeService.saveUserRole(employee);
     }
 
     @RequestMapping("/updUserIcon")
-    public @ResponseBody Result updUserIcon(String imgSrc) {
+    public @ResponseBody
+    Result updUserIcon(String imgSrc) {
         return employeeService.updUserIcon(imgSrc);
     }
 
     /**修改用户的相关信息**/
     @RequestMapping("/updUserName")
-    public @ResponseBody Result updUserName(String username) {
+    public @ResponseBody
+    Result updUserName(String username) {
         return employeeService.updUserName(username);
     }
 
     @RequestMapping("/updUserAge")
-    public @ResponseBody Result updUserAge(Integer age) {
+    public @ResponseBody
+    Result updUserAge(Integer age) {
         return employeeService.updUserAge(age);
     }
 
     @RequestMapping("/updUserBirthday")
-    public @ResponseBody Result updUserBirthday(String birthday) {
+    public @ResponseBody
+    Result updUserBirthday(String birthday) {
         return employeeService.updUserBirthday(birthday);
     }
 
     @RequestMapping("/updUserTelephone")
-    public @ResponseBody Result updUserTelephone(String telephone) {
+    public @ResponseBody
+    Result updUserTelephone(String telephone) {
         return employeeService.updUserTelephone(telephone);
     }
 
     @RequestMapping("/updUserCellphone")
-    public @ResponseBody Result updUserCellphone(String cellphone) {
+    public @ResponseBody
+    Result updUserCellphone(String cellphone) {
         return employeeService.updUserCellphone(cellphone);
     }
 
     @RequestMapping("/updUserWeixin")
-    public @ResponseBody  Result updUserWeixin(String weixin) {
+    public @ResponseBody
+    Result updUserWeixin(String weixin) {
         return employeeService.updUserWeixin(weixin);
     }
 
     @RequestMapping("/updUserQq")
-    public @ResponseBody Result updUserQq(String qq) {
+    public @ResponseBody
+    Result updUserQq(String qq) {
         return employeeService.updUserQq(qq);
     }
 
 
     @RequestMapping("addEvent")
-    public @ResponseBody Result addEvent(@RequestParam Map<String, Object> params) {
+    public @ResponseBody
+    Result addEvent(@RequestParam Map<String, Object> params) {
         System.out.println(params);
         return employeeService.addEvent(params);
     }
 
     @RequestMapping("editEvent")
-    public @ResponseBody Result editEvent(@RequestParam Map<String, Object> params) {
+    public @ResponseBody
+    Result editEvent(@RequestParam Map<String, Object> params) {
         return employeeService.editEvent(params);
     }
 
     @RequestMapping("getMyEvent")
-    public @ResponseBody Result getMyEvent() {
+    public @ResponseBody
+    Result getMyEvent() {
         return employeeService.getMyEvent();
     }
 
     @RequestMapping("delEvent")
-    public @ResponseBody Result delEvent(String eid) {
+    public @ResponseBody
+    Result delEvent(String eid) {
         return employeeService.delEvent(eid);
     }
 
@@ -198,18 +220,20 @@ public class EmployeeControll {
         ModelAndView modelAndView = new ModelAndView();
         Employee employee = employeeService.getUserDetail(id);
         modelAndView.addObject("employee", employee);
-        modelAndView.setViewName("../content/user/userdetail.jsp");
+        modelAndView.setViewName("../content/employee/employeedetail.jsp");
         return modelAndView;
     }
 
-    @RequestMapping("addOrUpdUser")
-    public @ResponseBody Result addOrUpdUser(Employee employee) {
-        return employeeService.addOrUpdUser(employee);
+    @RequestMapping("addUpdEmployee")
+    public @ResponseBody
+    Result addUpdEmployee(Employee employee) {
+        return employeeService.addUpdEmployee(employee);
     }
 
 
     @RequestMapping("getMessage")
-    public @ResponseBody Result getMessage() {
+    public @ResponseBody
+    Result getMessage() {
         return employeeService.getMessage();
     }
 }

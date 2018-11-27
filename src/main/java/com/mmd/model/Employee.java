@@ -14,6 +14,8 @@ public class Employee implements Serializable{
   private Long id;
   private String name;
   private String password;
+  private String rname;
+  private String depName;
   private String loginNo;
   private String cellphone;
   private Integer age;

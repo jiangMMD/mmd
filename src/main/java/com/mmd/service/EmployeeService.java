@@ -2,7 +2,6 @@ package com.mmd.service;
 
 
 import com.mmd.model.Employee;
-import com.mmd.model.Employee;
 import com.mmd.model.Role;
 import com.mmd.pjo.Page;
 import com.mmd.pjo.Result;
@@ -18,7 +17,7 @@ public interface EmployeeService {
 
     void updateUserHeadIcon(Employee employee);
 
-    ResultPage getAllUser(Page page, Employee employee);
+    ResultPage getAllEmployee(Page page, Employee employee);
 
     Result updUserInfo(Employee employee);
 
@@ -64,7 +63,7 @@ public interface EmployeeService {
 
     Employee getUserDetail(String id);
 
-    Result addOrUpdUser(Employee employee);
+    Result addUpdEmployee(Employee employee);
 
     Result getMessage();
 }

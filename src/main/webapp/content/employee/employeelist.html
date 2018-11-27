@@ -1,0 +1,516 @@
+<title>员工维护 - 笑享租</title>
+<!--列表样式信息-->
+<link rel="stylesheet" href="assets/css/ui.jqgrid.css"/>
+<link rel="stylesheet" href="assets/css/chosen.css"/>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="space-6"></div>
+        <div class="well">
+            <form id="queryForm" class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-xs-3">
+                        <label for="loginNo" class="col-sm-3 control-label no-padding-right">登录名:</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="loginNo" name="loginNo" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="col-xs-3">
+                        <label for="name" class="col-sm-3 control-label no-padding-right">姓名:</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="name" name="name" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="col-xs-3">
+                        <label class="col-sm-3 control-label no-padding-right">所属部门:</label>
+                        <div class="col-sm-9">
+                            <select id="dep_id" name="depId" class="chosen-select form-control"
+                                    data-placeholder="选择部门...">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-3">
+                        <button class="btn btn-primary" type="button" onclick="queryData()">
+                            <i class="ace-icon fa fa-search bigger"></i>
+                            查询
+                        </button>
+                        <button class="btn" type="reset" onclick="resetForm()">
+                            <i class="ace-icon fa fa-refresh bigger"></i>
+                            重置
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="space-12"></div>
+        <div class="fc-button-group" style="margin-left: 5px;">
+            <a id="employee_add" data-rel="tooltip" title="" data-original-title="新增" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon fa fa-plus-circle purple bigger-125"></i></a>
+            <a id="employee_edit" data-rel="tooltip" title="" data-original-title="修改" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon fa fa-pencil blue bigger-125"></i></a>
+        </div>
+        <table id="grid-table"></table>
+        <div id="grid-pager"></div>
+    </div><!-- /.col -->
+</div>
+
+<script type="text/javascript">
+    var scripts = [null, "assets/js/date-time/bootstrap-datepicker.js",
+        // "../assets/js/jqGrid/jquery.jqGrid.js",
+        "assets/js/jqGrid/jquery.jqGrid.custom.js",
+        "assets/js/chosen.jquery.js",
+        "assets/js/jqGrid/i18n/grid.locale-cn.js", null]
+
+    var grid_selector = "#grid-table";
+    var pager_selector = "#grid-pager";
+
+    //查询表单数据
+    function queryData() {
+        var formData = $("#queryForm").serializeJson();
+        jQuery(grid_selector).jqGrid("setGridParam", {postData: formData}).trigger("reloadGrid", [{page: 1}]);
+    }
+
+    function resetForm() {
+        $(".chosen-select").val('').trigger("chosen:updated");
+    }
+
+    $('.page-content-area').ace_ajax('loadScripts', scripts, function () {
+        //inline scripts related to this page
+        jQuery(function ($) {
+            //添加
+            $("#employee_add").click(function(){
+                toCustomUrl('page/employee/employeedetail.jsp');
+            });
+            //修改
+            $("#employee_edit").click(function(){
+                var ids = $(grid_selector).jqGrid('getGridParam','selarrrow');
+                if(!ids || ids.length === 0) {
+                    showWarnInfo("请先选择一条记录", 3000);
+                }else if(ids.length>1) {
+                    showWarnInfo("只能选择一条记录进行修改", 3000);
+                }else{
+                    toCustomUrl("server/employee/toUserDetail?id="+ids[0]);
+                }
+            });
+
+            var parent_column = $(grid_selector).closest('[class*="col-"]');
+            $(window).on('resize.jqGrid', function () {
+                $(grid_selector).jqGrid('setGridWidth', parent_column.width());
+                $(grid_selector).jqGrid('setGridHeight', $(window).height() - 360);
+            });
+            //resize on sidebar collapse/expand
+            $(document).on('settings.ace.jqGrid', function (ev, event_name, collapsed) {
+                if (event_name === 'sidebar_collapsed' || event_name === 'main_container_fixed') {
+                    //setTimeout is for webkit only to give time for DOM changes and then redraw!!!
+                    setTimeout(function () {
+                        $(grid_selector).jqGrid('setGridWidth', parent_column.width());
+                    }, 0);
+                }
+            });
+            //重新进入时，销毁原有页面信息
+            $(document).one('ajaxloadstart.page', function (e) {
+                $.jgrid.gridDestroy(grid_selector);
+                $('.ui-jqdialog').remove();
+            });
+
+            //先设置信息，在设置选择框信息
+            $('.chosen-select').chosen({allow_single_deselect: true});
+
+            //获取所有部门信息
+            var depObj = [];
+            var allDep = "";
+            myAjax("/base/getAllDepartment", null, function (result) {
+                if (result.code == 1) {
+                    depObj = result.data;
+                    allDep = toSelectData(result.data, "depId", "depName");
+                    //设置选择框中信息
+                    createDepSelect(result.data);
+                } else {
+                    showErrorInfo(result.message);
+                }
+            });
+
+            $(document).on('settings.ace.chosen', function (e, event_name, event_val) {
+                if (event_name != 'sidebar_collapsed') return;
+                $('.chosen-select').each(function () {
+                    var $this = $(this);
+                    $this.next().css({'width': $this.parent().width()});
+                })
+            });
+
+            function createDepSelect(data) {
+                var html = '<option value="">&nbsp;</option>';
+                data.forEach(function (info) {
+                    html += '<option value="' + info.depId + '">' + info.depName + '</option>';
+                });
+                $("#dep_id").html(html);
+                $(".chosen-select").trigger("chosen:updated");
+            }
+
+            //获取所有职位信息
+            var allPostArr = [];
+            var allPostInfo = "";
+            myAjax("/base/getAllPost", null, function(result){
+                if(result.code === 1) {
+                    allPostArr = result.data;
+                    allPostInfo = toSelectData(result.data, "data_code", "data_name");
+                }else{
+                    showErrorInfo(result.message);
+                }
+            });
+
+            //获取所有代理商信息
+            // var allAgencyArr = [];
+            // myAjax("/base/getAllAgency", null, function(result){
+            //     if(result.code === 1) {
+            //         allAgencyArr = result.data;
+            //     }else{
+            //         showErrorInfo(result.message);
+            //     }
+            // });
+
+            jQuery(grid_selector).jqGrid({
+                // direction: "rtl",
+                subGrid: false, //是否展示子table
+                url: projectUrl + "/employee/getAllEmployee", //获取所用用户信息
+                datatype: "json",
+                mtype: 'POST',
+                height: $(window).height() - 360,
+                colNames: ['ID',  '姓名', '登录名','部门',  '手机','年龄', '性别', '微信', 'QQ'],
+                colModel: [
+                    // {
+                    //     name: 'myac',
+                    //     search: false,
+                    //     frozen: true,
+                    //     width: 80,
+                    //     fixed: true,
+                    //     sortable: false,
+                    //     resize: false,
+                    //     formatter: 'actions',
+                    //     formatoptions: {
+                    //         keys: true,
+                    //         delbutton: true,//disable delete button
+                    //         delOptions:{recreateForm: true, afterComplete: function(response){
+                    //                 if (response.status === 401) {
+                    //                     window.location.href = projectUrl + "/login.html";
+                    //                 } else if (response.status === 404) {
+                    //                     showErrorInfo("操作失败，没有找到对应的服务地址！");
+                    //                 } else if (response.status === 500) {
+                    //                     showErrorInfo("服务异常，操作失败，请联系管理员进行解决");
+                    //                 } else if (response.status !== 200) {
+                    //                     showErrorInfo("操作失败，服务故障");
+                    //                 } else {
+                    //                     var result = response.responseJSON;
+                    //                     if (result.code === 0) {
+                    //                         //操作失败
+                    //                         showErrorInfo(result.message);
+                    //                     }
+                    //                 }
+                    //             }},
+                    //         editformbutton:true,
+                    //         editOptions:{
+                    //             beforeShowForm: function (e) {
+                    //                 $("#agency_ids").chosen({allow_single_deselect: true, width: "250px"});
+                    //                 var form = $(e[0]);
+                    //                 form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />');
+                    //                 style_edit_form(form);
+                    //             }
+                    //         },
+                    //         onSuccess: function (response) {
+                    //             var result = $.parseJSON(response.responseText);
+                    //             if (result.code === 0) {
+                    //                 //操作失败
+                    //                 showErrorInfo(result.message);
+                    //             } else {
+                    //                 //重新加载数据
+                    //                 setTimeout(function () {
+                    //                     $(".tooltip").remove(); //去除原有的hover提示信息
+                    //                 }, 100);
+                    //                 $(grid_selector).trigger("reloadGrid");
+                    //             }
+                    //         },
+                    //         onError: onerror,
+                    //     }
+                    // },
+                    {name: 'id', key: true, width: 60, hidden: true, editable: true},
+                    {
+                        name: 'name',
+                        index: 'name',
+                        width: 100,
+                        sortable: false,
+                        editable: true,
+                        editrules: {required: true}
+                    },
+                    {
+                        name: 'loginNo',
+                        index: 'loginNo',
+                        width: 100,
+                        editable: true,
+                    },
+                    {
+                        name: 'depName',
+                        index: 'depName',
+                        width: 100,
+                        editable: true,
+                    },
+                    {name: 'cellphone', index: 'cellphone', width: 100, editable: true},
+                    {name: 'age', index: 'age', width: 90, editable: true},
+                    {
+                        name: 'sex',
+                        index: 'sex',
+                        width: 70,
+                        editable: true,
+                        edittype: "select",
+                        formatter: pickSex,
+                        editoptions: {value: "1:男; 2:女"}
+                    },
+                    {name: 'weixin', index: 'weixin', width: 90, editable: true, edittype: "text"},
+                    {name: 'qq', index: 'qq', width: 100, editable: true},
+                ],
+                viewrecords: true,
+                rowNum: 10,
+                rowList: [10, 20, 30],
+                pager: pager_selector,
+                ondblClickRow: queryDetail,
+                altRows: false,
+                multiselect: true,
+                multiboxonly: true,
+                editurl: projectUrl + "/employee/CRUD_UserInfo", //用户的增删改操作
+            });
+
+            function queryDetail(id) {
+                toCustomUrl("server/employee/toUserDetail?id="+id);
+            }
+
+            function customElem() {
+                var el = '<select multiple="multiple" class="chosen-select form-control"  data-width="150px;" style="width: 150px" data-placeholder="选择">';
+                allAgencyArr.forEach(function(data) {
+                   el += '<option value="'+data.aid+'">'+data.agency_cityname+'----'+data.aname+'</option>';
+                });
+                el += '</select>';
+                return el;
+            }
+
+            function customValue(elem, operation, value) {
+                console.log("操作："+operation);
+                console.log("当前值："+value);
+                if (operation === 'get') {
+                    return $(elem).val();
+                } else if (operation === 'set') {
+                    $(elem).val(value);
+                }
+            }
+
+            function pickAgency(val) {
+                if(val) {
+                    var ids = val.split(",");
+                    var retMsg = "";
+                    ids.forEach(function(id){
+                        allAgencyArr.forEach(function(data) {
+                            if(id === data.aid) {
+                                retMsg = data.agency_cityname + "----" + data.aname;
+                            }
+                        })
+                    });
+                    return retMsg;
+                }else{
+                    return "";
+                }
+            }
+
+            //处理所有的部门
+            function pickPost(val) {
+                var name = "";
+                allPostArr.forEach(function(info){
+                    if(info.data_code == val) {
+                        name = info.data_name;
+                        return false;
+                    }
+                });
+                return name;
+            }
+
+            $(window).triggerHandler('resize.jqGrid');//trigger window resize to make the grid get the correct size
+            //添加底部操作按钮
+            Jq_operationButton();
+
+            function onerror(code, response) {
+                if (response.status === 401) {
+                    window.location.href = projectUrl + "/login.html";
+                } else if (response.status === 404) {
+                    showErrorInfo("操作失败，没有找到对应的服务地址！");
+                } else if (response.status === 500) {
+                    showErrorInfo("服务异常，操作失败，请联系管理员进行解决");
+                } else if (response.status !== 200) {
+                    showErrorInfo("操作失败，服务故障");
+                }
+            }
+
+            //switch element when editing inline
+            function aceSwitch(cellvalue, options, cell) {
+                setTimeout(function () {
+                    $(cell).find('input[type=checkbox]')
+                        .addClass('ace ace-switch ace-switch-5')
+                        .after('<span class="lbl"></span>');
+                }, 0);
+            }
+
+            /***以下为表单格式处理***/
+            function pickSex(val) {
+                if (val == "1") {
+                    return '男';
+                } else if (val == "2") {
+                    return '女';
+                } else {
+                    return '';
+                }
+            }
+
+            function pickDep(cellValue, options, cell) {
+                var name = "";
+                depObj.forEach(function (dep, index) {
+                    if (dep.dep_id == cellValue) {
+                        name = dep.dep_name;
+                        return false;
+                    }
+                });
+                return name;
+            }
+
+            //enable datepicker
+            function pickDate(cellvalue, options, cell) {
+                setTimeout(function () {
+                    $(cell).find('input[type=text]')
+                        .datepicker({format: 'mm-dd', autoclose: true});
+                }, 0);
+            }
+
+            /***以上为表单格式处理***/
+
+
+            /*** 以下为数据校验***/
+            function checnkCustom(val) {
+                if (val.length < 4 || val.length > 20) {
+                    return [false, "请输入4-20位字符"];
+                } else {
+                    return [true, ""];
+                }
+            }
+
+            /****以上为数据校验***/
+            //底部操作按钮
+            function Jq_operationButton() {
+                var grid_selector = "#grid-table";
+                var pager_selector = "#grid-pager";
+                jQuery(grid_selector).jqGrid('navGrid', pager_selector,
+                    { 	//navbar options
+                        edit: false,
+                        editicon: 'ace-icon fa fa-pencil blue',
+                        add: false,
+                        addicon: 'ace-icon fa fa-plus-circle purple',
+                        del: true,
+                        delicon: 'ace-icon fa fa-trash-o red',
+                        search: true,
+                        searchicon: 'ace-icon fa fa-search orange',
+                        refresh: true,
+                        refreshicon: 'ace-icon fa fa-refresh green',
+                        view: true,
+                        viewicon: 'ace-icon fa fa-search-plus grey',
+                    },
+                    {  //编辑
+                        recreateForm: true,
+                        beforeShowForm: function (e) {
+                            $("#agency_ids").chosen({allow_single_deselect: true, width: "250px"});
+                            var form = $(e[0]);
+                            form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />');
+                            style_edit_form(form);
+                        },
+                    },
+                    { //添加
+                        closeAfterAdd: true,
+                        recreateForm: true,
+                        viewPagerButtons: false,
+                        beforeShowForm: function (e) {
+                            $("#agency_ids").chosen({allow_single_deselect: true, width: "250px"});
+                            var form = $(e[0]);
+                            form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar')
+                                .wrapInner('<div class="widget-header" />');
+                            style_edit_form(form);
+                        }
+                    },
+                    { //删除
+                        recreateForm: true,
+                        beforeShowForm: function (e) {
+                            var form = $(e[0]);
+                            if (form.data('styled')) return false;
+                            form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
+                            style_delete_form(form);
+                            form.data('styled', true);
+                        },
+                        onClick: function (e) {
+                        }
+                    },
+                    { //搜索
+                        //search form
+                        recreateForm: true,
+                        afterShowSearch: function (e) {
+                            var form = $(e[0]);
+                            form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
+                            style_search_form(form);
+                        },
+                        afterRedraw: function () {
+                            style_search_filters($(this));
+                        },
+                        multipleSearch: true,
+                    },
+                    {
+                        recreateForm: true,
+                        beforeShowForm: function (e) {
+                            var form = $(e[0]);
+                            form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
+                        }
+                    }
+                )
+            }
+
+            function style_edit_form(form) {
+                //enable datepicker on "sdate" field and switches for "stock" field
+                form.find(".topinfo").first().html("<div class='alert alert-info'>用户的默认密码为 <strong>000000</strong></div>");
+                form.find('input[name=birthday]').datepicker({format: 'mm-dd', autoclose: true})
+                form.find('input[name=stock]').addClass('ace ace-switch ace-switch-5').after('<span class="lbl"></span>');
+                //don't wrap inside a label element, the checkbox value won't be submitted (POST'ed)
+                //.addClass('ace ace-switch ace-switch-5').wrap('<label class="inline" />').after('<span class="lbl"></span>');
+                //update buttons classes
+                var buttons = form.next().find('.EditButton .fm-button');
+                buttons.addClass('btn btn-sm').find('[class*="-icon"]').hide();//ui-icon, s-icon
+                buttons.eq(0).addClass('btn-primary').prepend('<i class="ace-icon fa fa-check"></i>');
+                buttons.eq(1).prepend('<i class="ace-icon fa fa-times"></i>')
+                buttons = form.next().find('.navButton a');
+                buttons.find('.ui-icon').hide();
+                // buttons.eq(0).append('<i class="ace-icon fa fa-chevron-left"></i>');
+                // buttons.eq(1).append('<i class="ace-icon fa fa-chevron-right"></i>');
+            }
+
+            function style_delete_form(form) {
+                var buttons = form.next().find('.EditButton .fm-button');
+                buttons.addClass('btn btn-sm btn-white btn-round').find('[class*="-icon"]').hide();//ui-icon, s-icon
+                buttons.eq(0).addClass('btn-danger').prepend('<i class="ace-icon fa fa-trash-o"></i>');
+                buttons.eq(1).addClass('btn-default').prepend('<i class="ace-icon fa fa-times"></i>')
+            }
+
+            function style_search_filters(form) {
+                form.find('.delete-rule').val('X');
+                form.find('.add-rule').addClass('btn btn-xs btn-primary');
+                form.find('.add-group').addClass('btn btn-xs btn-success');
+                form.find('.delete-group').addClass('btn btn-xs btn-danger');
+            }
+
+            function style_search_form(form) {
+                var dialog = form.closest('.ui-jqdialog');
+                var buttons = dialog.find('.EditTable')
+                buttons.find('.EditButton a[id*="_reset"]').addClass('btn btn-sm btn-info').find('.ui-icon').attr('class', 'ace-icon fa fa-retweet');
+                buttons.find('.EditButton a[id*="_query"]').addClass('btn btn-sm btn-inverse').find('.ui-icon').attr('class', 'ace-icon fa fa-comment-o');
+                buttons.find('.EditButton a[id*="_search"]').addClass('btn btn-sm btn-purple').find('.ui-icon').attr('class', 'ace-icon fa fa-search');
+            }
+        });
+    });
+</script>

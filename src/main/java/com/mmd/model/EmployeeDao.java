@@ -1,8 +1,5 @@
-package com.mmd.dao;
+package com.mmd.model;
 
-import com.mmd.model.Employee;
-import com.mmd.model.Menu;
-import com.mmd.model.Role;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

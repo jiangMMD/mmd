@@ -88,11 +88,11 @@ public class EmployeeServiceImpl implements EmployeeService {
      *      分页信息
      */
     @Override
-    public ResultPage getAllUser(Page page, Employee employee) {
+    public ResultPage getAllEmployee(Page page, Employee employee) {
         QueryParamInterface.setLocalPage(page);
         PageHelper.startPage(page);
         //处理查询参数问题
-        List<Employee> list = employeeDao.getAllUser(employee);
+        List<Employee> list = employeeDao.getAllEmployee(employee);
         return new ResultPage<>(list);
     }
 
@@ -287,8 +287,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Result addOrUpdUser(Employee employee) {
+    public Result addUpdEmployee(Employee employee) {
         int count = employeeDao.getCountWithLoginNo(employee);
+        System.out.println(count);
         if(count > 0) {
             return new Result(0, "该登录名已被使用，请尝试更换其他");
         }
