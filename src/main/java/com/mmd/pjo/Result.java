@@ -8,6 +8,7 @@ public class Result {
 
     public Result() {}
 
+
     public Result(int code, String message) {
         this.code = code;
         this.message = message;
