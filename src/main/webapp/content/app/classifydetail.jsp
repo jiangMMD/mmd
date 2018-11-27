@@ -66,7 +66,9 @@
 </div>
 
 <script>
-    var scripts = [null, null, null];
+    var scripts = [null,
+        "assets/js/jquery.form.js",
+         null];
     $('.page-content-area').ace_ajax('loadScripts', scripts, function () {
         //获取url中的参数信息
         $(function () {
@@ -81,7 +83,7 @@
 
             $("#validation-form-class").submit(function (e) {
                 e.preventDefault();
-                var flag = $("#validation-form-user").valid();
+                var flag = $("#validation-form-class").valid();
                 if (flag) {
                     $(this).ajaxSubmit({
                         url: projectUrl + "/app/addOrUpdClassify",

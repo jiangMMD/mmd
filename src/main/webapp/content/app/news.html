@@ -31,8 +31,9 @@
         </div>
         <div class="space-12"></div>
         <div class="fc-button-group" style="margin-left: 5px;">
-            <a id="user_add" data-rel="tooltip" title="" data-original-title="新增" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon fa fa-plus-circle purple bigger-125"></i></a>
-            <a id="user_edit" data-rel="tooltip" title="" data-original-title="修改" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon fa fa-pencil blue bigger-125"></i></a>
+            <a id="add" data-rel="tooltip" title="" data-original-title="新增" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon fa fa-plus-circle purple bigger-125"></i></a>
+            <a id="edit" data-rel="tooltip" title="" data-original-title="修改" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon fa fa-pencil blue bigger-125"></i></a>
+            <a id="del" data-rel="tooltip" title="" data-original-title="删除" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon fa fa-trash-o red bigger-125"></i></a>
         </div>
         <table id="grid-table"></table>
         <div id="grid-pager"></div>
@@ -63,11 +64,11 @@
         //inline scripts related to this page
         jQuery(function ($) {
             //添加
-            $("#user_add").click(function(){
+            $("#add").click(function(){
                 toCustomUrl('page/app/userdetail.jsp');
             });
             //修改
-            $("#user_edit").click(function(){
+            $("#edit").click(function(){
                 var ids = $(grid_selector).jqGrid('getGridParam','selarrrow');
                 if(!ids || ids.length === 0) {
                     showWarnInfo("请先选择一条记录", 3000);
@@ -75,6 +76,26 @@
                     showWarnInfo("只能选择一条记录进行修改", 3000);
                 }else{
                     toCustomUrl("server/user/toUserDetail?id="+ids[0]);
+                }
+            });
+            //删除
+            $("#del").click(function() {
+                var ids = $(grid_selector).jqGrid('getGridParam','selarrrow');
+                if(!ids || ids.length === 0) {
+                    showWarnInfo("至少选择一条记录", 3000);
+                }else{
+                    bootbox.confirm("确认删除选中所有信息？该操作不可逆转", function(res) {
+                        if(res) {
+                            myAjax("/app/delNew", {ids: ids.join(",")}, function(result){
+                                if(result.code == '1') {
+                                    showSuccInfo("操作成功");
+                                    queryData();
+                                }else{
+                                    showErrorInfo(result.message);
+                                }
+                            })
+                        }
+                    });
                 }
             });
 
@@ -97,7 +118,6 @@
                 $.jgrid.gridDestroy(grid_selector);
                 $('.ui-jqdialog').remove();
             });
-
 
             jQuery(grid_selector).jqGrid({
                 // direction: "rtl",
