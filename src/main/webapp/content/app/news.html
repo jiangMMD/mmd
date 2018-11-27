@@ -1,0 +1,134 @@
+<title>消息管理 - 魔晶</title>
+<!--列表样式信息-->
+<link rel="stylesheet" href="assets/css/ui.jqgrid.css"/>
+<link rel="stylesheet" href="assets/css/chosen.css"/>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="space-6"></div>
+        <div class="well">
+            <form id="queryForm" class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-xs-3">
+                        <label for="data_name" class="col-sm-3 control-label no-padding-right">分类名:</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="data_name" name="data_name" class="form-control"/>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-3">
+                        <button class="btn btn-primary" type="button" onclick="queryData()">
+                            <i class="ace-icon fa fa-search bigger"></i>
+                            查询
+                        </button>
+                        <button class="btn" type="reset" onclick="resetForm()">
+                            <i class="ace-icon fa fa-refresh bigger"></i>
+                            重置
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="space-12"></div>
+        <div class="fc-button-group" style="margin-left: 5px;">
+            <a id="user_add" data-rel="tooltip" title="" data-original-title="新增" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon fa fa-plus-circle purple bigger-125"></i></a>
+            <a id="user_edit" data-rel="tooltip" title="" data-original-title="修改" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon fa fa-pencil blue bigger-125"></i></a>
+        </div>
+        <table id="grid-table"></table>
+        <div id="grid-pager"></div>
+    </div><!-- /.col -->
+</div>
+
+<script type="text/javascript">
+    var scripts = [null, "assets/js/date-time/bootstrap-datepicker.js",
+        // "../assets/js/jqGrid/jquery.jqGrid.js",
+        "assets/js/jqGrid/jquery.jqGrid.custom.js",
+        "assets/js/chosen.jquery.js",
+        "assets/js/jqGrid/i18n/grid.locale-cn.js", null]
+
+    var grid_selector = "#grid-table";
+    var pager_selector = "#grid-pager";
+
+    //查询表单数据
+    function queryData() {
+        var formData = $("#queryForm").serializeJson();
+        jQuery(grid_selector).jqGrid("setGridParam", {postData: formData}).trigger("reloadGrid", [{page: 1}]);
+    }
+
+    function resetForm() {
+        $(".chosen-select").val('').trigger("chosen:updated");
+    }
+
+    $('.page-content-area').ace_ajax('loadScripts', scripts, function () {
+        //inline scripts related to this page
+        jQuery(function ($) {
+            //添加
+            $("#user_add").click(function(){
+                toCustomUrl('page/app/userdetail.jsp');
+            });
+            //修改
+            $("#user_edit").click(function(){
+                var ids = $(grid_selector).jqGrid('getGridParam','selarrrow');
+                if(!ids || ids.length === 0) {
+                    showWarnInfo("请先选择一条记录", 3000);
+                }else if(ids.length>1) {
+                    showWarnInfo("只能选择一条记录进行修改", 3000);
+                }else{
+                    toCustomUrl("server/user/toUserDetail?id="+ids[0]);
+                }
+            });
+
+            var parent_column = $(grid_selector).closest('[class*="col-"]');
+            $(window).on('resize.jqGrid', function () {
+                $(grid_selector).jqGrid('setGridWidth', parent_column.width());
+                $(grid_selector).jqGrid('setGridHeight', $(window).height() - 360);
+            });
+            //resize on sidebar collapse/expand
+            $(document).on('settings.ace.jqGrid', function (ev, event_name, collapsed) {
+                if (event_name === 'sidebar_collapsed' || event_name === 'main_container_fixed') {
+                    //setTimeout is for webkit only to give time for DOM changes and then redraw!!!
+                    setTimeout(function () {
+                        $(grid_selector).jqGrid('setGridWidth', parent_column.width());
+                    }, 0);
+                }
+            });
+            //重新进入时，销毁原有页面信息
+            $(document).one('ajaxloadstart.page', function (e) {
+                $.jgrid.gridDestroy(grid_selector);
+                $('.ui-jqdialog').remove();
+            });
+
+
+            jQuery(grid_selector).jqGrid({
+                // direction: "rtl",
+                subGrid: false, //是否展示子table
+                url: projectUrl + "/app/getClassify", //获取所用用户信息
+                datatype: "json",
+                mtype: 'POST',
+                height: $(window).height() - 360,
+                colNames: ['ID', '分类名', '创建人', '创建时间'],
+                colModel: [
+                    {name: 'dict_id', key: true, width: 60, hidden: true, editable: true},
+                    {name: 'data_name', width: 150},
+                    {name: 'crtuser', width: 150},
+                    {name: 'crtdate', width: 150},
+                ],
+                viewrecords: true,
+                rowNum: 10,
+                ondblClickRow: queryDetail,
+                rowList: [10, 20, 30],
+                pager: pager_selector,
+                altRows: false,
+                multiselect: true,
+                multiboxonly: true,
+                editurl: projectUrl + "/app/CRUD_Classify", //用户的增删改操作
+            });
+
+            function queryDetail(id) {
+                toCustomUrl("server/app/toClassifyDetail?id="+id);
+            }
+
+            $(window).triggerHandler('resize.jqGrid');//trigger window resize to make the grid get the correct size
+        });
+    });
+</script>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mmd.dao.AppDao">
+
+    <insert id="addClassify">
+        insert into bs_basedict(dict_code, dict_name, data_code, data_id, data_name, data_order, crtdate, crtuser)
+        VALUES ('HPT001', 'APP首页分类', (SELECT IFNULL(MAX(data_code), 1) FROM bs_basedict WHERE dict_code ='HPT001'),
+        (SELECT IFNULL(MAX(data_code) + 1, 1) FROM bs_basedict WHERE dict_code ='HPT001'), #{data.data_name},
+         (SELECT IFNULL(MAX(data_order) + 1, 1) FROM bs_basedict WHERE dict_code ='HPT001'), now(), #{data.crtuser})
+    </insert>
+
+    <update id="updClassify">
+        update bs_basedict set data_name = #{data.data_name} where dict_id = #{data.dict_id}
+    </update>
+
+    <select id="getClassify" resultType="map">
+        select dict_id, dict_name, data_code, data_name, dict_code, crtuser, date_format(crtdate, '%Y-%m-%d %T') crtdate from bs_basedict where dict_code = 'HPT001'
+        <if test="params.data_name !=null and params.data_name != ''">
+            and data_name like concat('%', #{params.data_name}, '%')
+        </if>
+    </select>
+
+    <select id="getClassifyById" resultType="map">
+        select dict_id, dict_name, data_name, data_code from bs_basedict  where dict_code = 'HPT001' and dict_id = #{id}
+    </select>
+</mapper>

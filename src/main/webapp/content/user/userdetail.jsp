@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>员工维护详细 - 笑享租</title>
+    <title>员工维护详细 - 魔晶</title>
     <link rel="stylesheet" href="assets/css/chosen.css"/>
     <link rel="stylesheet" href="assets/css/bootstrap-datepicker3.css" />
     <link rel="stylesheet" href="assets/css/bootstrap-timepicker.css" />
