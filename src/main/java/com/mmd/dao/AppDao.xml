@@ -13,6 +13,10 @@
         update bs_basedict set data_name = #{data.data_name} where dict_id = #{data.dict_id}
     </update>
 
+    <delete id="delClassify">
+        DELETE  from bs_basedict where dict_id in <foreach collection="ids" open="(" close=")" separator="," item="id">#{id}</foreach>
+    </delete>
+
     <select id="getClassify" resultType="map">
         select dict_id, dict_name, data_code, data_name, dict_code, crtuser, date_format(crtdate, '%Y-%m-%d %T') crtdate from bs_basedict where dict_code = 'HPT001'
         <if test="params.data_name !=null and params.data_name != ''">

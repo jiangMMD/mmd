@@ -144,7 +144,9 @@
                 altRows: false,
                 multiselect: true,
                 multiboxonly: true,
-                editurl: projectUrl + "/app/CRUD_Classify", //用户的增删改操作
+                loadError: function (xhr, status, error) {
+                    showErrorInfo("服务异常;"+error);
+                },
             });
 
             function queryDetail(id) {

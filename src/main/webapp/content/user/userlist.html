@@ -177,60 +177,6 @@
                 height: $(window).height() - 360,
                 colNames: ['ID', '登录名', '姓名', '年龄', '生日', '性别', '微信', 'QQ', '手机', '座机', '所属部门', '职位', '代理商'],
                 colModel: [
-                    // {
-                    //     name: 'myac',
-                    //     search: false,
-                    //     frozen: true,
-                    //     width: 80,
-                    //     fixed: true,
-                    //     sortable: false,
-                    //     resize: false,
-                    //     formatter: 'actions',
-                    //     formatoptions: {
-                    //         keys: true,
-                    //         delbutton: true,//disable delete button
-                    //         delOptions:{recreateForm: true, afterComplete: function(response){
-                    //                 if (response.status === 401) {
-                    //                     window.location.href = projectUrl + "/login.html";
-                    //                 } else if (response.status === 404) {
-                    //                     showErrorInfo("操作失败，没有找到对应的服务地址！");
-                    //                 } else if (response.status === 500) {
-                    //                     showErrorInfo("服务异常，操作失败，请联系管理员进行解决");
-                    //                 } else if (response.status !== 200) {
-                    //                     showErrorInfo("操作失败，服务故障");
-                    //                 } else {
-                    //                     var result = response.responseJSON;
-                    //                     if (result.code === 0) {
-                    //                         //操作失败
-                    //                         showErrorInfo(result.message);
-                    //                     }
-                    //                 }
-                    //             }},
-                    //         editformbutton:true,
-                    //         editOptions:{
-                    //             beforeShowForm: function (e) {
-                    //                 $("#agency_ids").chosen({allow_single_deselect: true, width: "250px"});
-                    //                 var form = $(e[0]);
-                    //                 form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />');
-                    //                 style_edit_form(form);
-                    //             }
-                    //         },
-                    //         onSuccess: function (response) {
-                    //             var result = $.parseJSON(response.responseText);
-                    //             if (result.code === 0) {
-                    //                 //操作失败
-                    //                 showErrorInfo(result.message);
-                    //             } else {
-                    //                 //重新加载数据
-                    //                 setTimeout(function () {
-                    //                     $(".tooltip").remove(); //去除原有的hover提示信息
-                    //                 }, 100);
-                    //                 $(grid_selector).trigger("reloadGrid");
-                    //             }
-                    //         },
-                    //         onError: onerror,
-                    //     }
-                    // },
                     {name: 'uid', key: true, width: 60, hidden: true, editable: true},
                     {
                         name: 'user_no',
@@ -290,6 +236,9 @@
                 multiselect: true,
                 multiboxonly: true,
                 editurl: projectUrl + "/user/CRUD_UserInfo", //用户的增删改操作
+                loadError: function (xhr, status, error) {
+                    showErrorInfo("服务异常;"+error);
+                },
             });
 
             function queryDetail(id) {

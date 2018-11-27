@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mmd.dao.BusinessDao">
+
+    <update id="delBusiness">
+        update merchant set recsts = 'D' where mer_id in <foreach collection="ids" item="id" open="(" close=")" separator=",">#{id}</foreach>
+    </update>
+
+    <select id="getMerchantList" resultType="merchant" parameterType="merchant">
+        select * from merchant where recsts != 'D'
+        <if test="merName != null and merName !=''">
+            and mer_name like concat('%', #{merName}, '%')
+        </if>
+        <if test="merLinkman != null and merLinkman != ''">
+            and mer_linkman like concat('%', #{merLinkman}, '%')
+        </if>
+        <if test="merType != null and merType != ''">
+            and mer_type = #{merType}
+        </if>
+    </select>
+
+    <select id="getBusinessDetail" resultType="merchant">
+        select * from merchant where mer_id = #{id}
+    </select>
+</mapper>

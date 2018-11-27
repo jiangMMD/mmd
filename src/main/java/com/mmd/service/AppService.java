@@ -13,4 +13,6 @@ public interface AppService {
     Map<String,Object> getClassifyById(String id);
 
     Result addOrUpdClassify(Map<String, Object> data);
+
+    Result delClassify(String ids);
 }

@@ -14,4 +14,6 @@ public interface AppDao {
     void addClassify(@Param("data") Map<String, Object> data);
 
     void updClassify(@Param("data") Map<String, Object> data);
+
+    void delClassify(@Param("ids") List<String> ids);
 }

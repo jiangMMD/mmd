@@ -8,6 +8,7 @@ import com.mmd.pjo.Result;
 import com.mmd.pjo.ResultPage;
 import com.mmd.plugin.QueryParamInterface;
 import com.mmd.service.AppService;
+import com.mmd.utils.PublicUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,6 +46,7 @@ public class AppServiceImpl implements AppService {
     @Override
     public Result addOrUpdClassify(Map<String, Object> data) {
         Employee employee = (Employee) session.getAttribute("employee");
+        System.out.println(data);
         if(data.get("dict_id") == null) {
             data.put("crtuser", employee.getName());
             appDao.addClassify(data);
@@ -52,6 +54,12 @@ public class AppServiceImpl implements AppService {
             data.put("upduser", employee.getName());
             appDao.updClassify(data);
         }
+        return new Result();
+    }
+
+    @Override
+    public Result delClassify(String ids) {
+        appDao.delClassify(PublicUtil.toListByIds(ids));
         return new Result();
     }
 }

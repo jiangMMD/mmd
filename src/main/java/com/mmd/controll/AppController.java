@@ -7,6 +7,7 @@ import com.mmd.service.AppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -23,7 +24,7 @@ public class AppController {
     private AppService appService;
 
     @RequestMapping("/getClassify")
-    public @ResponseBody ResultPage getClassify(Page page, Map<String, String> params) {
+    public @ResponseBody ResultPage getClassify(Page page,@RequestParam Map<String, String> params) {
         return appService.getClassify(page, params);
     }
 
@@ -37,8 +38,17 @@ public class AppController {
     }
 
     @RequestMapping("/addOrUpdClassify")
-    public @ResponseBody Result addOrUpdClassify(Map<String, Object> data) {
+    public @ResponseBody Result addOrUpdClassify(@RequestParam Map<String, Object> data) {
         return appService.addOrUpdClassify(data);
+    }
+
+    /**
+     * 删除分类信息
+     * @return
+     */
+    @RequestMapping("/delClassify")
+    public @ResponseBody Result delClassify(String ids) {
+        return appService.delClassify(ids);
     }
 
 }
