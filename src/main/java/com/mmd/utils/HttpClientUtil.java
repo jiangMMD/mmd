@@ -60,6 +60,7 @@ public class HttpClientUtil {
             if (executionCount > 5) { //重试的次数
                 return false;
 
+
             }
             if (exception instanceof ConnectTimeoutException) {
                 //超时
