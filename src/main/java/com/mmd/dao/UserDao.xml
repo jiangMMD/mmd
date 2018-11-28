@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mmd.dao.UserDao">
+    <insert id="addUserInfo">
+          insert into user(u_name,u_sex,u_phone,u_nick,u_age,u_identity,u_address,u_relevancy_date,u_crtuser, u_crtdate,recsts)
+          values (#{uName},#{uSex},#{uPhone},#{uNick},#{uAge},#{uIdentity},#{uAddress},#{uRelevancyDate},#{uCrtuser}, now(), '1')
+
+    </insert>
+    <update id="delUser">
+        update user set recsts = 'D' where u_id in <foreach collection="ids" item="id" open="(" close=")" separator=",">#{id}</foreach>
+    </update>
+    <update id="updateUser">
+          update user set u_name =#{uName},u_age =#{uAge},u_sex=#{uSex},u_nick=#{uNick},
+                            u_phone=#{uPhone},u_address=#{uAddress},u_identity=#{uIdentity},
+                            u_relevancy_date=#{uRelevancyDate} where u_id = #{uId}
+
+    </update>
+
+
+    <select id="getUser" resultType="com.mmd.model.User">
+      select u_id,u_name,u_sex,u_phone,u_nick,u_age,u_identity,u_integral,
+              u_address,u_mmd_no,u_mmd_money,u_relevancy_date,u_crtdate,u_crtuser
+      from user where recsts = '1'
+        <if test="uPhone != null and uPhone != ''">
+            and u_phone = #{uPhone}
+        </if>
+        <if test="uName != null  and uName != ''">
+            and u_name like concat('%', #{uName}, '%')
+        </if>
+
+    </select>
+    <select id="getUserNumsWithCids" resultType="java.lang.Integer">
+        SELECT count(*) from USER where recsts = '1' and u_id in <foreach collection="ids"  item="id" open="(" close=")" separator=",">#{id}</foreach>
+
+    </select>
+    <select id="getUserDetail" resultType="com.mmd.model.User">
+      select u_id,u_name,u_sex,u_phone,u_nick,u_age,u_identity,u_integral,
+              u_address,u_mmd_no,u_mmd_money,u_relevancy_date
+      from user where recsts = '1'and u_id = #{uid}
+
+    </select>
+    <select id="checkPhone" resultType="java.lang.Integer">
+        select count(*) from user where u_phone = #{uPhone}
+        <if test="uId !=null and uId != ''">
+            and u_id != #{uId}
+        </if>
+    </select>
+
+
+</mapper>
