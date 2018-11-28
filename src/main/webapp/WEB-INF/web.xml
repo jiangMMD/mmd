@@ -27,14 +27,14 @@
     </filter-mapping>
 
     <!--spring-session-redis 管理session-->
-    <filter>
-        <filter-name>springSessionRepositoryFilter</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>springSessionRepositoryFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
+    <!--<filter>-->
+        <!--<filter-name>springSessionRepositoryFilter</filter-name>-->
+        <!--<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>-->
+    <!--</filter>-->
+    <!--<filter-mapping>-->
+        <!--<filter-name>springSessionRepositoryFilter</filter-name>-->
+        <!--<url-pattern>/*</url-pattern>-->
+    <!--</filter-mapping>-->
 
     <!--<filter>-->
         <!--<filter-name>springSecurityFilterChain</filter-name>-->

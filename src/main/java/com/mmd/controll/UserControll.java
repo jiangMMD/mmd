@@ -1,0 +1,54 @@
+package com.mmd.controll;
+
+import com.mmd.model.User;
+import com.mmd.pjo.Page;
+import com.mmd.pjo.Result;
+import com.mmd.pjo.ResultPage;
+import com.mmd.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+@Controller
+@RequestMapping("/user")
+public class UserControll {
+    @Autowired
+   private UserService userService;
+
+    @RequestMapping("/getUser")
+    @ResponseBody
+    public ResultPage<User> getUser(Page page, User user){
+        return userService.getUser(page,user);
+
+    }
+
+    @RequestMapping("/delUser")
+    public @ResponseBody
+    Result delUser (String ids) {
+        return userService.delUser(ids);
+    }
+
+    @RequestMapping("/toUserDetail")
+    public ModelAndView toCustomDetail(String uid) {
+        ModelAndView modelAndView = new ModelAndView();
+        User user = userService.getUserDetail(uid);
+        if(user == null) {
+            modelAndView.setViewName("../content/common/error-403.html");
+        }else{
+            modelAndView.addObject("user", user);
+            modelAndView.setViewName("../content/user/userdetail.jsp");
+        }
+        return modelAndView;
+    }
+
+    @RequestMapping("/saveUserInfo")
+    public @ResponseBody
+    Result saveUserInfo(User user){
+        System.out.println(user);
+        return userService.saveUserInfo(user);
+    }
+
+
+}
