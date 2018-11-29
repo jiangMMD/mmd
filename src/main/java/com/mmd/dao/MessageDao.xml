@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mmd.dao.MessageDao">
+
+
+    <select id="getAllMessage" resultType="Message">
+        select m.id,m.title,m.content,m.user_id,m.type,m.pic_url,m.isread,m.crtdate,m.crtuser,
+        u.u_name uname, u.u_phone uphone
+         from message m left join user u on m.user_id = u.u_id
+        <where>
+            <if test="type !=null and type!=''">
+               and `type` = #{type}
+            </if>
+            <if test="userId !=null and userId != ''">
+                and user_id = #{userId}
+            </if>
+            <if test="startDate != null and startDate != ''">
+                and crtdate >= #{startDate}
+            </if>
+            <if test="endDate != null  and endDate != ''">
+                and crtdate &lt;= #{endDate}
+            </if>
+        </where>
+    </select>
+
+    <insert id="addMessage">
+          insert into message(`type`,user_id,title,content,crtuser,crtdate)
+          values (#{type},#{userId},#{title},#{content},#{crtuser},now())
+
+    </insert>
+
+    <delete id="delMessage">
+        DELETE  from message where id in <foreach collection="ids" open="(" close=")" separator="," item="id">#{id}</foreach>
+    </delete>
+
+
+</mapper>
