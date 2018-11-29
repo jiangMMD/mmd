@@ -49,6 +49,19 @@ public class UserControll {
         System.out.println(user);
         return userService.saveUserInfo(user);
     }
+    @RequestMapping("/queryAddress")
+    public @ResponseBody Result queryAddress(String uid){
+        return userService.queryAddress(uid);
+    }
+    @RequestMapping("/queryAddressByUid")
+    public @ResponseBody Result queryAddressByBid(String uid){
+        return userService.queryAddressByUid(uid);
+    }
+
+    @RequestMapping("delAddress")
+    public @ResponseBody Result delAddress(String id){
+        return userService.delAddress(id);
+    }
 
 
 }
