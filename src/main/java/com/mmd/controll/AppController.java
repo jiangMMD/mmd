@@ -1,15 +1,18 @@
 package com.mmd.controll;
 
+import com.mmd.model.Message;
 import com.mmd.pjo.Page;
 import com.mmd.pjo.Result;
 import com.mmd.pjo.ResultPage;
 import com.mmd.service.AppService;
+import com.mmd.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
 
 import java.util.Map;
 
@@ -22,6 +25,8 @@ public class AppController {
 
     @Autowired
     private AppService appService;
+    @Autowired
+    private MessageService messageService;
 
     @RequestMapping("/getClassify")
     public @ResponseBody ResultPage getClassify(Page page,@RequestParam Map<String, String> params) {
@@ -50,5 +55,25 @@ public class AppController {
     public @ResponseBody Result delClassify(String ids) {
         return appService.delClassify(ids);
     }
+    /**
+     * 删除消息信息
+     * @return
+     */
+    @RequestMapping("/delMessage")
+    public @ResponseBody Result delMessage(String ids) {
+        return messageService.delMessage(ids);
+    }
 
+
+    /*獲取所有消息*/
+    @RequestMapping("/getAllMessage")
+    public @ResponseBody ResultPage getAllMessge(Page page, Message message) {
+        return  messageService.getAllMessage(page, message);
+    }
+    @RequestMapping("/addMessage")
+    public @ResponseBody
+    Result saveUserInfo(Message message){
+        System.out.println(message);
+        return messageService.addMessage(message);
+    }
 }

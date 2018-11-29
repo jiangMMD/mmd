@@ -29,6 +29,16 @@
         </if>
 
     </select>
+
+    <select id="getUserByKey" resultType="map">
+        select u_id id, concat(u_name, ',', u_phone, ',', u_nick) text
+        from user where recsts = '1'
+        <if test="key !=null and key !=''">
+            and ((u_name like concat('%', #{key}, '%')) or (u_phone like concat('%', #{key}, '%')) or (u_nick like concat('%', #{key}, '%')))
+        </if>
+        limit 10
+    </select>
+
     <select id="getUserNumsWithCids" resultType="java.lang.Integer">
         SELECT count(*) from USER where recsts = '1' and u_id in <foreach collection="ids"  item="id" open="(" close=")" separator=",">#{id}</foreach>
 
