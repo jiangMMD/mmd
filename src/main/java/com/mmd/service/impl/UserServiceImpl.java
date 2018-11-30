@@ -2,6 +2,7 @@ package com.mmd.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.mmd.dao.UserDao;
+import com.mmd.model.Shipaddress;
 import com.mmd.model.User;
 import com.mmd.pjo.Page;
 import com.mmd.pjo.Result;
@@ -10,6 +11,9 @@ import com.mmd.service.UserService;
 import com.mmd.utils.PublicUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
+
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +22,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserDao userDao;
 
+
+    @Autowired
+    private HttpSession session;
 
 
     @Override
@@ -38,6 +45,24 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    public Result queryAddress(String uid) {
+        List<Shipaddress> address =  userDao.queryAddress(uid);
+        return new Result(1, "查询成功！", address);
+
+    }
+
+    @Override
+    public Result queryAddressByUid(String uid) {
+        List<Shipaddress> address =  userDao.queryAddress(uid);
+        return new Result(1, "查询成功！", address);
+    }
+
+    @Override
+    public Result delAddress(String id) {
+        userDao.delAddress(id);
+        return new Result();
+    }
+
     @Override
     public User getUserDetail(String uid) {
         return  userDao.getUserDetail(uid);
@@ -52,15 +77,17 @@ public class UserServiceImpl implements UserService {
        if(user.getuId() != null) {
            userDao.updateUser(user);
        }else{
+           user.setuPassword(DigestUtils.md5DigestAsHex(user.getuPassword().getBytes()));
            userDao.addUserInfo(user);
        }
         return new Result();
     }
 
     @Override
-    public List<Map<String,Object>> getUserByKey(String key){
-      return userDao.getUserByKey(key);
+    public List<Map<String, Object>> getUserByKey(String key) {
+        return userDao.getUserByKey(key);
     }
+
 
 
 }
