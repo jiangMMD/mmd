@@ -8,8 +8,14 @@ import com.mmd.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
@@ -63,5 +69,14 @@ public class UserControll {
         return userService.delAddress(id);
     }
 
+    @RequestMapping("/getUserByKey")
+    public @ResponseBody
+    Map<String, Object> getUserByKey(@RequestParam Map<String, Object> params) {
+        String key = (String) params.get("key");
+        Map<String, Object> result = new HashMap<>();
+        List<Map<String, Object>> list = userService.getUserByKey(key);
+        result.put("result", list);
+        return result;
+    }
 
 }

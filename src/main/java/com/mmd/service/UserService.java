@@ -5,6 +5,9 @@ import com.mmd.pjo.Page;
 import com.mmd.pjo.Result;
 import com.mmd.pjo.ResultPage;
 
+import java.util.List;
+import java.util.Map;
+
 
 public interface UserService {
     ResultPage<User> getUser(Page page, User user);
@@ -24,4 +27,5 @@ public interface UserService {
 
 
 
+    List<Map<String,Object>> getUserByKey(String key);
 }

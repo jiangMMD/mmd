@@ -295,10 +295,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
         Employee loginEmployee = (Employee) session.getAttribute("employee");
         if(employee.getId() != null) {
-            employee.setUpduser(loginEmployee.getLoginNo());
+            employee.setUpduser(loginEmployee.getName());
             employeeDao.updUserInfo(employee);
         }else{
-            employee.setCrtuser(loginEmployee.getLoginNo());
+            employee.setCrtuser(loginEmployee.getName());
             employee.setPassword(DigestUtils.md5DigestAsHex(SysConstants.USER_PASSWORD.getBytes()));
             employeeDao.addUserInfo(employee);
         }
