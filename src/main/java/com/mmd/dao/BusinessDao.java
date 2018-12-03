@@ -12,4 +12,12 @@ public interface BusinessDao {
     Merchant getBusinessDetail(@Param("id") String id);
 
     void delBusiness(@Param("ids") List<String> ids);
+
+    void uplineBusiness(@Param("ids") List<String> ids);
+
+    void downlineBusiness(@Param("ids") List<String> ids);
+
+    void addMerchant(Merchant merchant);
+
+    void updMerchant(Merchant merchant);
 }

@@ -15,10 +15,19 @@ public class Merchant {
   private String merHomeicon;
   private String merLinkman;
   private String merLinkphone;
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  private String merWeixin;
+  private String merQq;
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
   private Date crtdate;
   private String crtuser;
+  private Date update;
+  private String upduser;
   private String recsts;
+  private Integer hotval;
+  private Integer hits;
+  private Integer isHot;
+  private String merShortname;
+  private String merEname;
 
 
 }
