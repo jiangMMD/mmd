@@ -68,10 +68,8 @@ public class BusinessController {
             String url = PropertyLoad.getProperty("business_url") + fileName;
             merchant.setMerHomeimg(url);
         }
-
         return null;
     }
-
 
     /**
      * 处理文件，
