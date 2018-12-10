@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mmd.dao.ShopcatDao">
+    <select id="getShopcatList" resultType="com.mmd.model.Shopcat">
+      select s.cat_id,s.uid,s.rmbmoney,s.mmdmoney,
+        u.u_name username from shopcat s left join user u on s.uid = u.u_id
+        <where>
+            <if test="uid !=null and uid != ''">
+                and uid like CONCAT('%', #{uid}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="shopcatDetail" resultType="java.util.Map" resultMap="shopcatMap">
+        select
+          sc.cat_id, sc.mmdmoney, sc.rmbmoney,
+          se.entry_id, date_format(se.addtime, '%Y-%m-%d %T') addtime,
+          se.num, p.pname, p.homeimg, p.shopmmdprice, p.shopprice,
+          p.mer_id, (select mer_name from merchant m where m.mer_id = p.mer_id) merName
+        from shopcat sc left join shopentry se on sc.cat_id = se.cat_id
+        left join productsinfo p on se.pid = p.pid
+        where sc.cat_id = #{catId}
+    </select>
+
+    <resultMap id="shopcatMap" type="map">
+        <id column="cat_id" property="catId"/>
+        <result column="mmdmoney" property="mmdmoney"/>
+        <result column="rmbmoney" property="rmbmoney"/>
+        <collection property="merNameList" ofType="map" javaType="arrayList">
+            <id column="mer_id" property="merId"/>
+            <result column="merName" property="merName"/>
+            <collection property="prodList" ofType="map" javaType="arrayList">
+                <result column="pname" property="pname"/>
+                <result column="homeimg" property="homeimg"/>
+                <result column="shopprice" property="shopprice"/>
+                <result column="shopmmdprice" property="shopmmdprice"/>
+            </collection>
+        </collection>
+    </resultMap>
+</mapper>
