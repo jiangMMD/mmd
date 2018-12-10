@@ -1,4 +1,4 @@
-<title>商家系统 - 魔晶</title>
+<title>产品管理 - 魔晶</title>
 <!--列表样式信息-->
 <link rel="stylesheet" href="assets/css/ui.jqgrid.css"/>
 <link rel="stylesheet" href="assets/css/chosen.css"/>
@@ -20,34 +20,39 @@
                         </div>
                     </div>
                     <div class="col-xs-4">
-                        <label class="col-sm-3 control-label no-padding-right">联系人:</label>
+                        <label class="col-sm-3 control-label no-padding-right">商品名称:</label>
                         <div class="col-sm-9">
-                            <input type="text" name="merLinkman" class="form-control"/>
+                            <input type="text" name="pname" class="form-control"/>
                         </div>
                     </div>
+                    <div class="col-xs-4">
+                        <label class="col-sm-3 control-label no-padding-right">商品编号:</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="prodno" class="form-control"/>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="form-group">
                     <div class="col-xs-4">
-                        <label class="col-sm-3 control-label no-padding-right">是否上线:</label>
+                        <label class="col-sm-3 control-label no-padding-right">是否上架:</label>
                         <div class="col-sm-9">
-                            <select class="form-control" name="merType">
+                            <select class="form-control" name="state">
                                 <option value="">全部</option>
-                                <option value="1">未上线</option>
-                                <option value="2">已上线</option>
+                                <option value="2">未上架</option>
+                                <option value="1">已上架</option>
                             </select>
                         </div>
                     </div>
+
                     <div class="col-xs-4">
-                        <label class="col-sm-3 control-label no-padding-right">是否热门:</label>
+                        <label class="col-sm-3 control-label no-padding-right">产品类别:</label>
                         <div class="col-sm-9">
-                            <select class="form-control" name="isHot">
-                                <option value="">全部</option>
-                                <option value="1">热门商铺</option>
-                                <option value="2">非热门商铺</option>
-                            </select>
+                            <select id="categoryid" name="categoryid" class="form-control"></select>
                         </div>
                     </div>
-                    <div class="col-xs-3">
+
+                    <div class="col-xs-4">
                         <button class="btn btn-primary" type="button" onclick="queryData()">
                             <i class="ace-icon fa fa-search bigger"></i>
                             查询
@@ -65,8 +70,8 @@
             <a id="add" data-rel="tooltip" title="" data-original-title="新增" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon fa fa-plus-circle purple bigger-125"></i></a>
             <a id="edit" data-rel="tooltip" title="" data-original-title="修改" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon fa fa-pencil blue bigger-125"></i></a>
             <a id="del" data-rel="tooltip" title="" data-original-title="删除" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon fa fa-trash-o red bigger-125"></i></a>
-            <a id="upline" data-rel="tooltip" title="" data-original-title="上线" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon glyphicon glyphicon-upload bigger-125"></i></a>
-            <a id="downline" data-rel="tooltip" title="" data-original-title="下线" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon glyphicon glyphicon-download bigger-125"></i></a>
+            <a id="upline" data-rel="tooltip" title="" data-original-title="上架" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon glyphicon glyphicon-upload bigger-125"></i></a>
+            <a id="downline" data-rel="tooltip" title="" data-original-title="下架" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon glyphicon glyphicon-download bigger-125"></i></a>
         </div>
         <table id="grid-table"></table>
         <div id="grid-pager"></div>
@@ -77,6 +82,7 @@
     var scripts = [null, "assets/js/date-time/bootstrap-datepicker.js",
         "assets/js/jqGrid/jquery.jqGrid.custom.js",
         "assets/js/chosen.jquery.js",
+        "assets/js/select2.js",
         "assets/js/jqGrid/i18n/grid.locale-cn.js", null]
 
     var grid_selector = "#grid-table";
@@ -90,6 +96,7 @@
 
     function resetForm() {
         $(".chosen-select").val('').trigger("chosen:updated");
+        $("#categoryid").select2("val", "");
     }
 
     $('.page-content-area').ace_ajax('loadScripts', scripts, function () {
@@ -97,7 +104,7 @@
         jQuery(function ($) {
             //添加
             $("#add").click(function(){
-                toCustomUrl('page/business/businessdetail.jsp');
+                toCustomUrl('page/business/productdetail.jsp');
             });
             //修改
             $("#edit").click(function(){
@@ -118,7 +125,7 @@
                 }else{
                     bootbox.confirm("确认删除选中所有信息？该操作不可逆转", function(res) {
                         if(res) {
-                            myAjax("/business/delBusiness", {ids: ids.join(",")}, function(result){
+                            myAjax("/business/delProduct", {ids: ids.join(",")}, function(result){
                                 if(result.code == '1') {
                                     showSuccInfo("操作成功");
                                     queryData();
@@ -131,17 +138,17 @@
                 }
             });
 
-            //上线
+            //上架
             $("#upline").click(function(){
                 var ids = $(grid_selector).jqGrid('getGridParam','selarrrow');
                 if(!ids || ids.length === 0) {
                     showWarnInfo("至少选择一条记录", 3000);
                 }else{
-                    bootbox.confirm("确认将店铺上线？", function(res) {
+                    bootbox.confirm("确认将商品上架？", function(res) {
                         if(res) {
-                            myAjax("/business/uplineBusiness", {ids: ids.join(",")}, function(result){
+                            myAjax("/business/uplineProduct", {ids: ids.join(",")}, function(result){
                                 if(result.code == '1') {
-                                    showSuccInfo("上线成功");
+                                    showSuccInfo("上架成功");
                                     queryData();
                                 }else{
                                     showErrorInfo(result.message);
@@ -152,17 +159,17 @@
                 }
             });
 
-            //下线
+            //下架
             $("#downline").click(function(){
                 var ids = $(grid_selector).jqGrid('getGridParam','selarrrow');
                 if(!ids || ids.length === 0) {
                     showWarnInfo("至少选择一条记录", 3000);
                 }else{
-                    bootbox.confirm("确认将店铺下线?", function(res) {
+                    bootbox.confirm("确认将商品下架?", function(res) {
                         if(res) {
-                            myAjax("/business/downlineBusiness", {ids: ids.join(",")}, function(result){
+                            myAjax("/business/downlineProduct", {ids: ids.join(",")}, function(result){
                                 if(result.code == '1') {
-                                    showSuccInfo("下线成功");
+                                    showSuccInfo("下架成功");
                                     queryData();
                                 }else{
                                     showErrorInfo(result.message);
@@ -172,6 +179,32 @@
                     });
                 }
             });
+
+            $("#categoryid").select2({
+                ajax: {
+                    url: projectUrl + '/business/getProClassifyByKey',
+                    delay: 250,
+                    cache: true,
+                    data: function (params) {
+                        console.log(params);
+                        var query = {
+                            key: params.term
+                        };
+                        return query;
+                    },
+                    processResults: function (data, params) {
+                        console.log(data);
+                        return {
+                            results: data.data
+                        }
+                    }
+
+                },
+                placeholder: '输入类别名称',
+                // width: '200px'
+            });
+
+
 
             var parent_column = $(grid_selector).closest('[class*="col-"]');
             $(window).on('resize.jqGrid', function () {
@@ -205,51 +238,30 @@
                 })
             });
 
-            function createDepSelect(data) {
-                var html = '<option value="">&nbsp;</option>';
-                data.forEach(function (info) {
-                    html += '<option value="' + info.dep_id + '">' + info.dep_name + '</option>';
-                });
-                $("#dep_id").html(html);
-                $(".chosen-select").trigger("chosen:updated");
-            }
-
-            //获取所有职位信息
-            var allPostArr = [];
-            var allPostInfo = "";
-            myAjax("/base/getAllPost", null, function(result){
-                if(result.code === 1) {
-                    allPostArr = result.data;
-                    allPostInfo = toSelectData(result.data, "data_code", "data_name");
-                }else{
-                    showErrorInfo(result.message);
-                }
-            });
 
             jQuery(grid_selector).jqGrid({
                 // direction: "rtl",
                 subGrid: false, //是否展示子table
-                url: projectUrl + "/business/getMerchantList", //获取商家列表
+                url: projectUrl + "/business/getProductList", //获取商家列表
                 datatype: "json",
                 mtype: 'POST',
                 height: $(window).height() - 360,
-                colNames: ['ID', '状态', '店铺名称','中文简称', '英文简称',  '店铺地址', '店铺LOGO', '店铺展示照片', '联系人', '联系人电话', '店铺简介', '创建人', '创建时间','热点度','点击量'],
+                colNames: ['ID', '商品名称', '商家名称','商品编号','是否上架', '商品标题',  '商品详情', '首页图', '产品类别', '售价(RMB)', '售价(MMD)','成本价', '销量', '库存'],
                 colModel: [
-                    {name: 'merId', key: true, width: 60, hidden: true, editable: true},
-                    {name: 'merType', index: 'mer_type', width: 80, editable: true, formatter: pickState},
-                    {name: 'merName', index: 'mer_name', width: 100},
-                    {name: 'merShortname', index: 'mer_shortname', width: 100},
-                    {name: 'merEname', index: 'mer_ename', width: 80},
-                    {name: 'merAddress', index: 'mer_address', width: 120,},
-                    {name: 'merHomeicon', index: 'mer_homeicon', width: 100,formatter:pickHomeicon},
-                    {name: 'merHomeimg', index: 'mer_homeimg', width: 130,formatter:pickHomeimg},
-                    {name: 'merLinkman', index: 'mer_linkman', width: 100},
-                    {name: 'merLinkphone', index: 'mer_linkphone', width: 100},
-                    {name: 'merDesc', index: 'mer_desc', width: 200},
-                    {name: 'crtuser', index: 'crtuser', width: 50},
-                    {name: 'crtdate', index: 'crtdate', width: 90},
-                    {name: 'hotval', index: 'crtdate', width: 40},
-                    {name: 'hits', index: 'crtdate', width: 40},
+                    {name: 'pid', key: true, width: 60, hidden: true, editable: true},
+                    {name: 'pname', index: 'pname', width: 80, editable: true},
+                    {name: 'merName',  width: 100},
+                    {name: 'prodno', index: 'prodno', width: 80},
+                    {name: 'state', index: 'state', width: 80, formatter: pickState},
+                    {name: 'title', index: 'title', width: 80},
+                    {name: 'desc', index: 'desc', width: 120,},
+                    {name: 'homeimg', index: 'homeimg', width: 100,formatter:pickHomeimg},
+                    {name: 'proClassify', index: 'proClassify', width: 90},
+                    {name: 'shopprice', index: 'shopprice', width: 80},
+                    {name: 'shopmmdprice', index: 'shopmmdprice', width: 80},
+                    {name: 'costprice', index: 'costprice', width: 80},
+                    {name: 'sell', index: 'sell', width: 50},
+                    {name: 'inventory', index: 'inventory', width: 90},
                 ],
                 viewrecords: true,
                 rowNum: 10,
@@ -267,30 +279,27 @@
             function pickState(val) {
                 var statename = 'label-info';
                 var text = "";
-                if(val == "2") {
+                if(val == "1") {
                     statename = 'label-success';
-                    text = "已上线"
+                    text = "已上架"
                     return '<span class="label label-sm '+statename+'">'+text+'</span>';
-                }else if (val == "1"){
+                }else if (val == "2"){
                     var statename = 'label-info';
-                    text = "未上线"
+                    text = "未上架"
                     return '<span class="label label-sm '+statename+'">'+text+'</span>';
                 }else{
                     return '';
                 }
 
             }
-            //商家icon
-            function pickHomeicon(val,row,rowdata) {
-                return'<img width="40px" height="40px" alt="商家LOGO" src="'+val+'"/>';
-            }
-            //商家首页图
+
+            //商品首页图
             function pickHomeimg(val,row,rowdata) {
-                return'<img width="80px" height="40px" alt="商家首页图片" src="'+val+'"/>';
+                return'<img width="80px" height="40px" alt="" src="'+val+'"/>';
             }
 
             function queryDetail(id) {
-                toCustomUrl("server/business/toBusinessDetail?id="+id);
+                toCustomUrl("server/business/toProductDetail?id="+id);
             }
 
             $(window).triggerHandler('resize.jqGrid');//trigger window resize to make the grid get the correct size
