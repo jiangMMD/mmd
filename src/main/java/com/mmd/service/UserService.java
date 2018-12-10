@@ -18,6 +18,14 @@ public interface UserService {
 
     Result saveUserInfo(User user);
 
+    Result queryAddress(String uid);
+
+    Result queryAddressByUid(String uid);
+
+    Result delAddress(String id);
+
+
+
 
     List<Map<String,Object>> getUserByKey(String key);
 }

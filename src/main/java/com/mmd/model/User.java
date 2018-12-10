@@ -1,10 +1,11 @@
 package com.mmd.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import java.io.Serializable;
 import java.util.Date;
 
 
-public class User {
+public class User implements Serializable {
 
   private Long uId;
   private String uName;
@@ -19,12 +20,18 @@ public class User {
   private String uMmdNo; //关联的MMD账户
   private String uMmdPassword; //关联的MMD密码
   private String uMmdMoney;
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  private String uHeadIcon;
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
   private Date uRelevancyDate; //关联的MMD的日期
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
   private Date uCrtdate;
   private String uCrtuser;
   private String recsts;
+
+  private Integer shipAddressCount;
+
+  private String source;
+
 
   public Long getuId() {
     return uId;
@@ -130,6 +137,14 @@ public class User {
     this.uMmdMoney = uMmdMoney;
   }
 
+  public String getuHeadIcon() {
+    return uHeadIcon;
+  }
+
+  public void setuHeadIcon(String uHeadIcon) {
+    this.uHeadIcon = uHeadIcon;
+  }
+
   public Date getuRelevancyDate() {
     return uRelevancyDate;
   }
@@ -160,5 +175,21 @@ public class User {
 
   public void setRecsts(String recsts) {
     this.recsts = recsts;
+  }
+
+  public Integer getShipAddressCount() {
+    return shipAddressCount;
+  }
+
+  public void setShipAddressCount(Integer shipAddressCount) {
+    this.shipAddressCount = shipAddressCount;
+  }
+
+  public String getSource() {
+    return source;
+  }
+
+  public void setSource(String source) {
+    this.source = source;
   }
 }
