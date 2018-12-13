@@ -8,13 +8,14 @@ import java.util.List;
 import java.util.Map;
 
 public interface UserDao {
+
     List<User> getUser(User user);
+
+    User findUserWithNameAndPass(User user);
 
     int getUserNumsWithCids(@Param("ids") List<String> ids);
 
     void delUser(@Param("ids") List<String> ids);
-
-    User getUserDetail(@Param("uid") String uid);
 
     void addUserInfo(User user);
 
@@ -22,7 +23,9 @@ public interface UserDao {
 
     int checkPhone(User user);
 
-    User findUserWithNameAndPass(User user);
+    List<Map<String, Object>> getUserByKey(@Param("key") String key);
+
+    User getUserDetail(@Param("uid") String uid);
 
     List<Shipaddress> queryAddress(@Param("uid") String uid);
 
@@ -36,5 +39,6 @@ public interface UserDao {
 
     void updAddress(Shipaddress shipaddress);
 
-    List<Map<String, Object>> getUserByKey(@Param("key") String key);
+
+
 }

@@ -12,10 +12,4 @@ public interface BusinessService {
     Merchant getBusinessDetail(String id);
 
     Result delBusiness(String ids);
-
-    Result uplineBusiness(String ids);
-
-    Result downlineBusiness(String ids);
-
-    Result addOrUpdBusiness(Merchant merchant);
 }

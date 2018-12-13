@@ -31,8 +31,8 @@
 </div>
 <div class="row">
     <div class="col-xs-12">
-        <form class="form-horizontal" id="validation-form-merchant" method="post">
-            <input type="hidden" name="merId" value="${merchant.merId}">
+        <form class="form-horizontal" id="validation-form-user" method="post">
+            <input type="hidden" name="uid" value="${requestScope.user.uid}">
 
             <div class="space-20"></div>
 
@@ -55,150 +55,108 @@
 
                             <div class="col-xs-3  form-group">
                                 <label class="control-label" for="merAddress">店铺地址<span class="red">*</span></label>
-                                <input class="form-control" id="merAddress" name="merAddress" value="${merchant.merAddress}">
+                                <input class="form-control" id="merAddress" name="merAddress" value="${merchant.merName}">
                             </div>
 
                             <div class="col-xs-3 form-group">
-                                <label class="control-label" for="form-merchant-merShortname">中文简称<span class="red">*</span></label>
-                                <input class="form-control" id="form-merchant-merShortname" type="text" name="merShortname"
-                                       value="${merchant.merShortname}"/>
+                                <label class="control-label">商家LOGO<span class="red">*</span></label>
+                                <input multiple="" type="file" id="merHomeicon" name="merHomeicon"/>
+                                <ul class="ace-thumbnails clearfix" id="merHomeicon_file">
+                                    <li>
+                                        <a href="assets/images/gallery/image-3.jpg" data-rel="colorbox">
+                                            <img width="150" height="150" alt="150x150" src="assets/images/gallery/thumb-3.jpg" />
+                                            <div class="text">
+                                                <div class="inner">点击查看详细</div>
+                                            </div>
+                                        </a>
+                                        <div class="tools tools-bottom">
+                                            <a href="#" onclick="">
+                                                <i class="ace-icon fa fa-pencil" title="重新上传"></i>
+                                            </a>
+                                            <a href="#">
+                                                <i class="ace-icon fa fa-times red" title="删除图片"></i>
+                                            </a>
+                                        </div>
+                                    </li>
+                                </ul>
                             </div>
 
                             <div class="col-xs-3 form-group">
-                                <label class="control-label" for="form-merchant-merEname">英文简称<span class="red">*</span></label>
-                                <input id="form-merchant-merEname" class="form-control" name="merEname" value="${merchant.merEname}"/>
+                                <label class="control-label" for="form-user-birthday">生日</label>
+                                <input class="form-control date-picker" id="form-user-birthday" type="text" name="birthday"
+                                       data-date-format="yyyy-mm-dd" value="${requestScope.user.birthday}" placeholder="请选择您的出生年月">
                             </div>
-
-                        </div>
-
-                        <div class="space-12"></div>
-
-                        <div class="row">
-
-
-                            <div class="col-xs-3 form-group">
-                                <label class="control-label" for="form-merchant-merWeixin">微信</label>
-                                <input class="form-control" id="form-merchant-merWeixin" type="text" name="merWeixin"
-                                       value="${merchant.merWeixin}"/>
-                            </div>
-
-                            <div class="col-xs-3 form-group">
-                                <label class="control-label" for="form-merchant-merQq">QQ号</label>
-                                <input id="form-merchant-merQq" class="form-control" name="merQq" value="${merchant.merQq}"/>
-                            </div>
-
-                            <div class="col-xs-3 form-group">
-                                <label class="control-label" for="form-merchant-merLinkman">联系人<span class="red">*</span></label>
-                                <input class="form-control" id="form-merchant-merLinkman" type="text" name="merLinkman"
-                                       value="${merchant.merLinkman}"/>
-                            </div>
-
-                            <div class="col-xs-3 form-group">
-                                <label class="control-label" for="form-merchant-merLinkphone">联系人电话<span class="red">*</span></label>
-                                <input id="form-merchant-merLinkphone" class="form-control" name="merLinkphone" value="${merchant.merLinkphone}"/>
-                            </div>
-                        </div>
-
-                        <div class="row">
-
-                            <div class="col-xs-3 form-group">
-                                <label class="control-label" for="form-merchant-hotval">热点度<span class="red">*</span><span class="help-button" data-rel="popover" data-trigger="hover" data-placement="right" data-content="热点度用于店铺展示排名，值为0-99，热点度越高，店铺展示越靠前"
-                                                                                                                           title="" data-original-title="设置说明">?</span></label>
-                                <input id="form-merchant-hotval" type="number" class="form-control" value="${(!empty merchant.hotval)?merchant.hotval:0}"
-                                       name="hotval" placeholder="请输入0-99数值"/>
-                            </div>
-
-                            <div class="col-xs-3 form-group">
-                                <label class="control-label" for="form-merchant-merDesc">店铺简介</label>
-                                <textarea id="form-merchant-merDesc" class="form-control" value="${merchant.merDesc}"
-                                          name="merDesc">${merchant.merDesc}</textarea>
-                            </div>
-
-
                         </div>
 
                         <div class="space-12"></div>
 
                         <div class="row">
                             <div class="col-xs-3 form-group">
-                                <label class="control-label">店铺LOGO<span class="red">*</span></label>
-                                <c:if test="${empty merchant.merHomeicon}">
-                                    <input type="file" id="mer_homeiconFile" name="mer_homeiconFile" accept="image/*"/>
-                                    <ul class="ace-thumbnails clearfix" id="iconFile" style="display: none;">
-                                        <li>
-                                            <a href="${merchant.merHomeicon}" data-rel="colorbox">
-                                                <img width="150" height="150" alt="150x150" src="${merchant.merHomeicon}" />
-                                                <div class="text">
-                                                    <div class="inner">点击查看详细</div>
-                                                </div>
-                                            </a>
-                                            <div class="tools tools-bottom">
-                                                <a href="#" onclick="">
-                                                    <i class="ace-icon fa fa-pencil" title="重新上传" onclick="delImg('iconFile', 'mer_homeiconFile')"></i>
-                                                </a>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </c:if>
-                                <c:if test="${!empty merchant.merHomeicon}">
-                                    <input type="file" id="mer_homeiconFile" name="mer_homeiconFile" style="display: none;"/>
-                                    <ul class="ace-thumbnails clearfix" id="iconFile">
-                                        <li>
-                                            <a href="${merchant.merHomeicon}" data-rel="colorbox">
-                                                <img width="150" height="150" alt="150x150" src="${merchant.merHomeicon}" />
-                                                <div class="text">
-                                                    <div class="inner">点击查看详细</div>
-                                                </div>
-                                            </a>
-                                            <div class="tools tools-bottom">
-                                                <a href="#" onclick="">
-                                                    <i class="ace-icon fa fa-pencil" title="重新上传" onclick="delImg('iconFile', 'mer_homeiconFile')"></i>
-                                                </a>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </c:if>
-
+                                <label class="control-label" for="form-user-cellphone">手机</label>
+                                <input class="form-control" id="form-user-cellphone" type="text" name="cellphone"
+                                       value="${requestScope.user.cellphone}"/>
                             </div>
 
                             <div class="col-xs-3 form-group">
-                                <label class="control-label">店铺展示照片(请上传高宽比为690*320的图片)<span class="red">*</span></label>
-                                <c:if test="${empty merchant.merHomeimg}">
-                                    <input multiple="" type="file" id="mer_homeimgFile" name="mer_homeimgFile" accept="image/*"/>
-                                    <ul class="ace-thumbnails clearfix" id="imgFile" style="display: none;">
-                                        <li>
-                                            <a href="${merchant.merHomeimg}" data-rel="colorbox">
-                                                <img width="230" height="106" alt="150x150" src="${merchant.merHomeimg}" />
-                                                <div class="text">
-                                                    <div class="inner">点击查看详细</div>
-                                                </div>
-                                            </a>
-                                            <div class="tools tools-bottom">
-                                                <a href="#" onclick="">
-                                                    <i class="ace-icon fa fa-pencil" title="重新上传" onclick="delImg('imgFile', 'mer_homeimgFile')"></i>
-                                                </a>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </c:if>
-                                <c:if test="${!empty merchant.merHomeimg}">
-                                    <input multiple="" type="file" id="mer_homeimgFile" name="mer_homeimgFile" style="display: none;" accept="image/*"/>
-                                    <ul class="ace-thumbnails clearfix" id="imgFile" >
-                                        <li>
-                                            <a href="${merchant.merHomeimg}" data-rel="colorbox">
-                                                <img width="230" height="106" alt="150x150" src="${merchant.merHomeimg}" />
-                                                <div class="text">
-                                                    <div class="inner">点击查看详细</div>
-                                                </div>
-                                            </a>
-                                            <div class="tools tools-bottom">
-                                                <a href="#" onclick="">
-                                                    <i class="ace-icon fa fa-pencil" title="重新上传" onclick="delImg('imgFile', 'mer_homeimgFile')"></i>
-                                                </a>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </c:if>
+                                <label class="control-label" for="form-user-age">年龄</label>
+                                <input id="form-user-age" class="form-control" name="age" value="${requestScope.user.age}"/>
+                            </div>
+
+                            <div class="col-xs-3 form-group">
+                                <label class="control-label" for="form-user-telephone">座机电话</label>
+                                <input id="form-user-telephone" class="form-control" value="${requestScope.user.telephone}"
+                                       name="telephone"/>
+                            </div>
+
+                            <div class="col-xs-3 form-group">
+                                <label class="control-label" for="form-user-weixin">微信</label>
+                                <input id="form-user-weixin" class="form-control" value="${requestScope.user.weixin}"
+                                       name="weixin"/>
+                            </div>
+                        </div>
+
+                        <div class="space-12"></div>
+                        <div class="row">
+                            <div class="col-xs-3 form-group">
+                                <label class="control-label" for="form-user-qq">QQ</label>
+                                <input id="form-user-qq" class="form-control" value="${requestScope.user.qq}"
+                                       name="qq"/>
+                            </div>
+
+                            <div class="col-xs-3 form-group">
+                                <label class="control-label" for="form-user-dep_id">所属部门</label>
+                                <select name="dep_id" id="form-user-dep_id" class="form-control">
+                                    <option value=""></option>
+                                    <option value="1">财务部</option>
+                                    <option value="2">市场部</option>
+                                    <option value="3">营销部</option>
+                                    <option value="4">贷后服务部</option>
+                                    <option value="5">风控部</option>
+                                    <option value="6">人事部</option>
+                                    <option value="7">运营部</option>
+                                    <option value="8">开发部</option>
+                                </select>
+                            </div>
+
+                            <div class="col-xs-3 form-group">
+                                <label class="control-label" for="form-user-post_id">
+                                    职位
+                                    <span class="help-button" data-rel="popover" data-trigger="hover" data-placement="left" data-content="职位设置为经理、主管，可以查看所有客户订单信息， 设置为员工时，只能查看已分配的代理商上传的客户订单信息"
+                                          title="" data-original-title="设置说明">?</span>
+                                </label>
+                                <select id="form-user-post_id" name="post_id" class="form-control">
+                                    <option value=""></option>
+                                    <option value="1">主管</option>
+                                    <option value="2">经理</option>
+                                    <option value="3">员工</option>
+                                </select>
+                            </div>
+
+                            <div class="col-xs-3 form-group postshow">
+                                <label class="control-label" for="form-user-agency_ids">代理商</label>
+                                <select id="form-user-agency_ids" name="agency_ids" class="chosen-select form-control" multiple="multiple"
+                                        data-placeholder="分配代理商...">
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -233,25 +191,6 @@
         $(".chosen-select").val('').trigger("chosen:updated");
     }
 
-    //删除图片
-    function delImg(parentid, id) {
-        $("#"+parentid).hide();
-        $('#'+id).ace_file_input({
-            style: 'well',
-            btn_choose: 'Drop files here or click to choose',
-            btn_change: null,
-            no_icon: 'ace-icon fa fa-cloud-upload',
-            droppable: true,
-            thumbnail: 'small',
-            allowExt: ["jpeg", "jpg", "png", "gif" , "bmp"],
-            allowMime: ["image/jpg", "image/jpeg", "image/png", "image/gif", "image/bmp"],
-            preview_error : function(filename, error_code) {
-            }
-        }).on('change', function(){
-        });
-    }
-
-
     $('.page-content-area').ace_ajax('loadScripts', scripts, function () {
         //获取url中的参数信息
         $(function () {
@@ -275,68 +214,37 @@
             $('.chosen-select').chosen({allow_single_deselect: true});
 
             //判断显示情况
-
-            if('${merchant.merHomeicon}') {
+            console.log('${merHomeicon.merHomeicon}');
+            if('${merHomeicon.merHomeicon}') {
                 //如果有logo，那么就显示照片。否则不显示
-                $("#mer_homeiconFile").hide();
-                $("#iconFile").show();
+                $("#merHomeicon").hide();
+                $("#merHomeicon_file").show();
             }else{
-                $("#mer_homeiconFile").show();
-                $("#iconFile").hide();
+                $("#merHomeicon").show();
+                $("#merHomeicon_file").hide();
             }
-            if('${merchant.merHomeimg}') {
-                //如果有logo，那么就显示照片。否则不显示
-                $("#mer_homeimgFile").hide();
-                $("#imgFile").show();
-            }else{
-                $("#mer_homeimgFile").show();
-                $("#imgFile").hide();
-            }
-
         });
 
-        if(!'${merchant.merId}') {
-            $('input[type=file]').ace_file_input({
-                style: 'well',
-                btn_choose: 'Drop files here or click to choose',
-                btn_change: null,
-                no_icon: 'ace-icon fa fa-cloud-upload',
-                droppable: true,
-                thumbnail: 'small',
-                allowExt: ["jpeg", "jpg", "png", "gif" , "bmp"],
-                allowMime: ["image/jpg", "image/jpeg", "image/png", "image/gif", "image/bmp"],
-                preview_error : function(filename, error_code) {
-                }
-            }).on('change', function(){
-            });
-        }
+        $('#merHomeicon').ace_file_input({
+            style: 'well',
+            btn_choose: 'Drop files here or click to choose',
+            btn_change: null,
+            no_icon: 'ace-icon fa fa-cloud-upload',
+            droppable: true,
+            thumbnail: 'small',
+            preview_error : function(filename, error_code) {
+            }
+        }).on('change', function(){
+        });
 
 
-
-
-
-        $("#validation-form-merchant").submit(function (e) {
+        $("#validation-form-user").submit(function (e) {
             e.preventDefault();
-            var flag = $("#validation-form-merchant").valid();
+            var flag = $("#validation-form-user").valid();
             if (flag) {
                 $(this).ajaxSubmit({
-                    url: projectUrl + "/business/addOrUpdBusiness",
+                    url: projectUrl + "/user/addOrUpdUser",
                     type: "post",
-                    beforeSubmit: function() {
-                        var html = "";
-                        html += '<div class="center blue"><i class="ace-icon fa fa-spinner fa-spin orange"></i>上传中...请耐心等待</div>'
-                        html += '<div class="progress pos-rel" style="margin-top:20px;" data-percent="0%">';
-                        html += '<div class="progress-bar" style="width:0%;"></div>';
-                        html += '</div>';
-                        bootbox.dialog({
-                            message: html,
-                            closeButton: null,
-                        })
-                    },
-                    uploadProgress: function (event, position, total, percentComplete) {
-                        $(".progress").attr("data-percent", percentComplete+"%");
-                        $(".progress-bar").css("width", percentComplete+"%");
-                    },
                     success: function (result) {
                         bootbox.hideAll();
                         if (result.code === 1) {
@@ -359,19 +267,16 @@
         });
 
         //表单校验
-        $("#validation-form-merchant").validate({
+        $("#validation-form-user").validate({
             errorElement: 'div',
             errorClass: 'help-block',
             focusInvalid: false,
             ignore: ":hidden:not(select)",
             rules: {
-                merName: {required: true},
-                merAddress: {required: true},
-                merLinkman: {required:true},
-                merLinkphone: {number: true,required: true},
-                merEname: {required: true},
-                merShortname: {required: true},
-                hotval: {required: true, number: true, max: 99}
+                user_no: {required: true},
+                username: {required: true},
+                age: {number:true},
+                cellphone: {number: true},
             },
             highlight: function (e) {
                 $(e).closest('.form-group').removeClass('has-info').addClass('has-error');

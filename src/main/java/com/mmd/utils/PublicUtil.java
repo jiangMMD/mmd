@@ -32,7 +32,7 @@ public class PublicUtil {
     }
     public static String getNoID(String user_no) throws Exception {
 
-        return  String.valueOf(System.currentTimeMillis()).substring(1,10) + dupStr(getSeqno(), 2);
+        return  String.valueOf(System.currentTimeMillis()).substring(1,10) + dupStr(getSeqno(), 5);
 
     }
     private static synchronized String getSeqno() {
