@@ -184,7 +184,7 @@ public class BusinessController {
         }
         String file_sourcename = file.getOriginalFilename();
         String ref = file_sourcename.substring(file_sourcename.lastIndexOf("."));
-        String uuid = UUID.randomUUID().toString().replaceAll("_", "").substring(0, 8);
+        String uuid = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 16);
         String filename = uuid + ref;
         File dirFile = new File(dir + File.separator + filename);
         if (!dirFile.getParentFile().exists()) {
@@ -223,10 +223,17 @@ public class BusinessController {
     }
 
     @RequestMapping("/delCarousel")
-    public @ResponseBody Result delCarousel(String filename, String pid) {
+    public @ResponseBody Result delCarousel(String url, String filename, String pid) {
         //删除服务器上文件
-        return productService.delCarousel(filename, pid);
+        return productService.delCarousel(url, filename, pid);
     }
+
+    @RequestMapping("/delDetailimg")
+    public @ResponseBody Result delDetailimg(String url, String filename, String pid) {
+        //删除服务器上文件
+        return productService.delDetailimg(url, filename, pid);
+    }
+
 
     /**
      * 上传轮播图
@@ -239,6 +246,16 @@ public class BusinessController {
         String filename = dealFile(carouselFile, PropertyLoad.getProperty("goods_filedir"));
         return productService.uploadCarousel(filename,PropertyLoad.getProperty("goods_url") + filename, pid);
     }
+
+    @RequestMapping("/uploadDetailImg")
+    public @ResponseBody Result uploadDetailImg(MultipartFile detailimgFile, String pid) throws IOException {
+        if(StringUtils.isEmpty(pid)) {
+            return new Result().fail("请先添加基础产品信息，在上传轮播图");
+        }
+        String filename = dealFile(detailimgFile, PropertyLoad.getProperty("goods_filedir"));
+        return productService.uploadDetailImg(filename,PropertyLoad.getProperty("goods_url") + filename, pid);
+    }
+
 
     @RequestMapping("/getproddetailImg")
     public @ResponseBody Result getproddetailImg(String pid) {

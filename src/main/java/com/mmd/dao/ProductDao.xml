@@ -60,8 +60,12 @@
         VALUES (#{merId}, #{prodno}, #{pname}, #{title}, #{desc}, #{homeimg}, #{paramimg}, #{categoryid}, #{shopprice},
         #{shopmmdprice}, #{costprice}, #{serviceIds}, #{crtuser}, now())
     </insert>
-    <insert id="uploadCarousel" useGeneratedKeys="true" keyColumn="id" keyProperty="params.id">
+    <insert id="uploadCarousel">
         insert into prod_carousal(pid, pd_url, crtdate)
+        VALUES (#{pid}, #{goods_url}, now())
+    </insert>
+    <insert id="uploadDetailImg">
+        insert into prod_detailimg(pid, img, crtdate)
         VALUES (#{pid}, #{goods_url}, now())
     </insert>
 
@@ -69,7 +73,23 @@
         DELETE from prod_proprel where pid = #{pid}
     </delete>
     <delete id="delCarousel">
-        delete from prod_carousal where pd_url like concat('%', #{filename}) and pid = #{pid}
+        delete from prod_carousal where pid = #{pid}
+        <if test="url != null  and url !=''">
+            and pd_url = #{url}
+        </if>
+        <if test="(url == '' or url == null) and filename != null and filename != ''">
+            and pd_url like concat('%', #{filename})
+        </if>
+    </delete>
+
+    <delete id="delDetailimg">
+        delete from prod_detailimg where pid = #{pid}
+        <if test="url != null  and url !=''">
+            and img = #{url}
+        </if>
+        <if test="(url == '' or url == null) and filename != null and filename != ''">
+            and img like concat('%', #{filename})
+        </if>
     </delete>
 
     <select id="getProClassifyByKey" resultType="map">
@@ -178,7 +198,7 @@
     </select>
 
     <select id="getProdParamImg" resultType="map">
-        select id, img  from prod_detailimg where pid = #{id} order by ord
+        select id, img  from prod_detailimg where pid = #{id} order by crtdate
     </select>
 
     <select id="getProdSkuDetail" resultType="map">

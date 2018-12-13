@@ -44,5 +44,9 @@ public interface ProductService {
 
     Result uploadCarousel(String filename, String goods_url, String pid);
 
-    Result delCarousel(String filename, String pid);
+    Result delCarousel(String url, String filename, String pid);
+
+    Result uploadDetailImg(String filename, String goods_url, String pid);
+
+    Result delDetailimg(String url, String filename, String pid);
 }

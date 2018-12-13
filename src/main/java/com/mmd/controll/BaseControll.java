@@ -90,5 +90,28 @@ public class BaseControll {
         return baseService.getAllPost();
     }
 
+    @RequestMapping("/getPropData")
+    public Result getPropData() {
+        return baseService.getPropData();
+    }
 
+    @RequestMapping("/getPropValByPropId")
+    public Result getPropValByPropId(String prop_id) {
+        return baseService.getPropValByPropId(prop_id);
+    }
+
+    @RequestMapping("/getAllClassify")
+    public Result getAllClassify() {
+        return baseService.getAllClassify();
+    }
+
+    @RequestMapping("/getPriceToMMDRate")
+    public Result getPriceToMMDRate() {
+        return baseService.getPriceToMMDRate();
+    }
+
+    @RequestMapping("/getMerByKey")
+    public Result getMerByKey(String key) {
+        return baseService.getMerByKey(key);
+    }
 }

@@ -299,9 +299,6 @@
         }
       },
       removedfile: function(file) {
-        if(this.options.deleteprevFun && this.options.deleteprevFun(file, this) === false) {
-            return false;
-        }
         var _ref;
         if (file.previewElement) {
           if ((_ref = file.previewElement) != null) {
@@ -1056,12 +1053,12 @@
       })(this));
     };
 
-    Dropzone.prototype.removeFile = function(file) {
+    Dropzone.prototype.removeFile = function(file, callflg) {
       if (file.status === Dropzone.UPLOADING) {
         this.cancelUpload(file);
       }
       this.files = without(this.files, file);
-      this.emit("removedfile", file);
+      this.emit("removedfile", file, callflg);
       if (this.files.length === 0) {
         return this.emit("reset");
       }
@@ -1076,7 +1073,7 @@
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         file = _ref[_i];
         if (file.status !== Dropzone.UPLOADING || cancelIfNecessary) {
-          this.removeFile(file);
+          this.removeFile(file, true);
         }
       }
       return null;

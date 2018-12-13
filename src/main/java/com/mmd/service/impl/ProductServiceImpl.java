@@ -195,8 +195,20 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Result delCarousel(String filename, String pid) {
-        productDao.delCarousel(filename, pid);
+    public Result delCarousel(String url, String filename, String pid) {
+        productDao.delCarousel(url, filename, pid);
+        return new Result();
+    }
+
+    @Override
+    public Result uploadDetailImg(String filename, String goods_url, String pid) {
+        productDao.uploadDetailImg(goods_url, pid);
+        return new Result().success(goods_url);
+    }
+
+    @Override
+    public Result delDetailimg(String url, String filename, String pid) {
+        productDao.delDetailimg(url, filename, pid);
         return new Result();
     }
 

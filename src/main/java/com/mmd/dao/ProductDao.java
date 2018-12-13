@@ -55,5 +55,9 @@ public interface ProductDao {
 
     void uploadCarousel(@Param("goods_url") String goods_url, @Param("pid") String pid);
 
-    void delCarousel(@Param("filename") String filename, @Param("pid") String pid);
+    void delCarousel(@Param("url") String url, @Param("filename") String filename, @Param("pid") String pid);
+
+    void uploadDetailImg(@Param("goods_url") String goods_url, @Param("pid") String pid);
+
+    void delDetailimg(@Param("url") String url, @Param("filename") String filename, @Param("pid") String pid);
 }
