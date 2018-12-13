@@ -4,6 +4,12 @@
 <head>
     <title>员工维护详细 - 魔晶</title>
     <link rel="stylesheet" href="assets/css/select2.css"/>
+    <link rel="stylesheet" href="assets/css/chosen.css"/>
+    <link rel="stylesheet" href="assets/css/bootstrap-datepicker3.css" />
+    <link rel="stylesheet" href="assets/css/bootstrap-timepicker.css" />
+    <link rel="stylesheet" href="assets/css/daterangepicker.css" />
+    <link rel="stylesheet" href="assets/css/bootstrap-datetimepicker.css" />
+    <link rel="stylesheet" href="assets/css/colorbox.css" />
     <style>
         .form-group {
             margin-left: 0 !important;
@@ -52,7 +58,8 @@
                             </div>
 
                             <div id="userTypeId" class="col-xs-3 form-group">
-                                <label class="control-label">用户<span class="red">*</span></label>
+                                <label class="control-label">用户<span class="red">*</span><span class="help-button" data-rel="popover" data-trigger="hover" data-placement="right" data-content="个人消息可不选择用户，作为发送给所有用户的个人消息。"
+                                                                                               title="" data-original-title="设置说明">?</span></label>
                                 <select class="form-control" id="userId" name="userId"></select>
                             </div>
 
@@ -64,6 +71,48 @@
                             <div class="col-xs-3 form-group">
                                 <label class="control-label">消息内容<span class="red">*</span></label>
                                 <input class="form-control" name="content" value="${message.content}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-3 form-group">
+                                <label class="control-label">内容图片<span class="red">*</span></label>
+                                <c:if test="${empty message.picUrl}">
+                                    <input type="file" id="picUrlFile" name="picUrlFile" accept="image/*"/>
+                                    <ul class="ace-thumbnails clearfix" id="iconFile" style="display: none;">
+                                        <li>
+                                            <a href="${message.picUrl}" data-rel="colorbox">
+                                                <img width="150" height="150" alt="150x150" src="${message.picUrl}" />
+                                                <div class="text">
+                                                    <div class="inner">点击查看详细</div>
+                                                </div>
+                                            </a>
+                                            <div class="tools tools-bottom">
+                                                <a href="#" onclick="">
+                                                    <i class="ace-icon fa fa-pencil" title="重新上传" onclick="delImg('iconFile', 'picUrlFile')"></i>
+                                                </a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </c:if>
+                                <c:if test="${!empty message.picUrl}">
+                                    <input type="file" id="picUrlFile" name="picUrlFile" style="display: none;"/>
+                                    <ul class="ace-thumbnails clearfix" id="iconFile">
+                                        <li>
+                                            <a href="${message.picUrl}" data-rel="colorbox">
+                                                <img width="150" height="150" alt="150x150" src="${message.picUrl}" />
+                                                <div class="text">
+                                                    <div class="inner">点击查看详细</div>
+                                                </div>
+                                            </a>
+                                            <div class="tools tools-bottom">
+                                                <a href="#" onclick="">
+                                                    <i class="ace-icon fa fa-pencil" title="重新上传" onclick="delImg('iconFile', 'picUrlFile')"></i>
+                                                </a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </c:if>
+
                             </div>
                         </div>
                     </div>
@@ -83,9 +132,47 @@
 
 <script>
     var scripts = [null,
-        "assets/js/jquery.form.js",
         "assets/js/select2.js",
-        null];
+        "assets/js/date-time/bootstrap-datepicker.js",
+        "assets/js/date-time/bootstrap-timepicker.js",
+        "assets/js/date-time/daterangepicker.js",
+        "assets/js/jquery.colorbox.js",
+        "assets/js/jquery.validate.js",
+        "assets/js/jquery.validate_zh.js",
+        "assets/js/jquery.form.js",
+        "assets/js/bootbox.js",
+        "assets/js/chosen.jquery.js",
+        "assets/js/date-time/bootstrap-datetimepicker.js", null];
+
+    //删除图片
+    function delImg(parentid, id) {
+        $("#"+parentid).hide();
+        $('#'+id).ace_file_input({
+            style: 'well',
+            btn_choose: 'Drop files here or click to choose',
+            btn_change: null,
+            no_icon: 'ace-icon fa fa-cloud-upload',
+            droppable: true,
+            thumbnail: 'small',
+            allowExt: ["jpeg", "jpg", "png", "gif" , "bmp"],
+            allowMime: ["image/jpg", "image/jpeg", "image/png", "image/gif", "image/bmp"],
+            preview_error : function(filename, error_code) {
+            }
+        }).on('change', function(){
+        });
+    }
+
+    //判断显示情况
+
+    if('${message.picUrl}') {
+        //如果有logo，那么就显示照片。否则不显示
+        $("#picUrlFile").hide();
+        $("#iconFile").show();
+    }else{
+        $("#picUrlFile").show();
+        $("#iconFile").hide();
+    }
+
     $('.page-content-area').ace_ajax('loadScripts', scripts, function () {
         //获取url中的参数信息
         $(function () {
@@ -96,6 +183,10 @@
                     $this.next().css({'width': $this.parent().width()});
                 })
             });
+
+            $('[data-rel=popover]').popover({container:'body'});
+
+
             $("#userId").select2({
                 ajax: {
                     url: projectUrl + '/user/getUserByKey',
@@ -127,6 +218,21 @@
                     $(this).ajaxSubmit({
                         url: projectUrl + "/app/addMessage",
                         type: "post",
+                        beforeSubmit: function() {
+                            var html = "";
+                            html += '<div class="center blue"><i class="ace-icon fa fa-spinner fa-spin orange"></i>上传中...请耐心等待</div>'
+                            html += '<div class="progress pos-rel" style="margin-top:20px;" data-percent="0%">';
+                            html += '<div class="progress-bar" style="width:0%;"></div>';
+                            html += '</div>';
+                            bootbox.dialog({
+                                message: html,
+                                closeButton: null,
+                            })
+                        },
+                        uploadProgress: function (event, position, total, percentComplete) {
+                            $(".progress").attr("data-percent", percentComplete+"%");
+                            $(".progress-bar").css("width", percentComplete+"%");
+                        },
                         success: function (result) {
                             bootbox.hideAll();
                             if (result.code === 1) {

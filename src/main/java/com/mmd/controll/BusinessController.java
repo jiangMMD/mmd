@@ -39,7 +39,7 @@ public class BusinessController {
         ModelAndView modelAndView = new ModelAndView();
         Merchant merchant = businessService.getBusinessDetail(id);
         modelAndView.addObject("merchant", merchant);
-        modelAndView.setViewName("../content/business/businesslist.jsp");
+        modelAndView.setViewName("../content/business/businessdetail.jsp");
         return modelAndView;
     }
 
@@ -47,6 +47,18 @@ public class BusinessController {
     public @ResponseBody
     Result delBusiness(String ids) {
         return businessService.delBusiness(ids);
+    }
+    //上线
+    @RequestMapping("/uplineBusiness")
+    public @ResponseBody
+    Result uplineBusiness(String ids) {
+        return businessService.uplineBusiness(ids);
+    }
+    //下线
+    @RequestMapping("/downlineBusiness")
+    public @ResponseBody
+    Result downlineBusiness(String ids) {
+        return businessService.downlineBusiness(ids);
     }
 
     /**
@@ -61,6 +73,7 @@ public class BusinessController {
         if(mer_homeiconFile !=null && !mer_homeiconFile.isEmpty()) {
             String fileName = dealFile(mer_homeiconFile, PropertyLoad.getProperty("business_filedir"));
             String url = PropertyLoad.getProperty("business_url") + fileName;
+            System.out.println(PropertyLoad.getProperty("business_url"));
             merchant.setMerHomeicon(url);
         }
         if(mer_homeimgFile !=null && !mer_homeimgFile.isEmpty()) {
@@ -69,7 +82,7 @@ public class BusinessController {
             merchant.setMerHomeimg(url);
         }
 
-        return null;
+        return businessService.addOrUpdBusiness(merchant);
     }
 
 
@@ -84,9 +97,9 @@ public class BusinessController {
         String ref = file_sourcename.substring(file_sourcename.lastIndexOf("."));
         String uuid = UUID.randomUUID().toString().replaceAll("_", "").substring(0, 8);
         String filename = uuid + ref;
-        File dirFile = new File(dir);
-        if (!dirFile.exists()) {
-            dirFile.mkdirs();
+        File dirFile = new File(dir + File.separator +filename);
+        if (!dirFile.getParentFile().exists()) {
+            dirFile.getParentFile().mkdirs();
         }
         File bookFile = new File(dir + File.separator + filename);
         file.transferTo(bookFile);

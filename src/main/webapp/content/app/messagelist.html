@@ -161,14 +161,15 @@
                 datatype: "json",
                 mtype: 'POST',
                 height: $(window).height() - 360,
-                colNames: ['消息id','消息类型', '用户名', '用戶手机号', '消息主题', '消息内容', '创建时间', '创建人'],
+                colNames: ['消息id','消息类型', '用户名', '用戶手机号', '消息主题', '消息内容', '消息图片','创建时间', '创建人'],
                 colModel: [
                     {name: 'id', key: true, width: 60, hidden: true, editable: true},
-                    {name: 'type', width: 80,formatter: pickMessageType,editoptions: {value: "1:系统消息; 2:个人消息; 3:物流消息"}},
-                    {name: 'uname', width: 80},
+                    {name: 'type', width: 60,formatter: pickMessageType,editoptions: {value: "1:系统消息; 2:个人消息; 3:物流消息"}},
+                    {name: 'uname', width: 60},
                     {name: 'uphone', width: 80},
-                    {name: 'title', width: 110},
+                    {name: 'title', width: 100},
                     {name: 'content', width: 150},
+                    {name: 'picUrl', index: 'picUrl', width: 100,formatter:pickMessagePic},
                     {name: 'crtdate', width: 120},
                     {name: 'crtuser', width: 80},
                 ],
@@ -191,10 +192,15 @@
 
             /***以下为表单格式处理***/
             function pickMessageType(val) {
+                var statename = 'label-info';
+                var text = "";
                 if (val == "1") {
-                    return '系统消息';
+                    text = "系统消息"
+                    return '<span class="label label-sm '+statename+'">'+text+'</span>';
                 } else if (val == "2") {
-                    return '个人消息';
+                    text = "个人消息"
+                    statename = 'label-success';
+                    return '<span class="label label-sm '+statename+'">'+text+'</span>';
                 } else if (val == "3") {
                     return '物流消息';
                 } else {
@@ -230,6 +236,11 @@
                 placeholder: '输入姓名、手机号、昵称查询',
                 // width: '200px'
             });
+
+            //内容图片
+            function pickMessagePic(val,row,rowdata) {
+                return'<img width="40px" height="40px" alt="" src="'+val+'"/>';
+            }
 
             $(window).triggerHandler('resize.jqGrid');//trigger window resize to make the grid get the correct size
         });
