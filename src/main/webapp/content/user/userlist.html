@@ -272,7 +272,7 @@
                     {name: 'uMmdNo',index:'u_mmd_no', width: 120, editable: true},
                     {name: 'uMmdMoney',index:'u_mmd_money',width: 150, editable: true},
                     {name: 'uRelevancyDate',index:'u_relevancy_date', width: 150, editable: true},
-                    {name: 'source',index:'source',width: 80, editable: true},
+                    {name: 'source',index:'source',width: 80, editable: true,formatter:pickSource},
                     {name: 'uCrtdate',index:'u_crtdate', width: 120, editable: true},
                     {name: 'uCrtuser',index:'u_crtuser', width: 120, editable: true}
 
@@ -302,6 +302,17 @@
             }
 
             /***以下为表单格式处理***/
+
+            function pickSource(val) {
+                if(val == '1') {
+                    return '<span >IOS</span>';
+                } if(val == '2') {
+                    return '<span >安卓</span>';
+                }if(val==null){
+                    return '<span >'+""+'</span>';
+                }
+
+            }
 
             function pickState(val, row, rowdata){
                 console.log(row);

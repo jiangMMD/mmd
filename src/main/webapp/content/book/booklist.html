@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>订单维护</title>
+    <!--列表样式信息-->
+    <link rel="stylesheet" href="assets/css/ui.jqgrid.css"/>
+    <link rel="stylesheet" href="assets/css/chosen.css" />
+</head>
+<body>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="space-6"></div>
+        <div class="well">
+            <form id="queryForm" class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-xs-3">
+                        <label for="book_no" class="col-sm-3 control-label no-padding-right">订单号:</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="book_no" name="book_no" class="form-control"/>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-3">
+                        <label for="book_phone" class="col-sm-3 control-label no-padding-right">客户电话:</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="book_phone" name="phone" class="form-control"/>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-3">
+                        <button class="btn btn-primary" type="button" onclick="queryData()">
+                            <i class="ace-icon fa fa-search bigger"></i>
+                            查询
+                        </button>
+                        <button class="btn" type="reset" onclick="resetForm()">
+                            <i class="ace-icon fa fa-refresh bigger"></i>
+                            重置
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="space-12"></div>
+        <div class="row">
+            <div class="col-xs-2">
+                <a id="book_edit" data-rel="tooltip" title="修改" data-original-title="修改" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon fa fa-pencil blue bigger-125"></i></a>
+                <a id="book_del" data-rel="tooltip" title="删除" data-original-title="删除" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon fa fa-trash-o red bigger-125"></i></a>
+            </div>
+        </div>
+        <table id="grid-table"></table>
+        <div id="grid-pager"></div>
+    </div>
+</div>
+<script>
+    var scripts = [null, "assets/js/date-time/bootstrap-datepicker.js",
+        "assets/js/jqGrid/jquery.jqGrid.custom.js",
+        "assets/js/chosen.jquery.js",
+        "assets/js/jquery.PrintArea.js",
+        "assets/js/jqGrid/i18n/grid.locale-cn.js", null];
+
+    var grid_selector = "#grid-table";
+    var pager_selector = "#grid-pager";
+
+
+    //查询表单数据
+    function queryData() {
+        var formData = $("#queryForm").serializeJson();
+        jQuery(grid_selector).jqGrid("setGridParam", {postData: formData}).trigger("reloadGrid", [{page: 1}]);
+    }
+    $(".page-content-area").ace_ajax('loadScripts', scripts, function() {
+        $(function () {
+            var parent_column = $(grid_selector).closest('[class*="col-"]');
+            $(window).on('resize.jqGrid', function () {
+                $(grid_selector).jqGrid('setGridWidth', parent_column.width());
+                $(grid_selector).jqGrid('setGridHeight', $(window).height() - 360);
+            });
+
+            //重新进入时，销毁原有页面信息
+            $(document).one('ajaxloadstart.page', function (e) {
+                $.jgrid.gridDestroy(grid_selector);
+                $('.ui-jqdialog').remove();
+            });
+
+            //删除数据
+            $("#book_del").on("click", function(){
+                var ids = $(grid_selector).jqGrid('getGridParam','selarrrow');
+                if(!ids || ids.length === 0) {
+                    showWarnInfo("请至少选择一条记录!");
+                }else{
+                    bootbox.confirm("确认删除选中的客户信息? ", function(result) {
+                        if(result) {
+                            myAjax("/book/delBook", {ids: ids.join(",")}, function(result) {
+                                if(result.code === 1) {
+                                    showSuccInfo("操作成功！");
+                                    queryData();
+                                }else{
+                                    showErrorInfo(result.message);
+                                }
+                            })
+                        }
+                    });
+                }
+            });
+
+            $(grid_selector).jqGrid({
+                url: projectUrl + "/book/getBookList", //获取所有订单信息
+                datatype: "json",
+                mtype: 'POST',
+                height: $(window).height() - 360,
+                colNames: ['ID','交易状态','支付状态', '用户昵称','用户名', '电话','订单号','购买的产品个数',
+                    '待付时的RMB价格','原有的RMB总金额','待付时的MMD价格','原有的MMD总金额','支付的总金额'],
+                colModel: [
+                    {name: 'bid', key: true, width: 60, hidden: true, frozen: true},
+                    {name: 'state', width: 100, editable: true ,formatter:pickState},
+                    {name: 'paystate', width: 100, editable: true,formatter:pickPaystate},
+                    {name: 'nick', width: 100, editable: true},
+                    {name: 'name', width: 100, editable: true},
+                    {name: 'phone', width: 100, editable: true},
+                    {name: 'bookno', width: 200, editable: true},
+                    {name: 'prodnum', width: 200,height:300, editable: true},
+                    {name: 'rmbprice', width: 150, editable: true},
+                    {name: 'totalrmbprice', width: 150, editable: true},
+                    {name: 'mmdprice', width: 150, editable: true},
+                    {name: 'totalmmdprice', width: 150, editable: true},
+                    {name: 'paytotal', width: 100, editable: true},
+
+                ],
+                sortname: 'paytotal',
+                sortorder: 'desc',
+                ondblClickRow: queryDetail,
+                viewrecords: true,
+                rowNum: 10,
+                rowList: [10, 20, 30],
+                pager: pager_selector,
+                autowidth: true,
+                autoScroll: false,
+                shrinkToFit: false,
+                multiselect: true,
+                multiboxonly: true,
+                loadError: function (xhr, status, error) {
+                    showErrorInfo("服务异常;"+error);
+                },
+                loadComplete: function() {
+                    //分页信息
+                    Jq_loadComlete();
+                }
+            });
+            //支付状态
+            function pickPaystate(val) {
+                if(val == '1') {
+                    return '<span class="red2">未支付</span>';
+                }if(val=='2'){
+                    return '<span class="black">已付款</span>';
+                }
+            }
+            //交易状态
+            function pickState(val) {
+                if(val == '2') {
+                    return '<span class="black">已完成</span>';
+                }else if(val == '1') {
+                    return '<span class="red2">待支付</span>';
+                }else if(val == '3') {
+                    return '<span class="orange">取消交易</span>';s
+                }
+            }
+
+            function queryDetail(id) {
+                toCustomUrl("server/linebook/toLineBookDetail?bid="+id);
+            }
+
+
+        })
+    })
+</script>
+</body>
+</html>

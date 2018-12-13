@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mmd.dao.BookDao">
+    <delete id="delBook">
+        DELETE  from book where bid in <foreach collection="ids" open="(" close=")" separator="," item="id">#{id}</foreach>
+    </delete>
+
+
+    <select id="getBookList" resultType="java.util.Map">
+        select bid,
+        (select u_nick from user u where u.u_id = uid )nick,
+        (select u_name from user u where u.u_id = uid )name,
+        (select u_phone from user u where u.u_id = uid )phone,
+        bookno,rmbprice,mmdprice,totalrmbprice,totalmmdprice,paytotal,state,paystate from book
+          <where>
+              1=1
+              <if test="params.phone != null and params.phone != ''">
+                  and (select u_phone from user u where u.u_id = uid ) like concat('%', #{params.phone}, '%')
+               </if>
+              <if test="params.book_no != null and params.book_no != ''">
+                  and bookno like concat('%', #{params.book_no}, '%')
+              </if>
+          </where>
+    </select>
+
+</mapper>
