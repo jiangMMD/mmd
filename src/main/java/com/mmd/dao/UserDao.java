@@ -1,5 +1,6 @@
 package com.mmd.dao;
 
+import com.mmd.model.Shipaddress;
 import com.mmd.model.User;
 import org.apache.ibatis.annotations.Param;
 
@@ -20,6 +21,20 @@ public interface UserDao {
     void updateUser(User user);
 
     int checkPhone(User user);
+
+    User findUserWithNameAndPass(User user);
+
+    List<Shipaddress> queryAddress(@Param("uid") String uid);
+
+    List<Shipaddress> queryAddressByUid(@Param("uid") String uid);
+
+    Shipaddress getShipAddress(@Param("uid") String uid);
+
+    void delAddress(@Param("id") String id);
+
+    int getAddressNumsWithCids(@Param("ids") List<String> ids);
+
+    void updAddress(Shipaddress shipaddress);
 
     List<Map<String, Object>> getUserByKey(@Param("key") String key);
 }

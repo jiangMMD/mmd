@@ -16,16 +16,16 @@
 
     </update>
 
-
     <select id="getUser" resultType="com.mmd.model.User">
-      select u_id,u_name,u_sex,u_phone,u_nick,u_age,u_identity,u_integral,
-              u_address,u_mmd_no,u_mmd_money,u_relevancy_date,u_crtdate,u_crtuser
+      select u_id,u_name,u_sex,u_phone,u_nick,u_age,u_identity,u_integral,u_headicon,
+              u_address,u_mmd_no,u_mmd_money,u_relevancy_date,u_crtdate,u_crtuser,source,
+        (select count(*) from shipaddress ship where ship.uid = u_id and ship.recsts = '1') shipAddressCount
       from user where recsts = '1'
         <if test="uPhone != null and uPhone != ''">
             and u_phone = #{uPhone}
         </if>
         <if test="uName != null  and uName != ''">
-            and u_name like concat('%', #{uName}, '%')
+            and u_name like concat ('%', #{uName}, '%')
         </if>
 
     </select>
@@ -55,6 +55,35 @@
             and u_id != #{uId}
         </if>
     </select>
+    <select id="findUserWithNameAndPass" resultType="com.mmd.model.User">
+        select u_id,u_name,u_phone,u_nick,u_sex,u_age,u_integral,u_password,u_identity,
+                u_address,u_mmd_password,u_mmd_money,u_relevancy_date,u_crtdate,u_crtuser
+        from user where u_name = #{uName}and u_password = #{uPassword}
 
+    </select>
+    <select id="queryAddress" resultType="com.mmd.model.Shipaddress">
+      select id, delivery_name,delivery_phone,delivery_address from shipaddress where uid = #{uid} and recsts = '1' order by crtdate DESC
+    </select>
+    <select id="queryAddressByUid" resultType="com.mmd.model.Shipaddress">
+        select delivery_name,delivery_phone,delivery_address from shipaddress where uid = #{uid}and recsts = '1'
+    </select>
+    <select id="getShipAddress" resultType="com.mmd.model.Shipaddress">
+        select uid,delivery_name,delivery_phone,delivery_address,isdefault,zipcode,province,city,districtn,
+                street,crtuser,crtdate from shipaddress where recsts = '1'
+        <if test="deliveryAddress != null and deliveryAddress != ''">
+            and delivery_address = #{deliveryAddress}
+        </if>
+    </select>
+    <select id="getAddressNumsWithCids" resultType="java.lang.Integer">
+        SELECT count(*) from shipaddress where recsts = '1' and id in <foreach collection="ids"  item="id" open="(" close=")" separator=",">#{id}</foreach>
+    </select>
+
+    <update id="delAddress">
+        update shipaddress set recsts = 'D' where id  = #{id}
+    </update>
+    <update id="updAddress">
+        update shipaddress set uid =#{uid},delivery_name = #{deliveryName},delivery_phone = #{deliveryPhone},delivery_address =#{deliveryAddress},
+                zipcode = #{zipcode},province= #{province},city=#{city},districtn =#{districtn},street = #{street} where id =#{id}
+    </update>
 
 </mapper>

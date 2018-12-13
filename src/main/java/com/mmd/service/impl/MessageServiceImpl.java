@@ -19,6 +19,7 @@ import java.util.Objects;
 
 @Service
 public class MessageServiceImpl implements MessageService {
+
     @Autowired
     private MessageDao messageDao;
 

@@ -11,8 +11,8 @@ public class Merchant {
   private String merName;
   private String merDesc;
   private String merAddress;
-  private String merHomeimg;
-  private String merHomeicon;
+  private String merHomeimg; //请求地址
+  private String merHomeicon; //请求地址
   private String merLinkman;
   private String merLinkphone;
   private String merWeixin;
