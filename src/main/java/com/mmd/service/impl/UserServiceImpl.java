@@ -20,7 +20,7 @@ import java.util.Map;
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
-     private UserDao userDao;
+    UserDao userDao;
 
     @Autowired
     private HttpSession session;
@@ -35,6 +35,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Result delUser(String ids) {
+        int usernums = userDao.getUserNumsWithCids(PublicUtil.toListByIds(ids));
+        if(usernums > 0) {
+            return new Result(0, "操作失败，选中的客户中有订单信息，无法删除； 如需删除，请联系管理员进行删除");
+        }
         userDao.delUser(PublicUtil.toListByIds(ids));
         return new Result();
 
@@ -79,29 +83,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result queryAddress(String uid) {
-        List<Shipaddress> address =  userDao.queryAddress(uid);
-        return new Result(1, "查询成功！", address);
-
+    public List<Map<String,Object>> getUserByKey(String key){
+      return userDao.getUserByKey(key);
     }
-
-    @Override
-        public Result queryAddressByUid(String uid) {
-        List<Shipaddress> address =  userDao.queryAddress(uid);
-        return new Result(1, "查询成功！", address);
-    }
-
-    @Override
-    public Result delAddress(String id) {
-        userDao.delAddress(id);
-        return new Result();
-    }
-
-    @Override
-    public List<Map<String, Object>> getUserByKey(String key) {
-        return userDao.getUserByKey(key);
-    }
-
 
 
 }

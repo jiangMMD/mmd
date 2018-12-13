@@ -42,6 +42,36 @@
         </collection>
     </resultMap>
 
+    <insert id="insertSku" useGeneratedKeys="true" keyProperty="params.sku_id" keyColumn="sku_id">
+        insert into prod_sku(pid, sku_val, sku_valname, price, mmdprice, repertory)
+        VALUES (#{params.pid}, #{params.sku_val}, #{params.skuValname}, #{params.price}, #{params.mmdprice}, #{params.repertory})
+    </insert>
+    <insert id="insertSkuRel">
+        insert into prod_proprel(pid, prop_name_id, prop_val_id)
+        VALUES
+        <foreach collection="set" item="data" separator=",">
+            (#{pid}, '${data.prop_name_id}', '${data.prop_val_id}')
+        </foreach>
+    </insert>
+
+    <insert id="addProd" parameterType="productsinfo">
+        insert into productsinfo(mer_id, prodno, pname, title, `desc`, homeimg, paramimg, categoryid, shopprice,
+        shopmmdprice, costprice, service_ids, crtuser, crtdate)
+        VALUES (#{merId}, #{prodno}, #{pname}, #{title}, #{desc}, #{homeimg}, #{paramimg}, #{categoryid}, #{shopprice},
+        #{shopmmdprice}, #{costprice}, #{serviceIds}, #{crtuser}, now())
+    </insert>
+    <insert id="uploadCarousel" useGeneratedKeys="true" keyColumn="id" keyProperty="params.id">
+        insert into prod_carousal(pid, pd_url, crtdate)
+        VALUES (#{pid}, #{goods_url}, now())
+    </insert>
+
+    <delete id="delAllSkuRel">
+        DELETE from prod_proprel where pid = #{pid}
+    </delete>
+    <delete id="delCarousel">
+        delete from prod_carousal where pd_url like concat('%', #{filename}) and pid = #{pid}
+    </delete>
+
     <select id="getProClassifyByKey" resultType="map">
         select id, `name` text  from classify
         <where>
@@ -91,17 +121,74 @@
         update productsinfo set state = '2' where pid in <foreach collection="ids" item="id" open="(" close=")" separator=",">#{id}</foreach>
     </update>
 
+    <update id="updateSku">
+        update prod_sku set sku_val = #{params.sku_val}, sku_valname = #{params.skuValname},
+          price = #{params.price}, mmdprice = #{params.mmdprice}, repertory = #{params.repertory} where sku_id = #{params.sku_id}
+    </update>
+    <update id="delProdSku">
+        update prod_sku set recsts = 'D' where sku_id = #{sku_id}
+    </update>
+
+    <update id="updateProd" parameterType="productsinfo">
+        update productsinfo set pname = #{pname}, title = #{title},
+         categoryid = #{categoryid}, volume = #{volume}, weight = #{weight},
+         shopprice = #{shopprice}, shopmmdprice = #{shopmmdprice},
+         isproportion = #{isproportion}, costprice = #{costprice}, `desc` = #{desc},
+         service_ids = #{serviceIds}
+         <if test="homeimg != null  and homeimg != ''">
+             ,homeimg = #{homeimg}
+         </if>
+        <if test="paramimg != null  and paramimg != ''">
+            ,paramimg = #{paramimg}
+        </if>
+         where pid = #{pid}
+    </update>
+
     <select id="getProductDetail" resultType="productsinfo">
         select * from productsinfo where pid = #{id}
     </select>
 
     <select id="getProdCarousal" resultType="prodCarousal">
         select * from prod_carousal where pid = #{id}
-        order by pd_order
+        order by crtdate
     </select>
 
-    <select id="getCarousalList" resultType="ProdCarousal" parameterType="ProdCarousal">
-                select * from prod_carousal where pid = #{id}
-        order by pd_order
+    <select id="getCarousalList" resultType="ProdCarousal" parameterType="string">
+        select id, pd_url from prod_carousal where pid = #{id} order by pd_order
     </select>
+
+    <select id="getProdService" resultType="map">
+        select ps.sid, ps.content from prod_service ps
+        where concat(',', (select service_ids from productsinfo p where p.pid = #{id}), ',') like concat('%,', ps.sid, ',%')
+    </select>
+
+    <select id="getProdSku" resultType="map">
+        select sku_id, sku_val, sku_valname, price, mmdprice, repertory, salenum from prod_sku sku
+        where sku.pid = #{id} and recsts = '1'
+    </select>
+
+    <select id="getProdPropBySku" resultType="map">
+        (select pn.prop_id, pn.prop_name, pv.pv_id, pv.prop_id propval_id, pv.prop_val
+        from prod_skupropname pn left join prod_skupropval pv on pn.prop_id = pv.prop_name_id
+        where pv.prop_name_id = #{parMap.prop_name_id} and pv.prop_id = #{parMap.prop_val_id})
+    </select>
+
+    <select id="getAllProdService" resultType="map">
+        select sid, content, CONCAT(',', '${serviceIds}', ',') LIKE CONCAT('%,', sid, ',%') isexit  from prod_service
+    </select>
+
+    <select id="getProdParamImg" resultType="map">
+        select id, img  from prod_detailimg where pid = #{id} order by ord
+    </select>
+
+    <select id="getProdSkuDetail" resultType="map">
+        select sku_id, sku_val, price, mmdprice, repertory from prod_sku where sku_id = #{sku_id}
+    </select>
+
+    <select id="getAllProdSkuVals" resultType="string">
+        select sku_val from prod_sku where pid = #{pid} and recsts = '1'
+    </select>
+
+
+
 </mapper>

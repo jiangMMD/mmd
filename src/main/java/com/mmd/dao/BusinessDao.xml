@@ -6,6 +6,26 @@
         update merchant set recsts = 'D' where mer_id in <foreach collection="ids" item="id" open="(" close=")" separator=",">#{id}</foreach>
     </update>
 
+    <update id="uplineBusiness">
+        update merchant set mer_type = '2' where mer_id in <foreach collection="ids" item="id" open="(" close=")" separator=",">#{id}</foreach>
+    </update>
+
+    <update id="downlineBusiness">
+        update merchant set mer_type = '1' where mer_id in <foreach collection="ids" item="id" open="(" close=")" separator=",">#{id}</foreach>
+    </update>
+
+    <update id="updMerchant">
+        update merchant set mer_qq = #{merQq},mer_shortname = #{merShortname}, mer_ename = #{merEname}, mer_name = #{merName}, mer_desc = #{merDesc}, mer_address = #{merAddress}, mer_linkman = #{merLinkman}, mer_linkphone = #{merLinkphone}, mer_weixin = #{merWeixin}, hotval = #{hotval}, `update` = now(), upduser = #{upduser}
+         <if test="merHomeimg != null and merHomeimg != ''">
+             , mer_homeimg = #{merHomeimg}
+         </if>
+        <if test="merHomeimg != null and merHomeimg != ''">
+            , mer_homeicon = #{merHomeicon}
+        </if>
+
+        where mer_id = #{merId}
+    </update>
+
     <select id="getMerchantList" resultType="merchant" parameterType="merchant">
         select * from merchant where recsts != 'D'
         <if test="merName != null and merName !=''">
@@ -17,9 +37,22 @@
         <if test="merType != null and merType != ''">
             and mer_type = #{merType}
         </if>
+        <if test="isHot==1">
+            and hotval > 0
+        </if>
+        <if test="isHot==2">
+            and hotval = 0
+        </if>
     </select>
 
     <select id="getBusinessDetail" resultType="merchant">
         select * from merchant where mer_id = #{id}
     </select>
+
+    <insert id="addMerchant">
+          insert into merchant(mer_name,mer_shortname,mer_ename,mer_desc,mer_address,mer_homeicon,mer_homeimg,mer_linkman,mer_linkphone,mer_weixin,mer_qq,hotval,crtuser,crtdate)
+          values (#{merName},#{merShortname},#{merEname},#{merDesc},#{merAddress},#{merHomeicon},#{merHomeimg},#{merLinkman},#{merLinkphone},#{merWeixin},#{merQq},#{hotval},#{crtuser},now())
+
+    </insert>
+
 </mapper>
