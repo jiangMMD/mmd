@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mmd.dao.PropvalDao">
+    <select id="getPropValDetail" resultType="java.util.Map" resultMap="propMap">
+        select
+          n.prop_id,n.prop_name,n.recsts,v.prop_id,v.prop_name_id,v.pv_id,v.prop_val,v.recsts
+        from prod_skupropname n left join prod_skupropval v on v.prop_name_id = n.prop_id
+        where n.recsts = '1' and v.recsts = '1' and v.prop_name_id = #{id}
+    </select>
+
+    <resultMap id="propMap" type="map">
+        <id column="n.prop_id" property="propnameId"/>
+        <result column="n.prop_name" property="propName"/>
+        <collection property="propvalList" ofType="map" javaType="arrayList">
+            <id column="v.pv_id" property="pvId"/>
+            <result column="v.prop_val" property="propVal"/>
+            <result column="v.prop_id" property="propId"/>
+        </collection>
+    </resultMap>
+</mapper>
