@@ -209,21 +209,6 @@
                 $(this).ajaxSubmit({
                     url: projectUrl + "/user/saveUserInfo",
                     type: "post",
-                    // beforeSubmit: function() {
-                    //     var html = "";
-                    //     html += '<div class="center blue"><i class="ace-icon fa fa-spinner fa-spin orange"></i>上传中...请耐心等待</div>'
-                    //     html += '<div class="progress pos-rel" style="margin-top:20px;" data-percent="0%">';
-                    //     html += '<div class="progress-bar" style="width:0%;"></div>';
-                    //     html += '</div>';
-                    //     bootbox.dialog({
-                    //         message: html,
-                    //         closeButton: null,
-                    //     })
-                    // },
-                    // uploadProgress: function (event, position, total, percentComplete) {
-                    //     $(".progress").attr("data-percent", percentComplete+"%");
-                    //     $(".progress-bar").css("width", percentComplete+"%");
-                    // },
                     success: function (result) {
                         bootbox.hideAll();
                         if (result.code === 1) {

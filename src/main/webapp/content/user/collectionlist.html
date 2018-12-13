@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>收藏记录</title>
+    <!--列表样式信息-->
+    <link rel="stylesheet" href="assets/css/ui.jqgrid.css"/>
+    <link rel="stylesheet" href="assets/css/chosen.css" />
+</head>
+<body>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="space-6"></div>
+        <div class="well">
+            <form id="queryForm" class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-xs-3">
+                        <label for="alinkphone" class="col-sm-3 control-label no-padding-right">电话:</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="alinkphone" name="phone" class="form-control"/>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-3">
+                        <button class="btn btn-primary" type="button" onclick="queryData()">
+                            <i class="ace-icon fa fa-search bigger"></i>
+                            查询
+                        </button>
+                        <button class="btn" type="reset" onclick="resetForm()">
+                            <i class="ace-icon fa fa-refresh bigger"></i>
+                            重置
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <table id="grid-table"></table>
+        <div id="grid-pager"></div>
+    </div><!-- /.col -->
+</div>
+
+<script>
+    var scripts = [null, "assets/js/date-time/bootstrap-datepicker.js",
+        "assets/js/jqGrid/jquery.jqGrid.custom.js",
+        "assets/js/chosen.jquery.js",
+        "assets/js/jqGrid/i18n/grid.locale-cn.js", null];
+
+    var grid_selector = "#grid-table";
+    var pager_selector = "#grid-pager";
+
+    //查询表单数据
+    function queryData() {
+        var formData = $("#queryForm").serializeJson();
+        jQuery(grid_selector).jqGrid("setGridParam", {postData: formData}).trigger("reloadGrid", [{page: 1}]);
+    }
+    $('.page-content-area').ace_ajax('loadScripts', scripts, function () {
+
+        $('[data-rel=tooltip]').tooltip();
+
+        var parent_column = $(grid_selector).closest('[class*="col-"]');
+        $(window).on('resize.jqGrid', function () {
+            $(grid_selector).jqGrid('setGridWidth', parent_column.width());
+            $(grid_selector).jqGrid('setGridHeight', $(window).height() - 360);
+        });
+
+        //重新进入时，销毁原有页面信息
+        $(document).one('ajaxloadstart.page', function (e) {
+            $.jgrid.gridDestroy(grid_selector);
+            $('.ui-jqdialog').remove();
+        });
+
+        $(grid_selector).jqGrid({
+            url: projectUrl + "/user/getCollections", //获取收藏信息
+            datatype: "json",
+            mtype: 'POST',
+            height: $(window).height() - 360,
+            colNames: ['ID', '用户昵称','用户姓名', '电话','产品编号','产品名','所属商家名','产品图','MMD售价','RMB售价', '收藏时间'],
+            colModel: [
+                {name: 'id', key: true, width: 60, hidden: true, frozen: true},
+                {name: 'nick', width:120},
+                {name: 'name', width:120},
+                {name: 'phone', width: 150},
+                {name: 'prodno', width: 200},
+                {name: 'pname', width: 150},
+                {name: 'mer_name', width: 150},
+                {name: 'homeimg', width: 150},
+                {name: 'shopmmdprice', width: 150},
+                {name: 'shopprice', width: 150},
+                {name: 'colldate', width: 150},
+            ],
+            sortname: 'colldate',
+            sortorder: 'desc',
+            viewrecords: true,
+            rowNum: 10,
+            rowList: [10, 20, 30],
+            pager: pager_selector,
+            autowidth: true,
+            autoScroll: false,
+            shrinkToFit: false,
+            multiselect: true,
+            multiboxonly: true,
+            loadError: function (xhr, status, error) {
+                showErrorInfo("服务异常;"+error);
+            },
+        });
+
+    });
+
+</script>
+</body>
+</html>

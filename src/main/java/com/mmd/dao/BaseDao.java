@@ -30,4 +30,11 @@ public interface BaseDao {
     List<Map<String, Object>> getAllCity();
 
     List<Map<String, Object>> getAllPost();
+
+    List<Map<String,Object>> getFeedBack(@Param("params") Map<String, String> params);
+
+    void dealSuggest(@Param("id") String id);
+
+
+
 }

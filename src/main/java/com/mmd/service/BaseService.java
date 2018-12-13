@@ -2,7 +2,11 @@ package com.mmd.service;
 
 
 import com.mmd.model.Role;
+import com.mmd.pjo.Page;
 import com.mmd.pjo.Result;
+import com.mmd.pjo.ResultPage;
+
+import java.util.Map;
 
 public interface BaseService {
 
@@ -24,5 +28,9 @@ public interface BaseService {
     Result getAllCity();
 
     Result getAllPost();
+
+    ResultPage getFeedBack(Map<String, String> params, Page page);
+
+    Result dealSuggest(String id);
 
 }

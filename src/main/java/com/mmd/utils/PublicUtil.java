@@ -422,5 +422,8 @@ public class PublicUtil {
         return simpleDateFormat.parse(dateStr);
     }
 
+    public static boolean isEmptyObj(Object object) {
+        return object == null || "".equals(object);
+    }
 
 }

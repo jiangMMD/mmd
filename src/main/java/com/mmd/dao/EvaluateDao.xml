@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mmd.dao.EvaluateDao"><update id="updateStarNum">
+        update productsinfo set commentcount = commentcount - 1
+         <if test="evalStar &lt; 3">
+             ,badcount = badcount - 1
+         </if>
+        <if test="evalStar == 3">
+            ,mediumccount = mediumccount - 1
+        </if>
+        <if test="evalStar > 3">
+            ,bestcount = bestcount - 1
+        </if>
+         where pid = (select pid from prod_evaluate where id = #{id})
+
+    </update>
+    <update id="updateAvgStar">
+        update productsinfo set
+        average = (select round(avg(starlevel), 1) from prod_evaluate pe where pe.pid = #{pid})
+        where pid = #{pid}
+
+    </update>
+
+
+    <select id="getEvaluate" resultType="map">
+       select  p.pid, p.pname, p.homeimg, p.commentcount, p.bestcount, p.mediumccount,p.badcount, p.average  from productsinfo p
+      <where>
+          p.recsts = '1'
+          <if test="pid !=null and pid!=''">
+              and pid = #{pid}
+          </if>
+      </where>
+
+    </select>
+    <select id="getProdEvaluateDetail" resultType="com.mmd.model.ProdEvaluate">
+        select p.pid, p.pname, p.homeimg, p.commentcount, p.bestcount, p.mediumccount,p.badcount, p.average  from productsinfo p
+       where recsts='1'and pid = #{pid}
+    </select>
+    <select id="getWord" resultType="map">
+         select pe.id, pe.starlevel,
+         (select sku_valname from prod_sku sku where sku.sku_id = pe.sku_id) sku_valname,
+        (select u_nick from user u where u.u_id = pe.uid) unick,
+        (select word from sightword s where s.id = pe.sw_id) word,
+        date_format(pe.evdate, '%Y-%m-%d %T') evdate  from prod_evaluate pe where pe.pid = #{pid}
+    </select>
+
+    <select id="getPnameByKey" resultType="java.util.Map">
+        select pid id, concat(ifnull(pname, '')) text
+        from productsinfo where recsts = '1'
+        <if test="key !=null and key !=''">
+            and ((pname like concat('%', #{key}, '%')))
+        </if>
+        limit 10
+    </select>
+    <select id="getEvalStar" resultType="map">
+        select pid, starlevel from prod_evaluate where id = #{id}
+    </select>
+
+
+    <delete id="delEvaluate">
+        DELETE  from prod_evaluate where id in <foreach collection="ids" open="(" close=")" separator="," item="id">#{id}</foreach>
+    </delete>
+
+    <delete id="delWord">
+        delete from prod_evaluate where id = #{id}
+    </delete>
+</mapper>
