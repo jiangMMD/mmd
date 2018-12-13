@@ -42,6 +42,31 @@
         select data_code, data_name from bs_basedict where dict_code = 'ZW001'
     </select>
 
+    <select id="getPropData" resultType="map">
+        select prop_id id, prop_name text from prod_skupropname
+    </select>
+
+    <select id="getPropValByPropId" resultType="map">
+        select prop_id id, prop_val text from prod_skupropval where prop_name_id = #{prop_id}
+    </select>
+
+    <select id="getAllClassify" resultType="map">
+        select id, name from classify order by `order`
+    </select>
+
+    <select id="getPriceToMMDRate" resultType="map">
+        select * from rateinfo where type = '1' limit 1
+    </select>
+
+    <select id="getMerByKey" resultType="map">
+        select mer_id id, mer_name text from merchant
+        where recsts = '1'
+        <if test="key != null  and key != ''">
+            and mer_name like concat('%,', #{key}, ',%')
+        </if>
+        limit 10
+    </select>
+
     <resultMap id="menuOrderMap" type="Menu">
         <id property="mid" column="mid"></id>
         <result property="mname" column="mname"></result>

@@ -24,8 +24,5 @@ public interface UserService {
 
     Result delAddress(String id);
 
-
-
-
     List<Map<String,Object>> getUserByKey(String key);
 }

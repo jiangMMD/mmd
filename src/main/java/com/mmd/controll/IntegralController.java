@@ -51,6 +51,7 @@ public class IntegralController {
     public ModelAndView shopcatdetail(String catId) {
         ModelAndView modelAndView = new ModelAndView();
         Map<String, Object> shopdetail = shopcatService.shopcatDetail(catId);
+        System.out.println(shopdetail);
         modelAndView.addObject("shopdetail", shopdetail);
         modelAndView.setViewName("../content/user/shopcatdetail.jsp");
         return modelAndView;

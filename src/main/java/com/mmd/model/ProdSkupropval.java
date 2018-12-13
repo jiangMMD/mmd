@@ -6,9 +6,7 @@ public class ProdSkupropval {
   private Long pvId;
   private Long propId;
   private String propVal;
-  private String propName;
   private Long propNameId;
-  private String recsts;
 
   public Long getPvId() {
     return pvId;
@@ -34,27 +32,11 @@ public class ProdSkupropval {
     this.propVal = propVal;
   }
 
-  public String getPropName() {
-    return propName;
-  }
-
-  public void setPropName(String propName) {
-    this.propName = propName;
-  }
-
   public Long getPropNameId() {
     return propNameId;
   }
 
   public void setPropNameId(Long propNameId) {
     this.propNameId = propNameId;
-  }
-
-  public String getRecsts() {
-    return recsts;
-  }
-
-  public void setRecsts(String recsts) {
-    this.recsts = recsts;
   }
 }

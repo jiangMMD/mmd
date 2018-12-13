@@ -4,12 +4,15 @@
 <head>
     <title>员工维护详细 - 魔晶</title>
     <link rel="stylesheet" href="assets/css/select2.css"/>
+<<<<<<< HEAD
+=======
     <link rel="stylesheet" href="assets/css/chosen.css"/>
     <link rel="stylesheet" href="assets/css/bootstrap-datepicker3.css" />
     <link rel="stylesheet" href="assets/css/bootstrap-timepicker.css" />
     <link rel="stylesheet" href="assets/css/daterangepicker.css" />
     <link rel="stylesheet" href="assets/css/bootstrap-datetimepicker.css" />
     <link rel="stylesheet" href="assets/css/colorbox.css" />
+>>>>>>> origin/master
     <style>
         .form-group {
             margin-left: 0 !important;
@@ -58,8 +61,12 @@
                             </div>
 
                             <div id="userTypeId" class="col-xs-3 form-group">
+<<<<<<< HEAD
+                                <label class="control-label">用户<span class="red">*</span></label>
+=======
                                 <label class="control-label">用户<span class="red">*</span><span class="help-button" data-rel="popover" data-trigger="hover" data-placement="right" data-content="个人消息可不选择用户，作为发送给所有用户的个人消息。"
                                                                                                title="" data-original-title="设置说明">?</span></label>
+>>>>>>> origin/master
                                 <select class="form-control" id="userId" name="userId"></select>
                             </div>
 
@@ -73,6 +80,8 @@
                                 <input class="form-control" name="content" value="${message.content}">
                             </div>
                         </div>
+<<<<<<< HEAD
+=======
                         <div class="row">
                             <div class="col-xs-3 form-group">
                                 <label class="control-label">内容图片<span class="red">*</span></label>
@@ -115,6 +124,7 @@
 
                             </div>
                         </div>
+>>>>>>> origin/master
                     </div>
                 </div>
             </div>
@@ -132,6 +142,11 @@
 
 <script>
     var scripts = [null,
+<<<<<<< HEAD
+        "assets/js/jquery.form.js",
+        "assets/js/select2.js",
+        null];
+=======
         "assets/js/select2.js",
         "assets/js/date-time/bootstrap-datepicker.js",
         "assets/js/date-time/bootstrap-timepicker.js",
@@ -173,6 +188,7 @@
         $("#iconFile").hide();
     }
 
+>>>>>>> origin/master
     $('.page-content-area').ace_ajax('loadScripts', scripts, function () {
         //获取url中的参数信息
         $(function () {
@@ -183,10 +199,13 @@
                     $this.next().css({'width': $this.parent().width()});
                 })
             });
+<<<<<<< HEAD
+=======
 
             $('[data-rel=popover]').popover({container:'body'});
 
 
+>>>>>>> origin/master
             $("#userId").select2({
                 ajax: {
                     url: projectUrl + '/user/getUserByKey',
@@ -218,6 +237,8 @@
                     $(this).ajaxSubmit({
                         url: projectUrl + "/app/addMessage",
                         type: "post",
+<<<<<<< HEAD
+=======
                         beforeSubmit: function() {
                             var html = "";
                             html += '<div class="center blue"><i class="ace-icon fa fa-spinner fa-spin orange"></i>上传中...请耐心等待</div>'
@@ -233,6 +254,7 @@
                             $(".progress").attr("data-percent", percentComplete+"%");
                             $(".progress-bar").css("width", percentComplete+"%");
                         },
+>>>>>>> origin/master
                         success: function (result) {
                             bootbox.hideAll();
                             if (result.code === 1) {

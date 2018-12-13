@@ -161,6 +161,16 @@
                 datatype: "json",
                 mtype: 'POST',
                 height: $(window).height() - 360,
+<<<<<<< HEAD
+                colNames: ['消息id','消息类型', '用户名', '用戶手机号', '消息主题', '消息内容', '创建时间', '创建人'],
+                colModel: [
+                    {name: 'id', key: true, width: 60, hidden: true, editable: true},
+                    {name: 'type', width: 80,formatter: pickMessageType,editoptions: {value: "1:系统消息; 2:个人消息; 3:物流消息"}},
+                    {name: 'uname', width: 80},
+                    {name: 'uphone', width: 80},
+                    {name: 'title', width: 110},
+                    {name: 'content', width: 150},
+=======
                 colNames: ['消息id','消息类型', '用户名', '用戶手机号', '消息主题', '消息内容', '消息图片','创建时间', '创建人'],
                 colModel: [
                     {name: 'id', key: true, width: 60, hidden: true, editable: true},
@@ -170,6 +180,7 @@
                     {name: 'title', width: 100},
                     {name: 'content', width: 150},
                     {name: 'picUrl', index: 'picUrl', width: 100,formatter:pickMessagePic},
+>>>>>>> origin/master
                     {name: 'crtdate', width: 120},
                     {name: 'crtuser', width: 80},
                 ],
@@ -192,6 +203,12 @@
 
             /***以下为表单格式处理***/
             function pickMessageType(val) {
+<<<<<<< HEAD
+                if (val == "1") {
+                    return '系统消息';
+                } else if (val == "2") {
+                    return '个人消息';
+=======
                 var statename = 'label-info';
                 var text = "";
                 if (val == "1") {
@@ -201,6 +218,7 @@
                     text = "个人消息"
                     statename = 'label-success';
                     return '<span class="label label-sm '+statename+'">'+text+'</span>';
+>>>>>>> origin/master
                 } else if (val == "3") {
                     return '物流消息';
                 } else {
@@ -237,11 +255,14 @@
                 // width: '200px'
             });
 
+<<<<<<< HEAD
+=======
             //内容图片
             function pickMessagePic(val,row,rowdata) {
                 return'<img width="40px" height="40px" alt="" src="'+val+'"/>';
             }
 
+>>>>>>> origin/master
             $(window).triggerHandler('resize.jqGrid');//trigger window resize to make the grid get the correct size
         });
     });

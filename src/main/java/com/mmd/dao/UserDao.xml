@@ -27,7 +27,6 @@
         <if test="uName != null  and uName != ''">
             and u_name like concat ('%', #{uName}, '%')
         </if>
-
     </select>
 
     <select id="getUserByKey" resultType="map">
@@ -55,6 +54,7 @@
             and u_id != #{uId}
         </if>
     </select>
+
     <select id="findUserWithNameAndPass" resultType="com.mmd.model.User">
         select u_id,u_name,u_phone,u_nick,u_sex,u_age,u_integral,u_password,u_identity,
                 u_address,u_mmd_password,u_mmd_money,u_relevancy_date,u_crtdate,u_crtuser

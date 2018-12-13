@@ -7,6 +7,7 @@ import com.mmd.pjo.Result;
 import com.mmd.pjo.ResultPage;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ProductService {
     Result getProClassifyByKey(String key);
@@ -24,4 +25,28 @@ public interface ProductService {
     ProdCarousal getProdCarousal(String id);
 
     List<ProdCarousal> getProdCarousalList(String id);
+
+    List<Map<String,Object>> getProdService(String id);
+
+    List<Map<String,Object>> getProdSku(String id);
+
+    List<Map<String,Object>> getAllProdService(String serviceIds);
+
+    List<Map<String,Object>> getProdParamImg(String id);
+
+    Result getProdSkuDetail(String sku_id);
+
+    Result saveProdSku(Map<String, Object> params);
+
+    Result delProdSku(String sku_id, String pid);
+
+    Result addOrUpdProd(Productsinfo productsinfo);
+
+    Result uploadCarousel(String filename, String goods_url, String pid);
+
+    Result delCarousel(String url, String filename, String pid);
+
+    Result uploadDetailImg(String filename, String goods_url, String pid);
+
+    Result delDetailimg(String url, String filename, String pid);
 }

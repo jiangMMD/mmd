@@ -21,18 +21,18 @@ import java.util.Map;
 @RequestMapping("/user")
 public class UserControll {
     @Autowired
-   private UserService userService;
+    private UserService userService;
 
     @RequestMapping("/getUser")
     @ResponseBody
-    public ResultPage<User> getUser(Page page, User user){
-        return userService.getUser(page,user);
+    public ResultPage<User> getUser(Page page, User user) {
+        return userService.getUser(page, user);
 
     }
 
     @RequestMapping("/delUser")
     public @ResponseBody
-    Result delUser (String ids) {
+    Result delUser(String ids) {
         return userService.delUser(ids);
     }
 
@@ -40,9 +40,9 @@ public class UserControll {
     public ModelAndView toCustomDetail(String uid) {
         ModelAndView modelAndView = new ModelAndView();
         User user = userService.getUserDetail(uid);
-        if(user == null) {
+        if (user == null) {
             modelAndView.setViewName("../content/common/error-403.html");
-        }else{
+        } else {
             modelAndView.addObject("user", user);
             modelAndView.setViewName("../content/user/userdetail.jsp");
         }
@@ -51,21 +51,26 @@ public class UserControll {
 
     @RequestMapping("/saveUserInfo")
     public @ResponseBody
-    Result saveUserInfo(User user){
+    Result saveUserInfo(User user) {
         System.out.println(user);
         return userService.saveUserInfo(user);
     }
+
     @RequestMapping("/queryAddress")
-    public @ResponseBody Result queryAddress(String uid){
+    public @ResponseBody
+    Result queryAddress(String uid) {
         return userService.queryAddress(uid);
     }
+
     @RequestMapping("/queryAddressByUid")
-    public @ResponseBody Result queryAddressByBid(String uid){
+    public @ResponseBody
+    Result queryAddressByBid(String uid) {
         return userService.queryAddressByUid(uid);
     }
 
     @RequestMapping("delAddress")
-    public @ResponseBody Result delAddress(String id){
+    public @ResponseBody
+    Result delAddress(String id) {
         return userService.delAddress(id);
     }
 

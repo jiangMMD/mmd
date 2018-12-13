@@ -3,18 +3,23 @@
 <html>
 <head>
     <title>商品维护 - 魔晶</title>
-    <link rel="stylesheet" href="assets/css/chosen.css"/>
+    <link rel="stylesheet" href="assets/css/select2.css"/>
     <link rel="stylesheet" href="assets/css/bootstrap-datepicker3.css"/>
     <link rel="stylesheet" href="assets/css/bootstrap-timepicker.css"/>
     <link rel="stylesheet" href="assets/css/daterangepicker.css"/>
     <link rel="stylesheet" href="assets/css/bootstrap-datetimepicker.css"/>
     <link rel="stylesheet" href="assets/css/colorbox.css"/>
+    <link rel="stylesheet" href="assets/css/dropzone.css"/>
     <style>
         .form-group {
             margin-left: 0 !important;
             margin-right: 0 !important;
             margin-bottom: 0 !important;
         }
+        /*.dropzone .dz-preview .dz-image {*/
+            /*width:240px;*/
+            /*height:120px;*/
+        /*}*/
     </style>
 </head>
 <body>
@@ -22,7 +27,7 @@
 <div class="page-header">
     <h5>
         <div class="row">
-            <button class="btn btn-default btn-sm" onclick="history.back()">
+            <button type="button" class="btn btn-default btn-sm" onclick="history.back()">
                 <i class="ace-icon fa fa-arrow-left"></i>
                 返回
             </button>
@@ -31,461 +36,419 @@
 </div>
 <div class="row">
     <div class="col-xs-12">
-        <form class="form-horizontal" id="validation-form-productsinfo" method="post">
-            <input type="hidden" name="pid" value="${productsinfo.pid}">
-<%--            <input type="hidden" name="skuId" value="${prodSku.skuId}">--%>
+        <div class="tabbable">
+            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab4">
+                <li class="active">
+                    <a data-toggle="tab" href="#baseprod" aria-expanded="true">产品基本信息</a>
+                </li>
+                <li class="">
+                    <a data-toggle="tab" href="#basecarousal" aria-expanded="false">产品轮播图</a>
+                </li>
+                <li class="">
+                    <a data-toggle="tab" href="#basedetailimg" aria-expanded="false">产品详情图</a>
+                </li>
 
-            <div class="space-20"></div>
+                <li class="">
+                    <a data-toggle="tab" href="#basesku" aria-expanded="false">产品SKU</a>
+                </li>
+            </ul>
 
-            <%--//商品信息--%>
-            <div class="widget-box">
-                <div class="widget-header">
-                    <h4 class="widget-title">商品信息</h4>
-                    <div class="widget-toolbar">
-                        <a href="#" data-action="collapse">
-                            <i class="ace-icon fa fa-chevron-up"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="widget-body">
-                    <div class="widget-main" style="min-height: 200px;">
-                        <div class="row">
-                            <div class="col-xs-3 form-group">
-                                <label class="control-label" for="pname">商品名称<span class="red">*</span></label>
-                                <input class="form-control" id="pname" name="pname" value="${productsinfo.pname}">
-                            </div>
-                            <div class="col-xs-3 form-group">
-                                <label class="control-label" for="title">商品标题<span class="red">*</span></label>
-                                <input class="form-control" id="title" name="title" value="${productsinfo.title}">
-                            </div>
-                            <div class="col-xs-3 form-group">
-                                <label class="control-label" for="desc">商品简介<span class="red">*</span></label>
-                                <input class="form-control" id="desc" name="desc" value="${productsinfo.desc}">
-                            </div>
-
-                            <div class="col-xs-3 form-group">
-                                <label class="control-label" for="categoryid">商品类别</label>
-                                <select name="categoryid" id="categoryid" class="form-control">
-                                    <option value=""></option>
-                                    <option value="9">手表</option>
-                                    <option value="10">项链</option>
-                                    <option value="11">包包</option>
-                                    <option value="12">香水</option>
-                                    <option value="13">纺织品</option>
-                                    <option value="14">古玩</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="space-12"></div>
-                        <div class="row">
-                            <div class="col-xs-3 form-group">
-                                <label class="control-label" for="shopprice">商品价格<span class="red">*</span></label>
-                                <input class="form-control" id="shopprice" name="shopprice" placeholder="RMB价格"
-                                       onblur="test(this.value);" value="${productsinfo.shopprice}">
-                            </div>
-                            <div class="col-xs-3 form-group">
-                                <label class="control-label" for="shopmmdprice">商品价格</label>
-                                <input name="isproportion" class="ace ace-checkbox-2" type="checkbox"/>
-                                <input class="form-control" id="shopmmdprice" name="shopmmdprice" placeholder="MMD价格"
-                                       value="${productsinfo.shopmmdprice}">
-                            </div>
-                            <div class="col-xs-3 form-group">
-                                <label class="control-label" for="costprice">商品成本价<span class="red">*</span></label>
-                                <input class="form-control" id="costprice" name="costprice"
-                                       value="${productsinfo.costprice}">
-                            </div>
-                            <div class="col-xs-3 form-group">
-                                <label class="control-label" for="weight">重量<span class="red">*</span></label>
-                                <input class="form-control" id="weight" name="weight"
-                                       value="${productsinfo.weight}">
-                            </div>
-                        </div>
-
-                        <div class="space-12"></div>
-                        <div class="row">
-                            <div class="col-xs-3 form-group">
-                                <label class="control-label" for="volume">尺寸<span class="red">*</span></label>
-                                <input class="form-control" id="volume" name="volume"
-                                       value="${productsinfo.volume}">
-                            </div>
-                            <div class="col-xs-3 form-group">
-                                <label class="control-label" for="inventory">库存<span class="red">*</span></label>
-                                <input class="form-control" id="inventory" name="inventory"
-                                       value="${productsinfo.inventory}">
-                            </div>
-                            <div class="col-xs-3 form-group">
-                                <label class="control-label" for="sell">销量</label>
-                                <input class="form-control" id="sell" name="sell"
-                                       value="${productsinfo.sell}">
-                            </div>
-                            <div class="col-xs-3 form-group">
-                                <label class="control-label" for="commentcount">总评论数</label>
-                                <input class="form-control" id="commentcount" name="commentcount"
-                                       value="${productsinfo.commentcount}">
-                            </div>
-                        </div>
-
-                        <div class="space-12"></div>
-                        <div class="row">
-                            <div class="col-xs-3 form-group">
-                                <label class="control-label" for="bestcount">好评数</label>
-                                <input class="form-control" id="bestcount" name="bestcount"
-                                       value="${productsinfo.bestcount}">
-                            </div>
-                            <div class="col-xs-3 form-group">
-                                <label class="control-label" for="mediumccount">中评数</label>
-                                <input class="form-control" id="mediumccount" name="mediumccount"
-                                       value="${productsinfo.mediumccount}">
-                            </div>
-                            <div class="col-xs-3 form-group">
-                                <label class="control-label" for="badcount">差评数</label>
-                                <input class="form-control" id="badcount" name="badcount"
-                                       value="${productsinfo.badcount}">
-                            </div>
-
-                            <%-- 默认免运费
-                             <div class="col-xs-3 form-group" style="float:left">
-                                 <label class="control-label" for="expressfee">运费</label>
-                                 <input style="float: left" class="form-control" id="expressfee" name="expressfee"
-                                        placeholder="不填写默认包邮免快递费"
-                                        value="${productsinfo.expressfee}">
-                             </div>--%>
-                        </div>
-
-                        <div class="space-12"></div>
-                        <div class="row">
-                            <div class="col-xs-3 form-group">
-                                <label class="control-label">首页图<span class="red">*</span></label>
-                                <c:if test="${empty productsinfo.homeimg}">
-                                    <input type="file" id="prodHomeimgFile" name="prodHomeimgFile" accept="image/*"/>
-                                    <ul class="ace-thumbnails clearfix" id="imgFile" style="display: none;">
-                                        <li>
-                                            <a href="${productsinfo.homeimg}" data-rel="colorbox">
-                                                <img width="150" height="150" alt="150x150"
-                                                     src="${productsinfo.homeimg}"/>
-                                                <div class="text">
-                                                    <div class="inner">点击查看详细</div>
-                                                </div>
-                                            </a>
-                                            <div class="tools tools-bottom">
-                                                <a href="#" onclick="">
-                                                    <i class="ace-icon fa fa-pencil" title="重新上传"
-                                                       onclick="delImg('imgFile', 'prodHomeimgFile')"></i>
-                                                </a>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </c:if>
-                                <c:if test="${!empty productsinfo.homeimg}">
-                                    <input type="file" id="prodHomeimgFile" name="prodHomeimgFile"
-                                           style="display: none;"/>
-                                    <ul class="ace-thumbnails clearfix" id="imgFile">
-                                        <li>
-                                            <a href="${productsinfo.homeimg}" data-rel="colorbox">
-                                                <img width="150" height="150" alt="150x150"
-                                                     src="${productsinfo.homeimg}"/>
-                                                <div class="text">
-                                                    <div class="inner">点击查看详细</div>
-                                                </div>
-                                            </a>
-                                            <div class="tools tools-bottom">
-                                                <a href="#" onclick="">
-                                                    <i class="ace-icon fa fa-pencil" title="重新上传"
-                                                       onclick="delImg('imgFile', 'prodHomeimgFile')"></i>
-                                                </a>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </c:if>
-                            </div>
-                            <div class="col-xs-3 form-group">
-                                <label class="control-label">商品参数图<span class="red">*</span></label>
-                                <c:if test="${empty productsinfo.paramimg}">
-                                    <input multiple="" type="file" id="prodParamimgFile" name="prodParamimgFile"
-                                           accept="image/*"/>
-                                    <ul class="ace-thumbnails clearfix" id="paramimgFile" style="display: none;">
-                                        <li>
-                                            <a href="${productsinfo.paramimg}" data-rel="colorbox">
-                                                <img width="230" height="106" alt="150x150"
-                                                     src="${productsinfo.paramimg}"/>
-                                                <div class="text">
-                                                    <div class="inner">点击查看详细</div>
-                                                </div>
-                                            </a>
-                                            <div class="tools tools-bottom">
-                                                <a href="#" onclick="">
-                                                    <i class="ace-icon fa fa-pencil" title="重新上传"
-                                                       onclick="delImg('paramimgFile', 'prodParamimgFile')"></i>
-                                                </a>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </c:if>
-                                <c:if test="${!empty productsinfo.paramimg}">
-                                    <input multiple="" type="file" id="prodParamimgFile" name="prodParamimgFile"
-                                           style="display: none;" accept="image/*"/>
-                                    <ul class="ace-thumbnails clearfix" id="paramimgFile">
-                                        <li>
-                                            <a href="${productsinfo.paramimg}" data-rel="colorbox">
-                                                <img width="230" height="106" alt="150x150"
-                                                     src="${productsinfo.paramimg}"/>
-                                                <div class="text">
-                                                    <div class="inner">点击查看详细</div>
-                                                </div>
-                                            </a>
-                                            <div class="tools tools-bottom">
-                                                <a href="#" onclick="">
-                                                    <i class="ace-icon fa fa-pencil" title="重新上传"
-                                                       onclick="delImg('paramimgFile', 'prodParamimgFile')"></i>
-                                                </a>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </c:if>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <%--//是否精品等--%>
-            <div class="widget-box">
-                <div class="widget-body">
-                    <div class="widget-main" style="min-height: 80px;">
-                        <div class="space-8"></div>
-                        <div class="row">
-                            <div class="col-xs-3 form-group">
-                                <div class="checkbox">
-                                    <label>
-                                        <input name="isbest" class="ace ace-checkbox-2" type="checkbox"/>
-                                        <span class="lbl">&nbsp;&nbsp;精品&nbsp;&nbsp;</span>
-                                    </label>
+            <div class="tab-content">
+                <div id="baseprod" class="tab-pane active">
+                    <form class="form-horizontal" id="validation-form-productsinfo" method="post">
+                        <input type="hidden" name="pid" value="${productsinfo.pid}">
+                        <!--产品信息-->
+                        <div class="widget-box">
+                            <div class="widget-header">
+                                <h4 class="widget-title">商品信息</h4>
+                                <div class="widget-toolbar">
+                                    <a href="#" data-action="collapse">
+                                        <i class="ace-icon fa fa-chevron-up"></i>
+                                    </a>
                                 </div>
                             </div>
-                            <div class="col-xs-3 form-group">
-                                <div class="checkbox">
-                                    <label>
-                                        <input name="ishot" class="ace ace-checkbox-2" type="checkbox"/>
-                                        <span class="lbl">&nbsp;&nbsp;热销&nbsp;&nbsp;</span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-xs-3 form-group">
-                                <div class="checkbox">
-                                    <label>
-                                        <input name="isnew" class="ace ace-checkbox-2" type="checkbox"/>
-                                        <span class="lbl">&nbsp;&nbsp;新品&nbsp;&nbsp;</span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-xs-3 form-group">
-                                <div class="checkbox">
-                                    <label>
-                                        <input name="isflashview" class="ace ace-checkbox-2" type="checkbox"/>
-                                        <span class="lbl">&nbsp;&nbsp;首页轮播&nbsp;&nbsp;</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                            <div class="widget-body">
+                                <div class="widget-main" style="min-height: 200px;">
+                                    <c:if test="${empty productsinfo}">
+                                        <div class="row">
+                                            <div class="col-xs-6 form-group">
+                                                <label class="control-label" for="pname">选择商家<span
+                                                        class="red">*</span></label>
+                                                <select name="mer_id" class="form-group"></select>
+                                            </div>
+                                        </div>
+                                        <div class="space-12"></div>
+                                    </c:if>
+                                    <div class="row">
+                                        <div class="col-xs-3 form-group">
+                                            <label class="control-label" for="pname">商品名称<span
+                                                    class="red">*</span></label>
+                                            <input class="form-control" id="pname" name="pname"
+                                                   value="${productsinfo.pname}">
+                                        </div>
+                                        <div class="col-xs-3 form-group">
+                                            <label class="control-label" for="title">商品标题<span
+                                                    class="red">*</span></label>
+                                            <input class="form-control" id="title" name="title"
+                                                   value="${productsinfo.title}">
+                                        </div>
 
-            <%--//产品轮播图--%>
-            <div class="widget-box">
-                <div class="widget-header">
-                    <h4 class="widget-title">产品轮播图</h4>
-                    <div class="widget-toolbar">
-                        <a href="#" data-action="collapse">
-                            <i class="ace-icon fa fa-chevron-up"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="widget-body">
-                    <div class="widget-main" style="min-height: 200px;">
-                        <div class="space-12"></div>
-                        <div class="row">
-                            <c:if test="${empty prodCarousal.id}">
-                                <c:forEach begin="0" end="3" varStatus="state">
-                                    <div class="col-xs-3 form-group">
-                                        <label class="control-label">轮播图${state.index + 1}<span class="red">*</span></label>
-                                        <input type="file" class="carousalFile" id="prodCarousalFile${state.index + 1}" name="prodCarousalFile${state.index + 1}"
-                                               accept="image/*"/>
-                                        <ul class="ace-thumbnails clearfix" style="display: none;">
-                                            <li>
-                                                <a href="${prodCarousal.pdUrl}" data-rel="colorbox">
-                                                    <img width="150" height="150" alt="150x150"
-                                                         src="${prodCarousal.pdUrl}"/>
-                                                    <div class="text">
-                                                        <div class="inner">点击查看详细</div>
-                                                    </div>
-                                                </a>
-                                                <div class="tools tools-bottom">
-                                                    <a href="#" onclick="">
-                                                        <i class="ace-icon fa fa-pencil" title="重新上传"
-                                                           onclick="delImg('imgFile${state.index + 1}', 'prodCarousalFile${state.index + 1}')"></i>
-                                                    </a>
-                                                </div>
-                                            </li>
-                                        </ul>
+                                        <div class="col-xs-3 form-group">
+                                            <label class="control-label" for="categoryid">商品类别<span class="red">*</span></label>
+                                            <select name="categoryid" id="categoryid" class="form-control">
+                                            </select>
+                                        </div>
 
+                                        <div class="col-xs-3 form-group">
+                                            <label class="control-label" for="volume">尺寸</label>
+                                            <input class="form-control" id="volume" name="volume"
+                                                   value="${productsinfo.volume}">
+                                        </div>
                                     </div>
-                                </c:forEach>
-                            </c:if>
 
-                            <c:if test="${!empty prodCarousal.id}">
-                                <c:forEach items="${prodCarousal.id}" var="carousal" varStatus="state">
-                                    <div class="col-xs-3 form-group">
-                                        <label class="control-label">轮播图${state.index + 1}<span class="red">*</span></label>
-                                        <input type="file" id="prodCarousalFile${state.index + 1}" name="prodCarousalFile${state.index + 1}"
-                                               style="display: none;"/>
-                                        <ul class="ace-thumbnails clearfix" id="imgFile${state.index + 1}">
-                                            <li>
-                                                <a href="${prodCarousal.pdUrl}" data-rel="colorbox">
-                                                    <img width="150" height="150" alt="150x150"
-                                                         src="${prodCarousal.pdUrl}"/>
-                                                    <div class="text">
-                                                        <div class="inner">点击查看详细</div>
-                                                    </div>
-                                                </a>
-                                                <div class="tools tools-bottom">
-                                                    <a href="#" onclick="">
-                                                        <i class="ace-icon fa fa-pencil" title="重新上传"
-                                                           onclick="delImg('imgFile${state.index + 1}', 'prodCarousalFile${state.index + 1}')"></i>
-                                                    </a>
-                                                </div>
-                                            </li>
-                                        </ul>
+                                    <div class="space-12"></div>
+                                    <div class="row">
+                                        <div class="col-xs-3 form-group">
+                                            <label class="control-label" for="shopprice">商品价格<span class="red">*</span></label>
+                                            <input class="form-control" id="shopprice" name="shopprice"
+                                                   placeholder="RMB价格"
+                                                   onchange="changePrice(this.value);"
+                                                   value="${productsinfo.shopprice}">
+                                        </div>
+                                        <div class="col-xs-3 form-group">
+                                            <label class="control-label" for="shopmmdprice">MMD价格</label>
+                                            <div class="">
+                                                <span style="margin-left:10px;">
+                                                    <c:if test="${productsinfo.isproportion == 1}">
+                                                        <input readonly style="width: 70%;"
+                                                               class="col-xs-8 form-control" id="shopmmdprice"
+                                                               name="shopmmdprice" placeholder="MMD价格"
+                                                               value="${productsinfo.shopmmdprice}">
+                                                        <input name="isproportion" type="checkbox" class="ace input-lg"
+                                                               value="1" checked onclick="checkRate(this)"/>
+                                                    </c:if>
+                                                    <c:if test="${productsinfo.isproportion != 1}">
+                                                        <input style="width: 70%;" class="col-xs-8 form-control"
+                                                               id="shopmmdprice" name="shopmmdprice" placeholder="MMD价格"
+                                                               value="${productsinfo.shopmmdprice}">
+                                                        <input name="isproportion" type="checkbox" class="ace input-lg"
+                                                               value="1" onclick="checkRate(this)"/>
+                                                    </c:if>
+                                                    <span class="lbl">按比例</span>
+                                                    <span class="help-button" data-rel="popover" data-trigger="hover"
+                                                          data-placement="right"
+                                                          data-content="勾选后，将按照系统的RMB:MMD自动计算MMD价格" title=""
+                                                          data-original-title="说明">?</span>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xs-3 form-group">
+                                            <label class="control-label" for="costprice">商品成本价<span class="red">*</span></label>
+                                            <input class="form-control" id="costprice" name="costprice"
+                                                   value="${productsinfo.costprice}">
+                                        </div>
+                                        <div class="col-xs-3 form-group">
+                                            <label class="control-label" for="weight">重量</label>
+                                            <input class="form-control" id="weight" name="weight"
+                                                   value="${productsinfo.weight}">
+                                        </div>
                                     </div>
-                                </c:forEach>
-                            </c:if>
+
+                                    <div class="space-12"></div>
+                                    <div class="row">
+                                        <div class="col-xs-6 form-group">
+                                            <label class="control-label" for="desc">商品简介<span
+                                                    class="red">*</span></label>
+                                            <textarea class="form-control" id="desc" name="desc"
+                                                      value="${productsinfo.desc}">${productsinfo.desc}</textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="space-12"></div>
+                                    <div class="row">
+                                        <div class="col-xs-3 form-group">
+                                            <label class="control-label">首页图<span class="red">*</span></label>
+                                            <c:if test="${empty productsinfo.homeimg}">
+                                                <input type="file" id="prodHomeimgFile" name="homeimgFile"
+                                                       accept="image/*"/>
+                                                <ul class="ace-thumbnails clearfix" id="imgFile" style="display: none;">
+                                                    <li>
+                                                        <a href="${productsinfo.homeimg}" data-rel="colorbox">
+                                                            <img width="150" height="150" alt="产品首页图"
+                                                                 src="${productsinfo.homeimg}"/>
+                                                            <div class="text">
+                                                                <div class="inner">点击查看详细</div>
+                                                            </div>
+                                                        </a>
+                                                        <div class="tools tools-bottom">
+                                                            <a href="#" onclick="">
+                                                                <i class="ace-icon fa fa-pencil" title="重新上传"
+                                                                   onclick="delImg('imgFile', 'prodHomeimgFile')"></i>
+                                                            </a>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </c:if>
+                                            <c:if test="${!empty productsinfo.homeimg}">
+                                                <input type="file" id="prodHomeimgFile" name="homeimgFile"
+                                                       style="display: none;"/>
+                                                <ul class="ace-thumbnails clearfix" id="imgFile">
+                                                    <li>
+                                                        <a href="${productsinfo.homeimg}" data-rel="colorbox">
+                                                            <img width="150" height="150" alt="产品首页图"
+                                                                 src="${productsinfo.homeimg}"/>
+                                                            <div class="text">
+                                                                <div class="inner">点击查看详细</div>
+                                                            </div>
+                                                        </a>
+                                                        <div class="tools tools-bottom">
+                                                            <a href="#" onclick="">
+                                                                <i class="ace-icon fa fa-pencil" title="重新上传"
+                                                                   onclick="delImg('imgFile', 'prodHomeimgFile')"></i>
+                                                            </a>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </c:if>
+                                        </div>
+                                        <div class="col-xs-3 form-group">
+                                            <label class="control-label">商品参数图<span class="red">*</span></label>
+                                            <c:if test="${empty productsinfo.paramimg}">
+                                                <input multiple="" type="file" id="prodParamimgFile"
+                                                       name="paramimgFile"
+                                                       accept="image/*"/>
+                                                <ul class="ace-thumbnails clearfix" id="paramimgFile"
+                                                    style="display: none;">
+                                                    <li>
+                                                        <a href="${productsinfo.paramimg}" data-rel="colorbox">
+                                                            <img width="230" height="106" alt="产品参数图"
+                                                                 src="${productsinfo.paramimg}"/>
+                                                            <div class="text">
+                                                                <div class="inner">点击查看详细</div>
+                                                            </div>
+                                                        </a>
+                                                        <div class="tools tools-bottom">
+                                                            <a href="#" onclick="">
+                                                                <i class="ace-icon fa fa-pencil" title="重新上传"
+                                                                   onclick="delImg('paramimgFile', 'prodParamimgFile')"></i>
+                                                            </a>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </c:if>
+                                            <c:if test="${!empty productsinfo.paramimg}">
+                                                <input multiple="" type="file" id="prodParamimgFile"
+                                                       name="paramimgFile"
+                                                       style="display: none;" accept="image/*"/>
+                                                <ul class="ace-thumbnails clearfix" id="paramimgFile">
+                                                    <li>
+                                                        <a href="${productsinfo.paramimg}" data-rel="colorbox">
+                                                            <img width="230" height="106" alt="150x150"
+                                                                 src="${productsinfo.paramimg}"/>
+                                                            <div class="text">
+                                                                <div class="inner">点击查看详细</div>
+                                                            </div>
+                                                        </a>
+                                                        <div class="tools tools-bottom">
+                                                            <a href="#" onclick="">
+                                                                <i class="ace-icon fa fa-pencil" title="重新上传"
+                                                                   onclick="delImg('paramimgFile', 'prodParamimgFile')"></i>
+                                                            </a>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </c:if>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-12"></div>
+                        <%--提供的服务--%>
+                        <div class="widget-box">
+                            <div class="widget-header">
+                                <h4 class="widget-title">产品服务<span class="orange">（产品提供哪些服务？）</span></h4>
+                                <div class="widget-toolbar">
+                                    <a href="#" data-action="collapse">
+                                        <i class="ace-icon fa fa-chevron-up"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="widget-body">
+                                <div class="widget-main" style="min-height: 80px;">
+                                    <div class="space-8"></div>
+                                    <div class="row">
+                                        <c:forEach items="${allServices}" var="service">
+                                            <div class="col-xs-2 form-group">
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <c:if test="${service.isexit == 1}">
+                                                            <input value="${service.sid}" name="prodservice"
+                                                                   class="ace ace-checkbox-2" type="checkbox" checked/>
+                                                        </c:if>
+                                                        <c:if test="${service.isexit == 0}">
+                                                            <input value="${service.sid}" name="prodservice"
+                                                                   class="ace ace-checkbox-2" type="checkbox"/>
+                                                        </c:if>
+                                                        <span class="lbl">&nbsp;&nbsp;${service.content}&nbsp;&nbsp;</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </c:forEach>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-12"></div>
+                        <div class="row" id="user_save_info">
+                            <div class="col-xs-4 col-xs-offset-5">
+                                <input type="submit" class="btn btn-primary" id="prodr_save" value="保存">
+                                <input type="reset" class="btn" style="margin-left: 20px;" onclick="resetForm()"
+                                       value="重置表单">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="basecarousal" class="tab-pane">
+                    <%--产品轮播图--%>
+                        <div class="widget-box">
+                            <div class="widget-header">
+                                <h4 class="widget-title">产品轮播图<span class="orange">(如需上传视频，请在第一个轮播图位置上传)</span></h4>
+                                <div class="widget-toolbar">
+                                    <a href="#" data-action="collapse">
+                                        <i class="ace-icon fa fa-chevron-up"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="widget-body">
+                                <div class="widget-main" style="min-height: 200px;">
+                                    <form  class="dropzone well" id="dropzone" method="post">
+                                        <div class="fallback">
+                                            <input name="file" type="file" multiple />
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <div id="basedetailimg" class="tab-pane">
+                    <%--产品参数图--%>
+                    <div class="widget-box">
+                            <div class="widget-header">
+                                <h4 class="widget-title">产品详细图<span class="orange">(产品详细图，请参考设计图)</span></h4>
+                                <div class="widget-toolbar">
+                                    <a href="#" data-action="collapse">
+                                        <i class="ace-icon fa fa-chevron-up"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="widget-body">
+                                <div class="widget-main" style="min-height: 200px;">
+                                    <form  class="dropzone well" id="dropzone2" method="post">
+                                        <div class="fallback">
+                                            <input name="file" type="file" multiple />
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <div id="basesku" class="tab-pane">
+                    <%--产品的SKU--%>
+                    <div class="widget-box">
+                        <div class="widget-header">
+                            <h4 class="widget-title">产品属性管理<span class="orange">（维护产品的SKU属性信息）</span></h4>
+                            <div class="widget-toolbar">
+                                <a href="#" data-action="collapse">
+                                    <i class="ace-icon fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="widget-body">
+                            <div class="widget-main">
+                                <div class="space-8"></div>
+                                <div id="skuContent">
+                                    <c:forEach items="${prodSku}" var="sku">
+                                        <div class="row" id="sku${sku.sku_id}">
+                                            <div class="col-xs-2 form-group">
+                                                <label class="control-label">产品属性</label>
+                                                <div class="orange" id="skuValname" style="overflow: hidden"
+                                                     title="${sku.sku_valname}">
+                                                        ${sku.sku_valname}
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-2 form-group">
+                                                <label class="control-label">RMB价格</label>
+                                                <input name="price" class="form-control" type="number"
+                                                       value="${sku.price}" readonly/>
+                                            </div>
+
+                                            <div class="col-xs-2 form-group">
+                                                <label class="control-label">MMD价格</label>
+                                                <input name="mmdprice" type="number" class="form-control"
+                                                       value="${sku.mmdprice}" readonly/>
+                                            </div>
+
+                                            <div class="col-xs-2 form-group">
+                                                <label class="control-label">剩余库存</label>
+                                                <input name="repertory" type="number" class="form-control"
+                                                       value="${sku.repertory}" readonly/>
+                                            </div>
+
+                                            <div class="col-xs-2">
+                                                <label class="control-label"></label>
+                                                <div style="line-height: 40px">
+                                                    <button type="button" class="btn btn-sm btn-white btn-info btn-bold"
+                                                            onclick="updSku('${sku.sku_id}')">
+                                                        <i class="ace-icon fa fa-external-link bigger-90 blue"></i>
+                                                        修改
+                                                    </button>
+                                                    <button type="button"
+                                                            class="btn btn-sm btn-white btn-warning btn-bold"
+                                                            onclick="delSku('${sku.sku_id}')">
+                                                        <i class="ace-icon fa fa-trash-o bigger-90 orange"></i>
+                                                        删除
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="space-6" id="space${sku.sku_id}"></div>
+                                    </c:forEach>
+                                </div>
+                                <button type="button" class="col-xs-offset-2 btn btn-sm btn-white btn-info btn-bold"
+                                        id="addskubtn">
+                                    <i class="ace-icon glyphicon glyphicon-plus bigger-90 blue"></i>
+                                    添加SKU
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <%--//产品服务--%>
-            <div class="widget-box">
-                <div class="widget-header">
-                    <h4 class="widget-title">产品服务</h4>
-                    <div class="widget-toolbar">
-                        <a href="#" data-action="collapse">
-                            <i class="ace-icon fa fa-chevron-up"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="widget-body">
-                    <div class="widget-main" style="min-height: 80px;">
-                        <div class="space-8"></div>
-                        <div class="row">
-                            <div class="col-xs-3 form-group">
-                                <div class="checkbox">
-                                    <label>
-                                        <input name="proservice1" class="ace ace-checkbox-2" type="checkbox"/>
-                                        <span class="lbl">&nbsp;&nbsp;100%正品&nbsp;&nbsp;</span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-xs-3 form-group">
-                                <div class="checkbox">
-                                    <label>
-                                        <input name="proservice2" class="ace ace-checkbox-2" type="checkbox"/>
-                                        <span class="lbl">&nbsp;&nbsp;专业鉴定&nbsp;&nbsp;</span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-xs-3 form-group">
-                                <div class="checkbox">
-                                    <label>
-                                        <input name="proservice3" class="ace ace-checkbox-2" type="checkbox"/>
-                                        <span class="lbl">&nbsp;&nbsp;假一赔三&nbsp;&nbsp;</span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-xs-3 form-group">
-                                <div class="checkbox">
-                                    <label>
-                                        <input name="proservice4" class="ace ace-checkbox-2" type="checkbox"/>
-                                        <span class="lbl">&nbsp;&nbsp;品质保证&nbsp;&nbsp;</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <%--//产品属性--%>
-            <div class="widget-box">
-                <div class="widget-header">
-                    <h4 class="widget-title">产品属性</h4>
-                    <div class="widget-toolbar">
-                        <a href="#" data-action="collapse">
-                            <i class="ace-icon fa fa-chevron-up"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="widget-body">
-                    <div class="widget-main" style="min-height: 200px;">
-                        <div class="space-8"></div>
-                        <c:forEach begin="0" end="${prodSku.length}" varStatus="state">
-                            <div class="row">
-                                <div class="col-xs-2 form-group">
-                                    <label class="control-label" for="color">颜色</label>
-                                    <input class="form-control" id="color" name="color" value="${prodSku.color}">
-                                </div>
-                                <div class="col-xs-2 form-group">
-                                    <label class="control-label" for="size">尺寸</label>
-                                    <input class="form-control" id="size" name="color" value="${prodSku.size}">
-                                </div>
-                                <div class="col-xs-2 form-group">
-                                    <label class="control-label" for="material">材质</label>
-                                    <input class="form-control" id="material" name="material"
-                                           value="${prodSku.material}">
-                                </div>
-                                <div class="col-xs-2 form-group">
-                                    <label class="control-label" for="origin">产地</label>
-                                    <input class="form-control" id="origin" name="origin" value="${prodSku.origin}">
-                                </div>
-                                <div class="col-xs-2 form-group">
-                                    <label class="control-label" for="price">价格<span class="red">*</span></label>
-                                    <input class="form-control" id="price" name="price" placeholder="RMB价格"
-                                           value="${prodSku.price}">
-                                </div>
-                                <div class="col-xs-2 form-group">
-                                    <label class="control-label" for="mmdprice">价格</label>
-                                    <input class="form-control" id="mmdprice" name="mmdprice" placeholder="MMD价格"
-                                           value="${prodSku.mmdprice}">
-                                </div>
-                            </div>
-                            <div class="space-12"></div>
-                        </c:forEach>
-                    </div>
-                </div>
-            </div>
-        </form>
-        <div class="space-12"></div>
-        <div class="row" id="user_save_info">
-            <div class="col-xs-4 col-xs-offset-5">
-                <input type="submit" class="btn btn-primary" id="user_save" value="保存">
-                <input type="reset" class="btn" style="margin-left: 20px;" onclick="resetForm()" value="重置表单">
             </div>
         </div>
-        </form>
+
     </div>
 </div>
 </body>
 <script>
     var scripts = [null,
+        "assets/js/dropzone.js",
         "assets/js/date-time/bootstrap-datepicker.js",
         "assets/js/date-time/bootstrap-timepicker.js",
         "assets/js/date-time/daterangepicker.js",
+        "assets/js/select2.js",
         "assets/js/jquery.colorbox.js",
         "assets/js/jquery.validate.js",
         "assets/js/jquery.validate_zh.js",
         "assets/js/jquery.form.js",
-        "assets/js/bootbox.js",
         "assets/js/chosen.jquery.js",
         "assets/js/date-time/bootstrap-datetimepicker.js", null];
 
@@ -493,11 +456,306 @@
         $(".chosen-select").val('').trigger("chosen:updated");
     }
 
+    var MMDToPriceRate = "";
 
-    var shopprice = document.getElementById("shopprice").value;
-    document.getElementById("shopmmdprice").value  = shopprice;
-    function test (defaultVal) {
-        document.getElementById("shopmmdprice").value = defaultVal;
+    function changePrice(defaultVal) {
+        if ($("input[name=isproportion]").is(":checked")) {
+            if (!MMDToPriceRate) {
+                myAjax("/base/getPriceToMMDRate", null, function (res) {
+                    MMDToPriceRate = res.data.rate;
+                })
+            }
+            $("#shopmmdprice").val((Number(defaultVal) / Number(MMDToPriceRate)).toFixed(0));
+        }
+    }
+
+    //改变比例
+    function checkRate($this) {
+        if (!$($this).is(":checked")) {
+            $("#shopmmdprice").attr("readonly", false);
+        } else {
+            $("#shopmmdprice").attr("readonly", true);
+            $("#shopprice").trigger("change");
+        }
+    }
+
+
+    $("#addskubtn").click(function () {
+        createSKUHtml();
+    });
+
+    /**
+     * 更新sku信息
+     */
+    function updSku(id) {
+        myAjax("/business/getProdSkuDetail", {sku_id: id}, function (res) {
+            createSKUHtml(res, id);
+        });
+    }
+
+    var propNameData = [];
+    myAjax("/base/getPropData", null, function (res) {
+        propNameData = res.data;
+    });
+
+    function createSKUHtml(res, sku_id) {
+        var html = '<form class="form-horizontal" id="skuform">';
+        html += '<div class="form-group" style="padding-bottom:10px !important;">';
+        html += '<label class="col-xs-2 no-padding-right control-label">产品属性:</label>';
+        html += '<div class="col-xs-9" id="propItems">';
+        if (res) {
+            res.data.skuProp.forEach(function (data) {
+                html += '<div class="row propItem">';
+                html += '<select name="sku_propname" class="skuSelect1 col-xs-5">';
+                html += '<option value="' + data.prop_id + '">' + data.prop_name + '</option>';
+                html += '</select>';
+                html += '<select name="sku_propval" class="skuSelect2 col-xs-5">';
+                html += '<option value="' + data.propval_id + '">' + data.prop_val + '</option>';
+                html += '</select>';
+                html += '<a href="javascript:void(0);" style="margin-left:10px;"><i class="ace-icon fa fa-trash-o bigger-120 orange"></i></a>';
+                html += '<div class="space-6"></div>';
+                html += '</div>';
+            });
+        } else {
+            html += '<div class="row propItem">';
+            html += '<select name="sku_propname" class="skuSelect1 col-xs-5">';
+            html += '<option value=""></option>';
+            html += '</select>';
+            html += '<select name="sku_propval" class="skuSelect2 col-xs-5">';
+            html += '<option value=""></option>';
+            html += '</select>';
+            html += '<a href="javascript:void(0);" style="margin-left:10px;"><i class="ace-icon fa fa-trash-o bigger-120 orange"></i></a>';
+            html += '<div class="space-6"></div>';
+            html += '</div>';
+        }
+        html += '</div>';
+        html += '<button type="button" style="margin-left: 17%" class="col-xs-offset-2 btn btn-sm btn-white btn-warning btn-bold" id="propbtn">';
+        html += '<i class="ace-icon glyphicon glyphicon-plus bigger-90 orange"></i>';
+        html += '添加属性';
+        html += '</button>';
+        html += '</div>';
+        html += '<div class="form-group" style="padding-bottom:10px !important;">';
+        html += '<input type="hidden" name="sku_id" value="' + (res && res.data.sku_id ? res.data.sku_id : "") + '">'
+        html += '<label class="col-xs-2 no-padding-right control-label" id="sku_price">RMB价格:</label>';
+        html += '<input class="col-xs-8" id="sku_price" name="price" type="number" value="' + (res && res.data.price ? res.data.price : "") + '"/>';
+        html += '</div>';
+        html += '<div class="form-group" style="padding-bottom:10px !important;">';
+        html += '<label class="col-xs-2 no-padding-right control-label" id="sku_mmdprice">MMD价格:</label>';
+        html += '<input class="col-xs-8" id="sku_mmdprice" name="mmdprice" type="number" value="' + (res && res.data.mmdprice ? res.data.mmdprice : "") + '"/>';
+        html += '</div>';
+        html += '<div class="form-group" style="padding-bottom:10px !important;">';
+        html += '<label class="col-xs-2 no-padding-right control-label" id="sku_repertory">SKU库存:</label>';
+        html += '<input class="col-xs-8" id="sku_repertory" name="repertory" type="number" value="' + (res && res.data.repertory ? res.data.repertory : "") + '"/>';
+        html += '</div>';
+        html += '</form>';
+
+        bootbox.dialog({
+            title: "修改产品SKK信息<span class='orange'>(保存之后将立即生效)</span>",
+            message: html,
+            buttons: {
+                ok: {
+                    label: "保存",
+                    className: 'btn-info',
+                    callback: function () {
+                        //如果是新增SKU，那么需要先新增产品信息
+                        if (!'${productsinfo}') {
+                            showErrorInfo("请先添加产品信息;在添加SKU");
+                            return;
+                        }
+                        $("#skuform").validate({
+                            errorElement: 'div',
+                            errorClass: 'help-block',
+                            focusInvalid: false,
+                            ignore: ":hidden:not(select)",
+                            rules: {
+                                sku_propname: {required: true},
+                                sku_propval: {required: true},
+                                price: {required: true},
+                                mmdprice: {required: true},
+                                repertory: {required: true},
+                            },
+                            highlight: function (e) {
+                                $(e).closest('.form-group').removeClass('has-info').addClass('has-error');
+                            },
+                            success: function (e) {
+                                $(e).closest('.form-group').removeClass('has-error');//.addClass('has-info');
+                                $(e).remove();
+                            },
+                            errorPlacement: function (error, element) {
+                                if (element.is('input[type=checkbox]') || element.is('input[type=radio]')) {
+                                    var controls = element.closest('div[class*="col-"]');
+                                    if (controls.find(':checkbox,:radio').length > 1) controls.append(error);
+                                    else error.insertAfter(element.nextAll('.lbl:eq(0)').eq(0));
+                                }
+                                else if (element.is('.select2')) {
+                                    error.insertAfter(element.siblings('[class*="select2-container"]:eq(0)'));
+                                }
+                                else if (element.is('.chosen-select')) {
+                                    error.insertAfter(element.siblings('[class*="chosen-container"]:eq(0)'));
+                                } else if (element.is('input[type=file]')) {
+                                    $(error).css("margin-top", "35px");
+                                    $(error).css("position", "absolute");
+                                    error.insertAfter(element);
+                                } else {
+                                    error.insertAfter(element)
+                                }
+                                ;
+                            }
+                        });
+                        var vlflg = $("#skuform").valid();
+                        console.log(vlflg);
+                        if (!vlflg) {
+                            return false;
+                        }
+                        var formdata = $("#skuform").serializeJson();
+                        var skuValname = "";
+                        $(".skuSelect2").find("option:selected").each(function () {
+                            skuValname += ";" + $(this).text();
+                        });
+                        formdata.skuValname = skuValname.substr(1);
+                        formdata.pid = '${productsinfo.pid}';
+                        formdata.sku_propname_id = formdata.sku_propname.join(",");
+                        formdata.sku_propval_id = formdata.sku_propval.join(",");
+                        //开始保存SKU信息；
+                        myAjax("/business/saveProdSku", formdata, function (result) {
+                            if (result.code === 1) {
+                                var data = result.data;
+                                if (sku_id) {
+                                    console.log(sku_id);
+                                    //修改，
+                                    $("#sku" + sku_id).find("#skuValname").html(formdata.skuValname);
+                                    $("#sku" + sku_id).find("input[name=price]").val(formdata.price);
+                                    $("#sku" + sku_id).find("input[name=mmdprice]").val(formdata.mmdprice);
+                                    $("#sku" + sku_id).find("input[name=repertory]").val(formdata.repertory);
+                                } else {
+                                    //新增
+                                    addSkuInfoHtml(data);
+                                }
+                                showSuccInfo("操作成功！");
+                            } else {
+                                showErrorInfo("操作失败！");
+                            }
+                        })
+                    }
+                }
+            }
+        });
+        createBind();
+        bindPropSelect();
+    }
+
+    function addSkuInfoHtml(data) {
+        var html = '<div class="row" id="sku' + data.sku_id + '">';
+        html += '<div class="col-xs-2 form-group">';
+        html += '<label class="control-label">产品属性</label>';
+        html += '<div class="orange" id="skuValname" style="overflow: hidden" title="' + data.skuValname + '">';
+        html += data.skuValname;
+        html += '</div>';
+        html += '</div>';
+        html += '<div class="col-xs-2 form-group">';
+        html += '<label class="control-label">RMB价格</label>';
+        html += '<input name="price" class="form-control" type="number" value="' + data.price + '" readonly/>';
+        html += '</div>';
+        html += '<div class="col-xs-2 form-group">';
+        html += '<label class="control-label">MMD价格</label>';
+        html += '<input name="mmdprice" type="number" class="form-control" value="' + data.mmdprice + '" readonly/>';
+        html += '</div>';
+        html += '<div class="col-xs-2 form-group">';
+        html += '<label class="control-label">剩余库存</label>';
+        html += '<input name="repertory" type="number" class="form-control" value="' + data.repertory + '" readonly/>';
+        html += '</div>';
+        html += '<div class="col-xs-2">';
+        html += '<label class="control-label"></label>';
+        html += '<div style="line-height: 40px">';
+        html += '<button type="button" class="btn btn-sm btn-white btn-info btn-bold" onclick="updSku(' + data.sku_id + ')">';
+        html += '<i class="ace-icon fa fa-external-link bigger-90 blue"></i>';
+        html += '修改';
+        html += '</button>';
+        html += '<button type="button" class="btn btn-sm btn-white btn-warning btn-bold" onclick="delSku(' + data.sku_id + ')">';
+        html += '<i class="ace-icon fa fa-trash-o bigger-90 orange"></i>';
+        html += '删除';
+        html += '</button>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '<div class="space-6" id="space' + data.sku_id + '"></div>';
+        $("#skuContent").append(html);
+    }
+
+
+    function createBind() {
+        $("#propbtn").click(function () {
+            var html = "";
+            html += '<div class="row propItem">';
+            html += '<select name="sku_propname" class="skuSelect1 col-xs-5">';
+            html += '<option value=""></option>';
+            html += '</select>';
+            html += '<select name="sku_propval" class="skuSelect2 col-xs-5">';
+            html += '<option value=""></option>';
+            html += '</select>';
+            html += '<a href="javascript:void(0);" style="margin-left:10px;"><i class="ace-icon fa fa-trash-o bigger-120 orange"></i></a>';
+            html += '<div class="space-6"></div>';
+            html += '</div>';
+            $("#propItems").append(html);
+            bindPropSelect($("#propItems").find(".propItem:last").find(".skuSelect1"));
+        });
+    }
+
+    //加载属性
+    function bindPropSelect($this) {
+        var dom = $this ? $this : $(".skuSelect1");
+        console.log(dom);
+        dom.select2({
+            placeholder: "请选择属性名",
+            data: propNameData,
+            width: '45%'
+        });
+        //删除
+        dom.parent().find("a").click(function () {
+            $(this).parent().remove();
+        });
+        dom.each(function () {
+            getPropValSelect2($(this), $(this).val(), true);
+        });
+        dom.on("change", function () {
+            getPropValSelect2($(this), $(this).val());
+        });
+    }
+
+    function getPropValSelect2($this, id, initflg) {
+        var propNameData = [];
+        myAjax("/base/getPropValByPropId", {prop_id: id}, function (res) {
+            propNameData = res.data;
+        });
+        if (!initflg) {
+            $this.parent().find(".skuSelect2").select2("destroy").empty();
+        }
+        $this.parent().find(".skuSelect2").select2({
+            placeholder: "请选择对应属性值",
+            data: propNameData,
+            width: '45%'
+        })
+    }
+
+    /**
+     * 删除SKU
+     * @param id
+     */
+    function delSku(id) {
+        bootbox.confirm("确认删除该SKU？ 删除之后，将会立即生效。不可找回", function (res) {
+            if (res) {
+                //开始删除数据库
+                myAjax("/business/delProdSku", {sku_id: id, pid: '${productsinfo.pid}'}, function (res) {
+                    if (res.code == 1) {
+                        $("#sku" + id).remove();
+                        $("#space" + id).remove();
+                        showSuccInfo("操作成功！");
+                    } else {
+                        showErrorInfo(res.message)
+                    }
+                })
+            }
+        })
     }
 
     //删除图片
@@ -518,14 +776,31 @@
         });
     }
 
-    if('${productsinfo.pid}') {
-        $("select[name=categoryid]").val('${productsinfo.categoryid}');
-        <%--/* $("select[name=post_id]").val('${requestScope.employee.post_id}');*/--%>
-
-    }
-
-
     $('.page-content-area').ace_ajax('loadScripts', scripts, function () {
+
+        //加载商家
+        $("select[name=mer_id]").select2({
+            placeholder: "请选择商家名称检索",
+            ajax: {
+                url: projectUrl + '/base/getMerByKey',
+                delay: 250,
+                cache: true,
+                data: function (params) {
+                    console.log(params);
+                    var query = {
+                        key: params.term
+                    };
+                    return query;
+                },
+                processResults: function (data, params) {
+                    return {
+                        results: data.data
+                    }
+                }
+            },
+            width: '100%'
+        });
+
         //获取url中的参数信息
         $(function () {
             $(document).on('settings.ace.chosen', function (e, event_name, event_val) {
@@ -547,33 +822,6 @@
             //先设置信息，在设置选择框信息
             $('.chosen-select').chosen({allow_single_deselect: true});
 
-            //判断首页和参数图显示情况
-            if ('${productsinfo.homeimg}') {
-                //如果有logo，那么就显示照片。否则不显示
-                $("#prodHomeimgFile").hide();
-                $("#imgFile").show();
-            } else {
-                $("#prodHomeimgFile").show();
-                $("#imgFile").hide();
-            }
-            if ('${productsinfo.paramimg}') {
-                //如果有logo，那么就显示照片。否则不显示
-                $("#prodParamimgFile").hide();
-                $("#paramimgFile").show();
-            } else {
-                $("#prodParamimgFile").show();
-                $("#paramimgFile").hide();
-            }
-
-            //判断轮播图显示情况
-            if ('${productsinfo}') {
-                $("#prodHomeimgFile${state.index + 1}").hide();
-                $("#imgFile${state.index + 1}").show();
-            } else {
-                $("#prodHomeimgFile${state.index + 1}").show();
-                $("#imgFile${state.index + 1}").hide();
-            }
-
         });
 
         if (!'${productsinfo.pid}') {
@@ -592,14 +840,16 @@
             });
         }
 
-
         $("#validation-form-productsinfo").submit(function (e) {
             e.preventDefault();
             var flag = $("#validation-form-productsinfo").valid();
+            var parData = $("#validation-form-productsinfo").serializeJson();
+            console.log(parData)
             if (flag) {
                 $(this).ajaxSubmit({
-                    url: projectUrl + "/business/addOrUpdBusiness",
+                    url: projectUrl + "/business/addOrUpdProd",
                     type: "post",
+                    data: {serviceIds: parData.prodservice.join(",")},
                     beforeSubmit: function () {
                         var html = "";
                         html += '<div class="center blue"><i class="ace-icon fa fa-spinner fa-spin orange"></i>上传中...请耐心等待</div>'
@@ -624,7 +874,7 @@
                                 history.back();
                             }, 4000);
                         } else {
-                            showError("操作失败！错误信息：" + result.message);
+                            showErrorInfo("操作失败！错误信息：" + result.message);
                         }
                     },
                     error: function (err) {
@@ -646,10 +896,10 @@
                 pname: {required: true},
                 title: {required: true},
                 desc: {required: true},
-                homeimg: {required: true},
-                paramimg: {required: true},
-                weight: {number: true, required: true},
-                volume: {required: true},
+                homeimgFile: {required: true},
+                paramimgFile: {required: true},
+                shopprice: {required: true},
+                // shopmmdprice: {required: true},
                 inventory: {number: true, required: true},
                 costprice: {number: true, required: true},
                 categoryid: {required: true},
@@ -683,6 +933,59 @@
             }
         });
 
+        //加载商品类别
+        myAjax("/base/getAllClassify", null, function (result) {
+            var html = "<option></option>";
+            result.data.forEach(function (data) {
+                if ('${productsinfo.pid}' && data.id == '${productsinfo.categoryid}') {
+                    html += '<option value="' + data.id + '" selected>' + data.name + '</option>';
+                } else {
+                    html += '<option value="' + data.id + '">' + data.name + '</option>';
+                }
+            })
+            $("#categoryid").html(html);
+        });
+
+        $("#form-carousal").submit(function(e) {
+            e.preventDefault();
+            $(this).ajaxSubmit({
+                url: projectUrl + "/business/addOrUpdCarousel",
+                type: "post",
+                beforeSubmit: function () {
+                    var html = "";
+                    html += '<div class="center blue"><i class="ace-icon fa fa-spinner fa-spin orange"></i>上传中...请耐心等待</div>'
+                    html += '<div class="progress pos-rel" style="margin-top:20px;" data-percent="0%">';
+                    html += '<div class="progress-bar" style="width:0%;"></div>';
+                    html += '</div>';
+                    bootbox.dialog({
+                        message: html,
+                        closeButton: null,
+                    })
+                },
+                uploadProgress: function (event, position, total, percentComplete) {
+                    $(".progress").attr("data-percent", percentComplete + "%");
+                    $(".progress-bar").css("width", percentComplete + "%");
+                },
+                success: function (result) {
+                    bootbox.hideAll();
+                    if (result.code === 1) {
+                        showInfo("操作成功! 即将返回主列表")
+                        $("#user_save_info").hide();
+                        setTimeout(function () {
+                            history.back();
+                        }, 4000);
+                    } else {
+                        showErrorInfo("操作失败！错误信息：" + result.message);
+                    }
+                },
+                error: function (err) {
+                    bootbox.hideAll();
+                    showErrorInfo("保存失败，" + err.statusText);
+                }
+            });
+        });
+
+
         imgFileFunction();
 
         //处理图片信息
@@ -714,9 +1017,154 @@
             $('.ace-thumbnails [data-rel="colorbox"]').colorbox(colorbox_params);
             $("#cboxLoadingGraphic").html("<i class='ace-icon fa fa-spinner orange fa-spin'></i>");//let's add a custom loading icon
 
-            $(document).one('ajaxloadstart.page', function (e) {
-                $('#colorbox, #cboxOverlay').remove();
+            jQuery(function(){
+                try {
+                    var myDropzone = new Dropzone("#dropzone", {
+                        url: projectUrl + "/business/uploadCarousel?pid="+'${productsinfo.pid}',
+                        paramName: "carouselFile", // The name that will be used to transfer the file
+                        maxFiles: 5,
+                        dictMaxFilesExceeded: "只能上传{{maxFiles}}个文件",
+                        dictResponseError: '上传出错!',
+                        addRemoveLinks : true,
+                        uploadMultiple: false,
+                        dictDefaultMessage :
+                            '<span class="bigger-150 bolder"><i class="ace-icon fa fa-caret-right red"></i> Drop files</span> to upload \
+                            <span class="smaller-80 grey">(or click)</span> <br /> \
+                            <i class="upload-icon ace-icon fa fa-cloud-upload blue fa-3x"></i>',
+                        removedfile: function(file, nocallflg){ //自定义从列表删除元素时候执行的事件
+                            var than = this;
+                            if(file.accepted && !nocallflg) { //成功的元素
+                                bootbox.confirm("确定要删除该轮播图，确定之后将会立即生效，并且不可找回", function(res) {
+                                    if(res) {
+                                        myAjax("/business/delCarousel", {filename:file.name, url:file.url, pid: '${productsinfo.pid}'}, function(res){
+                                            if(res.code == 1) {
+                                                showSuccInfo("操作成功！");
+                                                var _ref;
+                                                if (file.previewElement) {
+                                                    if ((_ref = file.previewElement) != null) {
+                                                        _ref.parentNode.removeChild(file.previewElement);
+                                                    }
+                                                }
+                                                return than._updateMaxFilesReachedClass();
+                                            }
+                                        })
+                                    }else{
+                                        bootbox.hideAll();
+                                    }
+                                });
+                            }else{
+                                var _ref;
+                                if (file.previewElement) {
+                                    if ((_ref = file.previewElement) != null) {
+                                        _ref.parentNode.removeChild(file.previewElement);
+                                    }
+                                }
+                                return this._updateMaxFilesReachedClass();
+                            }
+                        },
+                        init: function(){
+                            var than = this;
+                            if('${productsinfo}') {
+                                myAjax("/business/getprodCarousal", {pid: '${productsinfo.pid}'}, function(res){
+                                    if(res.data && res.data.length>0) {
+                                        var urls = "";
+                                        res.data.forEach(function(data){
+                                            urls += "," + data.pdUrl;
+                                        });
+                                        than.emit("initimage", urls.substr(1));
+                                    }
+                                });
+                            };
+                            this.on("success", function(file, res) {
+                                file.url = res.data;
+                            })
+                        },
+                    });
+                    $(document).one('ajaxloadstart.page', function (e) {
+                        myDropzone.destroy();
+                        $('#colorbox, #cboxOverlay').remove();
+                    });
+
+                } catch(e) {
+                    console.log(e);
+                    alert('Dropzone.js不支持你的浏览器，请更换其他浏览器尝试!');
+                }
             });
+
+
+            jQuery(function(){
+                try {
+                    var myDropzone2 = new Dropzone("#dropzone2", {
+                        url: projectUrl + "/business/uploadDetailImg?pid="+'${productsinfo.pid}',
+                        paramName: "detailimgFile", // The name that will be used to transfer the file
+                        maxFiles: 10,
+                        dictMaxFilesExceeded: "只能上传{{maxFiles}}个文件",
+                        dictResponseError: '上传出错!',
+                        addRemoveLinks : true,
+                        uploadMultiple: false,
+                        dictDefaultMessage :
+                            '<span class="bigger-150 bolder"><i class="ace-icon fa fa-caret-right red"></i> Drop files</span> to upload \
+                            <span class="smaller-80 grey">(or click)</span> <br /> \
+                            <i class="upload-icon ace-icon fa fa-cloud-upload blue fa-3x"></i>',
+                        removedfile: function(file, nocallflg){ //自定义从列表删除元素时候执行的事件
+                            var than = this;
+                            if(file.accepted && !nocallflg) { //成功的元素
+                                bootbox.confirm("确定要删除该轮播图，确定之后将会立即生效，并且不可找回", function(res) {
+                                    if(res) {
+                                        myAjax("/business/delDetailimg", {filename:file.name, url:file.url, pid: '${productsinfo.pid}'}, function(res){
+                                            if(res.code == 1) {
+                                                showSuccInfo("操作成功！");
+                                                var _ref;
+                                                if (file.previewElement) {
+                                                    if ((_ref = file.previewElement) != null) {
+                                                        _ref.parentNode.removeChild(file.previewElement);
+                                                    }
+                                                }
+                                                return than._updateMaxFilesReachedClass();
+                                            }
+                                        })
+                                    }else{
+                                        bootbox.hideAll();
+                                    }
+                                });
+                            }else{
+                                var _ref;
+                                if (file.previewElement) {
+                                    if ((_ref = file.previewElement) != null) {
+                                        _ref.parentNode.removeChild(file.previewElement);
+                                    }
+                                }
+                                return this._updateMaxFilesReachedClass();
+                            }
+                        },
+                        init: function(){
+                            var than = this;
+                            if('${productsinfo}') {
+                                myAjax("/business/getproddetailImg", {pid: '${productsinfo.pid}'}, function(res){
+                                    if(res.data && res.data.length>0) {
+                                        var urls = "";
+                                        res.data.forEach(function(data){
+                                            urls += "," + data.img;
+                                        });
+                                        than.emit("initimage", urls.substr(1));
+                                    }
+                                });
+                            };
+                            this.on("success", function(file, res) {
+                                file.url = res.data;
+                            })
+                        },
+                    });
+                    
+                    $(document).one('ajaxloadstart.page', function (e) {
+                        myDropzone2.destroy();
+                        $('#colorbox, #cboxOverlay').remove();
+                    });
+                } catch(e) {
+                    console.log(e);
+                    alert('Dropzone.js不支持你的浏览器，请更换其他浏览器尝试!');
+                }
+            })
         }
     });
 </script>

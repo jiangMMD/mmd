@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -30,6 +28,7 @@ public class AppController {
 
     @Autowired
     private AppService appService;
+
     @Autowired
     private MessageService messageService;
 
@@ -68,7 +67,6 @@ public class AppController {
     public @ResponseBody Result delMessage(String ids) {
         return messageService.delMessage(ids);
     }
-
 
     /*獲取所有消息*/
     @RequestMapping("/getAllMessage")

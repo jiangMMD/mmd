@@ -20,6 +20,31 @@ public class Result {
         this.data = data;
     }
 
+    public Result success() {
+        this.code = 1;
+        this.message = "success";
+        return this;
+    }
+
+    public Result success(Object data) {
+        this.code = 1;
+        this.message = "success";
+        this.data = data;
+        return this;
+    }
+
+    public Result fail() {
+        this.code = 0;
+        this.message = "error";
+        return this;
+    }
+
+    public Result fail(String message) {
+        this.code = 0;
+        this.message = message;
+        return this;
+    }
+
     public int getCode() {
         return code;
     }

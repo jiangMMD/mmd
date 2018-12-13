@@ -113,7 +113,17 @@
                         </div>
 
                     </div>
+<<<<<<< HEAD
+                </div>
+            </div>
+            <div class="space-12"></div>
+            <div class="row" id="book_save_info">
+                <div class="col-xs-4 col-xs-offset-5">
+                    <input type="submit" class="btn btn-primary" id="custom_save" value="保存">
+                    <input type="reset" class="btn" style="margin-left: 20px;" value="重置表单">
+=======
 
+>>>>>>> origin/master
                 </div>
             </div>
 

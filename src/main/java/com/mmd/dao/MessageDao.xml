@@ -24,9 +24,8 @@
     </select>
 
     <insert id="addMessage">
-          insert into message(`type`,user_id,title,content,pic_url,crtuser,crtdate)
-          values (#{type},#{userId},#{title},#{content},#{picUrl},#{crtuser},now())
-
+          insert into message(`type`,user_id,title,content,crtuser,crtdate)
+          values (#{type},#{userId},#{title},#{content},#{crtuser},now())
     </insert>
 
     <delete id="delMessage">

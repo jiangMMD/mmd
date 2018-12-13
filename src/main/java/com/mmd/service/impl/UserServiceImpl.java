@@ -22,7 +22,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserDao userDao;
 
-
     @Autowired
     private HttpSession session;
 
@@ -84,10 +83,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Map<String, Object>> getUserByKey(String key) {
-        return userDao.getUserByKey(key);
+    public List<Map<String,Object>> getUserByKey(String key){
+      return userDao.getUserByKey(key);
     }
-
 
 
 }
