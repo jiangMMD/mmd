@@ -1,0 +1,308 @@
+<title>产品管理 - 魔晶</title>
+<!--列表样式信息-->
+<link rel="stylesheet" href="assets/css/ui.jqgrid.css"/>
+<link rel="stylesheet" href="assets/css/chosen.css"/>
+<link rel="stylesheet" href="assets/css/select2.css"/>
+<link rel="stylesheet" href="assets/css/bootstrap-datepicker3.css" />
+<link rel="stylesheet" href="assets/css/bootstrap-timepicker.css" />
+<link rel="stylesheet" href="assets/css/daterangepicker.css" />
+<link rel="stylesheet" href="assets/css/bootstrap-datetimepicker.css" />
+<div class="row">
+    <div class="col-xs-12">
+        <div class="space-6"></div>
+        <div class="well">
+            <form id="queryForm" class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-xs-4">
+                        <label class="col-sm-3 control-label no-padding-right">商家名称:</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="merName" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <label class="col-sm-3 control-label no-padding-right">商品名称:</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="pname" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <label class="col-sm-3 control-label no-padding-right">商品编号:</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="prodno" class="form-control"/>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-4">
+                        <label class="col-sm-3 control-label no-padding-right">是否上架:</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="state">
+                                <option value="">全部</option>
+                                <option value="2">未上架</option>
+                                <option value="1">已上架</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-4">
+                        <label class="col-sm-3 control-label no-padding-right">产品类别:</label>
+                        <div class="col-sm-9">
+                            <select id="categoryid" name="categoryid" class="form-control"></select>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-4">
+                        <button class="btn btn-primary" type="button" onclick="queryData()">
+                            <i class="ace-icon fa fa-search bigger"></i>
+                            查询
+                        </button>
+                        <button class="btn" type="reset" onclick="resetForm()">
+                            <i class="ace-icon fa fa-refresh bigger"></i>
+                            重置
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="space-12"></div>
+        <div class="fc-button-group" style="margin-left: 5px;">
+            <a id="add" data-rel="tooltip" title="" data-original-title="新增" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon fa fa-plus-circle purple bigger-125"></i></a>
+            <a id="edit" data-rel="tooltip" title="" data-original-title="修改" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon fa fa-pencil blue bigger-125"></i></a>
+            <a id="del" data-rel="tooltip" title="" data-original-title="删除" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon fa fa-trash-o red bigger-125"></i></a>
+            <a id="upline" data-rel="tooltip" title="" data-original-title="上架" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon glyphicon glyphicon-upload bigger-125"></i></a>
+            <a id="downline" data-rel="tooltip" title="" data-original-title="下架" href="javascript:void(0)" style="padding: 2px;"><i class="ace-icon glyphicon glyphicon-download bigger-125"></i></a>
+        </div>
+        <table id="grid-table"></table>
+        <div id="grid-pager"></div>
+    </div><!-- /.col -->
+</div>
+
+<script type="text/javascript">
+    var scripts = [null, "assets/js/date-time/bootstrap-datepicker.js",
+        "assets/js/jqGrid/jquery.jqGrid.custom.js",
+        "assets/js/chosen.jquery.js",
+        "assets/js/select2.js",
+        "assets/js/jqGrid/i18n/grid.locale-cn.js", null]
+
+    var grid_selector = "#grid-table";
+    var pager_selector = "#grid-pager";
+
+    //查询表单数据
+    function queryData() {
+        var formData = $("#queryForm").serializeJson();
+        jQuery(grid_selector).jqGrid("setGridParam", {postData: formData}).trigger("reloadGrid", [{page: 1}]);
+    }
+
+    function resetForm() {
+        $(".chosen-select").val('').trigger("chosen:updated");
+        $("#categoryid").select2("val", "");
+    }
+
+    $('.page-content-area').ace_ajax('loadScripts', scripts, function () {
+        //inline scripts related to this page
+        jQuery(function ($) {
+            //添加
+            $("#add").click(function(){
+                toCustomUrl('page/business/productdetail.jsp');
+            });
+            //修改
+            $("#edit").click(function(){
+                var ids = $(grid_selector).jqGrid('getGridParam','selarrrow');
+                if(!ids || ids.length === 0) {
+                    showWarnInfo("请先选择一条记录", 3000);
+                }else if(ids.length>1) {
+                    showWarnInfo("只能选择一条记录进行修改", 3000);
+                }else{
+                    queryDetail(ids[0]);
+                }
+            });
+            //删除
+            $("#del").click(function(){
+                var ids = $(grid_selector).jqGrid('getGridParam','selarrrow');
+                if(!ids || ids.length === 0) {
+                    showWarnInfo("至少选择一条记录", 3000);
+                }else{
+                    bootbox.confirm("确认删除选中所有信息？该操作不可逆转", function(res) {
+                        if(res) {
+                            myAjax("/business/delProduct", {ids: ids.join(",")}, function(result){
+                                if(result.code == '1') {
+                                    showSuccInfo("操作成功");
+                                    queryData();
+                                }else{
+                                    showErrorInfo(result.message);
+                                }
+                            })
+                        }
+                    });
+                }
+            });
+
+            //上架
+            $("#upline").click(function(){
+                var ids = $(grid_selector).jqGrid('getGridParam','selarrrow');
+                if(!ids || ids.length === 0) {
+                    showWarnInfo("至少选择一条记录", 3000);
+                }else{
+                    bootbox.confirm("确认将商品上架？", function(res) {
+                        if(res) {
+                            myAjax("/business/uplineProduct", {ids: ids.join(",")}, function(result){
+                                if(result.code == '1') {
+                                    showSuccInfo("上架成功");
+                                    queryData();
+                                }else{
+                                    showErrorInfo(result.message);
+                                }
+                            })
+                        }
+                    });
+                }
+            });
+
+            //下架
+            $("#downline").click(function(){
+                var ids = $(grid_selector).jqGrid('getGridParam','selarrrow');
+                if(!ids || ids.length === 0) {
+                    showWarnInfo("至少选择一条记录", 3000);
+                }else{
+                    bootbox.confirm("确认将商品下架?", function(res) {
+                        if(res) {
+                            myAjax("/business/downlineProduct", {ids: ids.join(",")}, function(result){
+                                if(result.code == '1') {
+                                    showSuccInfo("下架成功");
+                                    queryData();
+                                }else{
+                                    showErrorInfo(result.message);
+                                }
+                            })
+                        }
+                    });
+                }
+            });
+
+            $("#categoryid").select2({
+                ajax: {
+                    url: projectUrl + '/business/getProClassifyByKey',
+                    delay: 250,
+                    cache: true,
+                    data: function (params) {
+                        console.log(params);
+                        var query = {
+                            key: params.term
+                        };
+                        return query;
+                    },
+                    processResults: function (data, params) {
+                        console.log(data);
+                        return {
+                            results: data.data
+                        }
+                    }
+
+                },
+                placeholder: '输入类别名称',
+                // width: '200px'
+            });
+
+
+
+            var parent_column = $(grid_selector).closest('[class*="col-"]');
+            $(window).on('resize.jqGrid', function () {
+                $(grid_selector).jqGrid('setGridWidth', parent_column.width());
+                $(grid_selector).jqGrid('setGridHeight', $(window).height() - 360);
+            });
+            //resize on sidebar collapse/expand
+            $(document).on('settings.ace.jqGrid', function (ev, event_name, collapsed) {
+                if (event_name === 'sidebar_collapsed' || event_name === 'main_container_fixed') {
+                    //setTimeout is for webkit only to give time for DOM changes and then redraw!!!
+                    setTimeout(function () {
+                        $(grid_selector).jqGrid('setGridWidth', parent_column.width());
+                    }, 0);
+                }
+            });
+            //重新进入时，销毁原有页面信息
+            $(document).one('ajaxloadstart.page', function (e) {
+                $.jgrid.gridDestroy(grid_selector);
+                $('.ui-jqdialog').remove();
+            });
+
+            //先设置信息，在设置选择框信息
+            $('.chosen-select').chosen({allow_single_deselect: true});
+
+
+            $(document).on('settings.ace.chosen', function (e, event_name, event_val) {
+                if (event_name != 'sidebar_collapsed') return;
+                $('.chosen-select').each(function () {
+                    var $this = $(this);
+                    $this.next().css({'width': $this.parent().width()});
+                })
+            });
+
+
+            jQuery(grid_selector).jqGrid({
+                // direction: "rtl",
+                subGrid: false, //是否展示子table
+                url: projectUrl + "/business/getProductList", //获取商家列表
+                datatype: "json",
+                mtype: 'POST',
+                height: $(window).height() - 360,
+                colNames: ['ID', '商品名称', '商家名称','商品编号','是否上架', '商品标题',  '商品详情', '首页图', '产品类别', '售价(RMB)', '售价(MMD)','成本价', '销量', '库存'],
+                colModel: [
+                    {name: 'pid', key: true, width: 60, hidden: true, editable: true},
+                    {name: 'pname', index: 'pname', width: 80, editable: true},
+                    {name: 'merName',  width: 100},
+                    {name: 'prodno', index: 'prodno', width: 80},
+                    {name: 'state', index: 'state', width: 80, formatter: pickState},
+                    {name: 'title', index: 'title', width: 80},
+                    {name: 'desc', index: 'desc', width: 120,},
+                    {name: 'homeimg', index: 'homeimg', width: 100,formatter:pickHomeimg},
+                    {name: 'proClassify', index: 'proClassify', width: 90},
+                    {name: 'shopprice', index: 'shopprice', width: 80},
+                    {name: 'shopmmdprice', index: 'shopmmdprice', width: 80},
+                    {name: 'costprice', index: 'costprice', width: 80},
+                    {name: 'sell', index: 'sell', width: 50},
+                    {name: 'inventory', index: 'inventory', width: 90},
+                ],
+                viewrecords: true,
+                rowNum: 10,
+                rowList: [10, 20, 30],
+                pager: pager_selector,
+                ondblClickRow: queryDetail,
+                altRows: false,
+                multiselect: true,
+                multiboxonly: true,
+                loadError: function (xhr, status, error) {
+                    showErrorInfo("服务异常;"+error);
+                },
+            });
+
+            function pickState(val) {
+                var statename = 'label-info';
+                var text = "";
+                if(val == "1") {
+                    statename = 'label-success';
+                    text = "已上架"
+                    return '<span class="label label-sm '+statename+'">'+text+'</span>';
+                }else if (val == "2"){
+                    var statename = 'label-info';
+                    text = "未上架"
+                    return '<span class="label label-sm '+statename+'">'+text+'</span>';
+                }else{
+                    return '';
+                }
+
+            }
+
+            //商品首页图
+            function pickHomeimg(val,row,rowdata) {
+                return'<img width="80px" height="40px" alt="" src="'+val+'"/>';
+            }
+
+            function queryDetail(id) {
+                toCustomUrl("server/business/toProductDetail?id="+id);
+            }
+
+            $(window).triggerHandler('resize.jqGrid');//trigger window resize to make the grid get the correct size
+        });
+    });
+</script>
