@@ -31,10 +31,18 @@ public interface BaseDao {
 
     List<Map<String, Object>> getAllPost();
 
+    List<Map<String, Object>> getPropData();
+
+    List<Map<String, Object>> getPropValByPropId(@Param("prop_id") String prop_id);
+
+    List<Map<String, Object>> getAllClassify();
+
+    Map<String, Object> getPriceToMMDRate();
+
+    List<Map<String, Object>> getMerByKey(@Param("key") String key);
+
     List<Map<String,Object>> getFeedBack(@Param("params") Map<String, String> params);
 
     void dealSuggest(@Param("id") String id);
-
-
 
 }

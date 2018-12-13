@@ -69,6 +69,7 @@ public class BaseControll {
         return baseService.updRoleMenu(role);
     }
 
+
     @RequestMapping("/addRole")
     public Result addRole(Role role) {
         if(StringUtils.isEmpty(role.getRname())) {
@@ -94,6 +95,26 @@ public class BaseControll {
         return baseService.getAllPost();
     }
 
+    @RequestMapping("/getPropData")
+    public Result getPropData() {
+        return baseService.getPropData();
+    }
+
+    @RequestMapping("/getPropValByPropId")
+    public Result getPropValByPropId(String prop_id) {
+        return baseService.getPropValByPropId(prop_id);
+    }
+
+    @RequestMapping("/getAllClassify")
+    public Result getAllClassify() {
+        return baseService.getAllClassify();
+    }
+
+    @RequestMapping("/getPriceToMMDRate")
+    public Result getPriceToMMDRate() {
+        return baseService.getPriceToMMDRate();
+    }
+
     @RequestMapping("/getFeedBack")
     public ResultPage getFeedBack(@RequestParam Map<String, String> params, Page page){
         return  baseService.getFeedBack(params,page);
@@ -105,4 +126,8 @@ public class BaseControll {
     }
 
 
+    @RequestMapping("/getMerByKey")
+    public Result getMerByKey(String key) {
+        return baseService.getMerByKey(key);
+    }
 }
