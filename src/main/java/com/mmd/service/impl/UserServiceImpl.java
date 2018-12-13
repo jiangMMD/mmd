@@ -35,10 +35,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Result delUser(String ids) {
-        int usernums = userDao.getUserNumsWithCids(PublicUtil.toListByIds(ids));
-        if(usernums > 0) {
-            return new Result(0, "操作失败，选中的客户中有订单信息，无法删除； 如需删除，请联系管理员进行删除");
-        }
+//        int usernums = userDao.getUserNumsWithCids(PublicUtil.toListByIds(ids));
+//        if(usernums > 0) {
+//            return new Result(0, "操作失败，选中的客户中有订单信息，无法删除； 如需删除，请联系管理员进行删除");
+//        }
         userDao.delUser(PublicUtil.toListByIds(ids));
         return new Result();
 
@@ -87,5 +87,21 @@ public class UserServiceImpl implements UserService {
       return userDao.getUserByKey(key);
     }
 
+    @Override
+    public List<Map<String, Object>> getUserByPhone(String key) {
+        return userDao.getUserByPhone(key);
+    }
+
+    @Override
+    public List<Map<String, Object>> getUserByName(String key) {
+        return userDao.getUserByName(key);
+    }
+
+    @Override
+    public ResultPage getCollections(Page page, Map<String, String> params) {
+        PageHelper.startPage(page);
+        List<Map<String, Object>> list = userDao.getCollections(params);
+        return new ResultPage<>(list);
+    }
 
 }

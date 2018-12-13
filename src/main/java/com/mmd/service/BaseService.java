@@ -2,7 +2,11 @@ package com.mmd.service;
 
 
 import com.mmd.model.Role;
+import com.mmd.pjo.Page;
 import com.mmd.pjo.Result;
+import com.mmd.pjo.ResultPage;
+
+import java.util.Map;
 
 public interface BaseService {
 
@@ -25,13 +29,8 @@ public interface BaseService {
 
     Result getAllPost();
 
-    Result getPropData();
+    ResultPage getFeedBack(Map<String, String> params, Page page);
 
-    Result getPropValByPropId(String prop_id);
+    Result dealSuggest(String id);
 
-    Result getAllClassify();
-
-    Result getPriceToMMDRate();
-
-    Result getMerByKey(String key);
 }

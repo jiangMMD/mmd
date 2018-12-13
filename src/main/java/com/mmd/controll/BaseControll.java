@@ -1,15 +1,19 @@
 package com.mmd.controll;
 
 import com.mmd.model.Role;
+import com.mmd.pjo.Page;
 import com.mmd.pjo.Result;
+import com.mmd.pjo.ResultPage;
 import com.mmd.service.BaseService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Map;
 
 /**
  * 获取所有的基础信息
@@ -90,28 +94,15 @@ public class BaseControll {
         return baseService.getAllPost();
     }
 
-    @RequestMapping("/getPropData")
-    public Result getPropData() {
-        return baseService.getPropData();
+    @RequestMapping("/getFeedBack")
+    public ResultPage getFeedBack(@RequestParam Map<String, String> params, Page page){
+        return  baseService.getFeedBack(params,page);
     }
 
-    @RequestMapping("/getPropValByPropId")
-    public Result getPropValByPropId(String prop_id) {
-        return baseService.getPropValByPropId(prop_id);
+    @RequestMapping("/dealSuggest")
+    public Result dealSuggest(String id){
+        return baseService.dealSuggest(id);
     }
 
-    @RequestMapping("/getAllClassify")
-    public Result getAllClassify() {
-        return baseService.getAllClassify();
-    }
 
-    @RequestMapping("/getPriceToMMDRate")
-    public Result getPriceToMMDRate() {
-        return baseService.getPriceToMMDRate();
-    }
-
-    @RequestMapping("/getMerByKey")
-    public Result getMerByKey(String key) {
-        return baseService.getMerByKey(key);
-    }
 }

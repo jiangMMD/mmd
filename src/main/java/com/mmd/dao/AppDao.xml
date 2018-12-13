@@ -13,9 +13,11 @@
         update bs_basedict set data_name = #{data.data_name} where dict_id = #{data.dict_id}
     </update>
 
+
     <delete id="delClassify">
         DELETE  from bs_basedict where dict_id in <foreach collection="ids" open="(" close=")" separator="," item="id">#{id}</foreach>
     </delete>
+
 
     <select id="getClassify" resultType="map">
         select dict_id, dict_name, data_code, data_name, dict_code, crtuser, date_format(crtdate, '%Y-%m-%d %T') crtdate from bs_basedict where dict_code = 'HPT001'
@@ -27,4 +29,88 @@
     <select id="getClassifyById" resultType="map">
         select dict_id, dict_name, data_name, data_code from bs_basedict  where dict_code = 'HPT001' and dict_id = #{id}
     </select>
+
+    <select id="getClassifyList" resultType="map">
+        select * from classify where recsts = '1' order by `order`
+    </select>
+
+    <select id="loadJifen" resultType="com.mmd.model.Integral">
+        select id,type,backform,value,state from integral
+    </select>
+
+    <update id="updIntegralByLogin">
+        update integral set value = #{integral.value1}, state = #{integral.state1}  where type = '1'
+    </update>
+    <update id="updIntegralByBuy">
+        update integral set value = #{integral.value2}, backform = #{integral.backform2}, state = #{integral.state2}  where type = '3'
+    </update>
+
+
+    <insert id="insertClassify" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+      insert into classify (`name`,`order`,crtdate,recsts) values (#{map.name}, #{map.order}, now(), '1')
+    </insert>
+
+    <update id="updateClassify">
+      update classify set `name`= #{map.name}, `order` = #{map.order} where id = #{map.id}
+    </update>
+    <update id="updRateinfoByRMB">
+      update rateinfo set rate =#{rateinfo.rate1} where type='1'
+    </update>
+    <update id="updRateinfoByIntegral">
+      update rateinfo set rate =#{rateinfo.rate2} where type='2'
+    </update>
+
+    <update id="updateCarousel">
+        update homecarousel set pid = #{map.pid},
+         <if test="map.imgurl != null and map.imgurl !=''">
+             imgurl = #{map.imgurl},
+         </if>
+        recsts = '1'
+         where orderby = #{map.orderby}
+    </update>
+
+    <delete id="delClassifyInfo">
+        delete from classify where id  not in <foreach collection="ids" open="(" close=")" separator="," item="id">#{id}</foreach>
+    </delete>
+
+
+    <select id="getHotwordList" resultType="java.util.Map">
+        select id,word from hotword
+    </select>
+    <select id="getHistoryList" resultType="java.util.Map">
+        select id,word,updatetime from searchhistories order by times desc ;
+    </select>
+    <select id="loadExchange" resultType="com.mmd.model.Rateinfo">
+        select id,type,rate from rateinfo
+    </select>
+
+    <select id="getCarousal" resultType="java.util.Map">
+        select id, pid, (select pname from productsinfo p where p.pid = h.pid) pname,
+         imgurl
+         from homecarousel h where recsts = '1' order by orderby
+    </select>
+
+    <select id="getProdByKey" resultType="java.util.Map">
+        select pid id, pname text from productsinfo where recsts = '1'
+        <if test="key != null and key != ''">
+            and pname like concat('%', #{key}, '%')
+        </if>
+        order by crtdate desc limit 10
+    </select>
+
+    <insert id="insertHotword">
+      insert into hotword (word) values
+      <foreach collection="map" item="word" separator=",">
+          (#{word})
+      </foreach>
+    </insert>
+
+
+
+    <delete id="delHotword">
+        delete from hotword
+    </delete>
+
+
+
 </mapper>

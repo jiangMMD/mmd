@@ -1,13 +1,14 @@
 package com.mmd.model;
 
 
-public class Integral {
+import java.io.Serializable;
+
+public class Integral implements Serializable {
 
   private Long id;
-  private Long uid;
   private String type;
   private String backform;
-  private Double value;
+  private Long value;
   private String state;
 
   public Long getId() {
@@ -34,11 +35,11 @@ public class Integral {
     this.backform = backform;
   }
 
-  public Double getValue() {
+  public Long getValue() {
     return value;
   }
 
-  public void setValue(Double value) {
+  public void setValue(Long value) {
     this.value = value;
   }
 
@@ -48,13 +49,5 @@ public class Integral {
 
   public void setState(String state) {
     this.state = state;
-  }
-
-  public Long getUid() {
-    return uid;
-  }
-
-  public void setUid(Long uid) {
-    this.uid = uid;
   }
 }

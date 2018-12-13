@@ -36,4 +36,10 @@ public interface UserDao {
     void updAddress(Shipaddress shipaddress);
 
     List<Map<String, Object>> getUserByKey(@Param("key") String key);
+
+    List<Map<String, Object>> getUserByPhone(@Param("key") String key);
+
+    List<Map<String, Object>> getUserByName(@Param("key") String key);
+
+    List<Map<String,Object>> getCollections(@Param("params") Map<String, String> params);
 }

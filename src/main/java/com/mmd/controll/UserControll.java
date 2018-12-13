@@ -84,4 +84,27 @@ public class UserControll {
         return result;
     }
 
+    @RequestMapping("/getUserByPhone")
+    public @ResponseBody Map<String ,Object> getUserByPhone(@RequestParam Map<String, Object> params){
+        String key = (String) params.get("key");
+        Map<String, Object> result = new HashMap<>();
+        List<Map<String,Object>> list = userService.getUserByPhone(key);
+        result.put("result",list);
+        return result;
+    }
+
+    @RequestMapping("/getUserByName")
+    public @ResponseBody Map<String ,Object> getUserByName(@RequestParam Map<String, Object> params){
+        String key = (String) params.get("key");
+        Map<String, Object> result = new HashMap<>();
+        List<Map<String,Object>> list = userService.getUserByName(key);
+        result.put("result",list);
+        return result;
+    }
+
+    @RequestMapping("/getCollections")
+    public @ResponseBody ResultPage getCollections(Page page,@RequestParam Map<String, String> params){
+        return userService.getCollections(page,params);
+    }
+
 }

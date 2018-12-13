@@ -24,5 +24,14 @@ public interface UserService {
 
     Result delAddress(String id);
 
+
+
     List<Map<String,Object>> getUserByKey(String key);
+
+    List<Map<String,Object>> getUserByPhone(String key);
+
+    List<Map<String,Object>> getUserByName(String key);
+
+    ResultPage getCollections(Page page, Map<String, String> params);
+
 }

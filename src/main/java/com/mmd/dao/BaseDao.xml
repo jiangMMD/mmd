@@ -4,6 +4,9 @@
     <update id="updRoleMenu" parameterType="role">
         update role set m_ids = #{menu_ids}  where rid = #{rid}
     </update>
+    <update id="dealSuggest">
+        update suggest set state = '1' where id = #{id}
+    </update>
 
     <delete id="delRole">
         DELETE FROM role where rid = #{rid}
@@ -40,6 +43,18 @@
     </select>
     <select id="getAllPost" resultType="map">
         select data_code, data_name from bs_basedict where dict_code = 'ZW001'
+    </select>
+    <select id="getFeedBack" resultType="java.util.Map">
+        select id,
+        (select u_nick from user u where u.u_id = s.uid)nick,
+        (select u_name from user u where u.u_id = s.uid )name,
+        s.phone,s.content,s.state,DATE_FORMAT(s.crtdate, '%Y-%m-%d %T') crtdate from suggest s
+        <where>
+            1 = 1
+            <if test="params.phone != null and params.phone != ''">
+               and phone = #{params.phone}
+            </if>
+        </where>
     </select>
 
     <select id="getPropData" resultType="map">
