@@ -426,4 +426,27 @@ public class PublicUtil {
         return object == null || "".equals(object);
     }
 
+
+    public static String getProdNo() {
+        SimpleDateFormat sfDate = new SimpleDateFormat("yyMMddHHmmssSSS");
+        String strDate = sfDate.format(new Date());
+        //为了防止高并发重复,再获取3个随机数
+        String random = getRandom(2);
+        return strDate + random;
+    }
+
+    public static String getRandom(Integer length) {
+        String result = "";
+        Random rand = new Random();
+        int n = 20;
+        if (null != length && length > 0) {
+            n = length;
+        }
+        int randInt = 0;
+        for (int i = 0; i < n; i++) {
+            randInt = rand.nextInt(10);
+            result += randInt;
+        }
+        return result;
+    }
 }
