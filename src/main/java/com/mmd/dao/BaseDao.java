@@ -24,7 +24,6 @@ public interface BaseDao {
 
     void updRoleMenu(Role role);
 
-
     void delRole(@Param("rid") String rid);
 
     List<Map<String, Object>> getAllCity();
