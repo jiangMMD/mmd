@@ -84,6 +84,32 @@ public class BaseServiceImpl implements BaseService {
     }
 
     @Override
+    public Result getPropData() {
+        return new Result(1, "查询成功！", baseDao.getPropData());
+    }
+
+    @Override
+    public Result getPropValByPropId(String prop_id) {
+        return new Result().success(baseDao.getPropValByPropId(prop_id));
+    }
+
+    @Override
+    public Result getAllClassify() {
+        return new Result().success(baseDao.getAllClassify());
+    }
+
+    @Override
+    public Result getPriceToMMDRate() {
+        return new Result().success(baseDao.getPriceToMMDRate());
+    }
+
+    @Override
+    public Result getMerByKey(String key) {
+        return new Result().success(baseDao.getMerByKey(key));
+
+    }
+
+    @Override
     public ResultPage getFeedBack(Map<String, String> params, Page page) {
         PageHelper.startPage(page);
         List<Map<String, Object>> list = baseDao.getFeedBack(params);
