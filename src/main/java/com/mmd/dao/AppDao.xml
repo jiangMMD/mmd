@@ -46,7 +46,7 @@
     </update>
 
 
-    <insert id="insertClassify" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+    <insert id="insertClassify" useGeneratedKeys="true" keyColumn="id" keyProperty="map.id">
       insert into classify (`name`,`order`,crtdate,recsts) values (#{map.name}, #{map.order}, now(), '1')
     </insert>
 
