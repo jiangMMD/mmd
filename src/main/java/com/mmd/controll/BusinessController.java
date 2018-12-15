@@ -149,21 +149,23 @@ public class BusinessController {
     @RequestMapping("/toProductDetail")
     public ModelAndView toProductDetail(String id) {
         ModelAndView modelAndView = new ModelAndView();
-        //查询产品详细
-        Productsinfo productsinfo = productService.getProductDetail(id);
-        modelAndView.addObject("productsinfo", productsinfo);
-        //查询该产品轮播图信息
-//        List<ProdCarousal> carousalList =productService.getProdCarousalList(id);
-//        modelAndView.addObject("prodCarousal", carousalList);
-        //查询全部产品服务
-        List<Map<String, Object>> allServices = productService.getAllProdService(productsinfo.getServiceIds());
-        modelAndView.addObject("allServices", allServices);
+        if(!StringUtils.isEmpty(id)) {
+            //查询产品详细
+            Productsinfo productsinfo = productService.getProductDetail(id);
+            modelAndView.addObject("productsinfo", productsinfo);
 
-        //查询产品SKU信息
-        List<Map<String, Object>> prodSku = productService.getProdSku(id);
-        modelAndView.addObject("prodSku", prodSku);
+            //查询产品SKU信息
+            List<Map<String, Object>> prodSku = productService.getProdSku(id);
+            modelAndView.addObject("prodSku", prodSku);
 
-        System.out.println(prodSku);
+            //查询全部产品服务
+            List<Map<String, Object>> allServices = productService.getAllProdService(productsinfo.getServiceIds());
+            modelAndView.addObject("allServices", allServices);
+        }else{
+            //查询全部产品服务
+            List<Map<String, Object>> allServices = productService.getAllProdService(null);
+            modelAndView.addObject("allServices", allServices);
+        }
         modelAndView.setViewName("../content/business/productdetail.jsp");
         return modelAndView;
     }

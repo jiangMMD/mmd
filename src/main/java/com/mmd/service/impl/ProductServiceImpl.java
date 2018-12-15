@@ -2,6 +2,7 @@ package com.mmd.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.mmd.dao.ProductDao;
+import com.mmd.model.Employee;
 import com.mmd.model.ProdCarousal;
 import com.mmd.model.Productsinfo;
 import com.mmd.model.User;
@@ -141,6 +142,8 @@ public class ProductServiceImpl implements ProductService {
             productDao.updateSku(params);
         }
         dealSkuRel(String.valueOf(params.get("pid")));
+        //修改产品总库存
+        productDao.updateProdStore(String.valueOf(params.get("pid")));
         return new Result().success(params);
     }
 
@@ -170,17 +173,17 @@ public class ProductServiceImpl implements ProductService {
         return new Result();
     }
 
-    private User getUserInfo() {
-        return (User) session.getAttribute("user");
+    private Employee getEmployeeInfo() {
+        return (Employee) session.getAttribute("employee");
     }
 
     @Override
     public Result addOrUpdProd(Productsinfo productsinfo) {
-        User user = getUserInfo();
+        Employee employee = getEmployeeInfo();
         if(productsinfo.getPid() != null) {
             productDao.updateProd(productsinfo);
         }else {
-            productsinfo.setCrtuser(user.getuName());
+            productsinfo.setCrtuser(employee.getName());
             //设置产品编号
             productsinfo.setProdno(PublicUtil.getProdNo());
             productDao.addProd(productsinfo);
