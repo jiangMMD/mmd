@@ -102,6 +102,9 @@
                                        placeholder="请输入您的手机号"/>
                             </div>
                         </div>
+
+                        <div class="space-12"></div>
+
                         <div class="row">
                             <div class="col-xs-6 form-group">
                                 <label class="control-label" for="form-custom-koseki">用户家庭地址<span
@@ -109,11 +112,8 @@
                                 <input id="form-custom-koseki" class="form-control" name="uAddress" value="${user.uAddress}"
                                        placeholder="请输入你的家庭地址"/>
                             </div>
-
                         </div>
-
                     </div>
-<<<<<<< HEAD
                 </div>
             </div>
             <div class="space-12"></div>
@@ -121,19 +121,9 @@
                 <div class="col-xs-4 col-xs-offset-5">
                     <input type="submit" class="btn btn-primary" id="custom_save" value="保存">
                     <input type="reset" class="btn" style="margin-left: 20px;" value="重置表单">
-=======
-
->>>>>>> origin/master
                 </div>
             </div>
 
-                        <div class="space-12"></div>
-                        <div class="row" id="book_save_info">
-                            <div class="col-xs-4 col-xs-offset-5">
-                                <input type="submit" class="btn btn-primary" id="custom_save" value="保存">
-                                <input type="reset" class="btn" style="margin-left: 20px;" value="重置表单">
-                            </div>
-                        </div>
         </form>
     </div>
 </div>
