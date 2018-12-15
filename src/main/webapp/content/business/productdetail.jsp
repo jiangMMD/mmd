@@ -74,7 +74,7 @@
                                             <div class="col-xs-6 form-group">
                                                 <label class="control-label" for="pname">选择商家<span
                                                         class="red">*</span></label>
-                                                <select name="mer_id" class="form-group"></select>
+                                                <select name="merId" class="form-group"></select>
                                             </div>
                                         </div>
                                         <div class="space-12"></div>
@@ -779,7 +779,7 @@
     $('.page-content-area').ace_ajax('loadScripts', scripts, function () {
 
         //加载商家
-        $("select[name=mer_id]").select2({
+        $("select[name=merId]").select2({
             placeholder: "请选择商家名称检索",
             ajax: {
                 url: projectUrl + '/base/getMerByKey',
