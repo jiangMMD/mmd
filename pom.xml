@@ -493,5 +493,24 @@
             <artifactId>lombok</artifactId>
             <version>1.18.2</version>
         </dependency>
+
+        <!--图片压缩工具-->
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.8</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.bingoogolapple</groupId>
+            <artifactId>zxing</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.2.1</version>
+        </dependency>
     </dependencies>
 </project>
