@@ -60,4 +60,6 @@ public interface ProductDao {
     void uploadDetailImg(@Param("goods_url") String goods_url, @Param("pid") String pid);
 
     void delDetailimg(@Param("url") String url, @Param("filename") String filename, @Param("pid") String pid);
+
+    void updateProdStore(@Param("pid") String pid);
 }
