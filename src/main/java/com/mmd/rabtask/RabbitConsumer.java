@@ -6,4 +6,5 @@ package com.mmd.rabtask;
 public class RabbitConsumer {
 
 
+
 }
